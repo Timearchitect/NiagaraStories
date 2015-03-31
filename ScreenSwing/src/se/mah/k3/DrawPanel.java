@@ -48,7 +48,7 @@ public class DrawPanel extends JPanel {
 						 users.get(place).setyRel((double)dataSnapshot.getValue());
 					 }
 					 if (dataSnapshot.getKey().equals("RoundTripTo")){
-						 System.out.println("Roundtrip: "+(long)dataSnapshot.getValue());
+						 //System.out.println("Roundtrip: "+(long)dataSnapshot.getValue());
 						 myFirebaseRef.child(arg0.getKey()).child("RoundTripBack").setValue((long)dataSnapshot.getValue()+1);
 					 }
 				 }
