@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Vector;
+
 import javax.swing.JPanel;
 
 import com.firebase.client.ChildEventListener;
@@ -15,19 +17,16 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 public class DrawPanel extends JPanel {
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private Firebase myFirebaseRef;
-	private ArrayList<User> users = new ArrayList<User>();
+	//A vector is like an ArrayList a little bit slower but Thread-safe. This means that it can handle concurrent changes. 
+	private Vector<User> users = new Vector<User>();
 	Font font = new Font("Verdana", Font.BOLD, 20);
 	
 	public DrawPanel() {
-		myFirebaseRef = new Firebase("https://klara.firebaseio.com/");
-		myFirebaseRef.removeValue();
-		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);
+		myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/");
+		myFirebaseRef.removeValue(); //Cleans out everything
+		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		 myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {}
@@ -35,11 +34,12 @@ public class DrawPanel extends JPanel {
 			@Override
 			public void onChildMoved(DataSnapshot arg0, String arg1) {}
 			
+			//A user changed some value so update
 			@Override
 			public void onChildChanged(DataSnapshot arg0, String arg1) {
 				Iterable<DataSnapshot> dsList= arg0.getChildren();
 				Collections.sort(users);
-				int place = Collections.binarySearch(users, new User(arg0.getKey(),0,0)); //Find the user usernama has to be unique
+				int place = Collections.binarySearch(users, new User(arg0.getKey(),0,0)); //Find the user usernama has to be unique uses the method compareTo in User
 				 for (DataSnapshot dataSnapshot : dsList) {					 
 					 if (dataSnapshot.getKey().equals("xRel")){
 						 users.get(place).setxRel((double)dataSnapshot.getValue());
@@ -48,13 +48,13 @@ public class DrawPanel extends JPanel {
 						 users.get(place).setyRel((double)dataSnapshot.getValue());
 					 }
 					 if (dataSnapshot.getKey().equals("RoundTripTo")){
-						 //System.out.println("Roundtrip: "+(long)dataSnapshot.getValue());
 						 myFirebaseRef.child(arg0.getKey()).child("RoundTripBack").setValue((long)dataSnapshot.getValue()+1);
 					 }
 				 }
 				 repaint();
 			}
 			
+			//We got a new user
 			@Override
 			public void onChildAdded(DataSnapshot arg0, String arg1) {
 				if (arg0.hasChildren()){
@@ -77,7 +77,7 @@ public class DrawPanel extends JPanel {
 		});
 	}
 	
-	
+	//Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);

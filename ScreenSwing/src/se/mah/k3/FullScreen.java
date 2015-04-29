@@ -20,7 +20,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private boolean inFullScreenMode = false;
-	private int PrevX = 100 ,PrevY = 100 ,PrevWidth = 480,PrevHeight = 640;
+	private int PrevX = 100 ,PrevY = 100 ,PrevWidth = 480,PrevHeight = 640; //Dummysize
 
 	/**
 	 * Launch the application.
@@ -48,7 +48,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
 		DrawPanel panel = new DrawPanel();
 		contentPane.add(panel, BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); //Listen to keyboard
@@ -68,8 +67,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 				//Always on last screen!
 				setUndecorated(true);
 				gd[gd.length-1].setFullScreenWindow(this);
-//				System.out.println("Height on fulldisplay: "+gd[gd.length-1].getDisplayMode().getHeight());
-//				System.out.println("Width on fulldisplay: "+gd[gd.length-1].getDisplayMode().getWidth());
 				setVisible(true);
 				this.inFullScreenMode = true;
 			}
@@ -84,6 +81,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
    }
 
 
+	//Toggle fullscreen with f
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
        if (e.getID() == KeyEvent.KEY_TYPED) {
