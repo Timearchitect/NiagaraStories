@@ -5,10 +5,10 @@ import java.awt.Color;
 public class User implements Comparable<User>{
 	
 	private String id;
-	 int xPos, pxPos;
-	 int yPos, pyPos;
-	private double xRel=0;
-	private double yRel=0;
+	 int xPos,pyPos;
+	 int yPos, pxPos;
+	private double xRel=0,pxRel=0;
+	private double yRel=0,pyRel=0;
 	private Color c = new Color(100,100,100);
 	
 	
@@ -47,6 +47,20 @@ public class User implements Comparable<User>{
 	}
 	public void setxRel(double xRel) {
 		this.xRel = xRel;
+	}
+	
+
+	public double getpyRel() {
+		return pyRel;
+	}
+	public void setpyRel(double pyRel) {
+		this.pyRel = pyRel;
+	}
+	public double getpxRel() {
+		return pxRel;
+	}
+	public void setpxRel(double pxRel) {
+		this.pxRel = pxRel;
 	}
 	
 	@Override
