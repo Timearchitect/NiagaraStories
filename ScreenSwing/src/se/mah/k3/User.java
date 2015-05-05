@@ -5,8 +5,8 @@ import java.awt.Color;
 public class User implements Comparable<User>{
 	
 	private String id;
-	private int xPos;
-	private int yPos;
+	 int xPos, pxPos;
+	 int yPos, pyPos;
 	private double xRel=0;
 	private double yRel=0;
 	private Color c = new Color(100,100,100);

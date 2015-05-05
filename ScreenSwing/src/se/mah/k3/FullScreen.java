@@ -1,6 +1,7 @@
 package se.mah.k3;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -10,6 +11,7 @@ import java.awt.KeyboardFocusManager;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.event.KeyEvent;
 
 public class FullScreen extends JFrame implements KeyEventDispatcher{
@@ -17,6 +19,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 	/**
 	 * 
 	 */
+	private static DrawPanel panel;
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private boolean inFullScreenMode = false;
@@ -31,12 +34,16 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 				try {
 					FullScreen frame = new FullScreen();
 					frame.setVisible(true);
+				    gameLoop(); // start the game loop
+				    
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
+
+
 
 	/**
 	 * Create the frame.
@@ -48,12 +55,23 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		DrawPanel panel = new DrawPanel();
+		//DrawPanel panel = new DrawPanel();
+		 panel = new DrawPanel();
+		 
+		//panel.setOpaque(false);
+		//panel.setBackground( new Color(255, 0, 0, 20) );
 		contentPane.add(panel, BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); //Listen to keyboard
 	    manager.addKeyEventDispatcher(this);
 		setFullscreen(true);
+		
 	}
+	  static void gameLoop() {
+		
+		  panel.run();
+		
+		 
+	  }
 	
 	public void setFullscreen(boolean fullscreen) {
 		 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

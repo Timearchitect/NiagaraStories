@@ -15,7 +15,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-public class DrawPanel extends JPanel {
+public class DrawPanel extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
 	private Firebase myFirebaseRef;
 	//A vector is like an ArrayList a little bit slower but Thread-safe. This means that it can handle concurrent changes. 
@@ -23,10 +23,12 @@ public class DrawPanel extends JPanel {
 	Font font = new Font("Verdana", Font.BOLD, 20);
 	
 	public DrawPanel() {
-		myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/");
+		 
+		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
+		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
 		myFirebaseRef.removeValue(); //Cleans out everything
 		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
-		 myFirebaseRef.addChildEventListener(new ChildEventListener() {
+		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {}
 			
@@ -50,7 +52,7 @@ public class DrawPanel extends JPanel {
 						 myFirebaseRef.child(arg0.getKey()).child("RoundTripBack").setValue((long)dataSnapshot.getValue()+1);
 					 }
 				 }
-				 repaint();
+				 repaint(); // repaint() when changed
 			}
 			
 			//We got a new user
@@ -59,7 +61,7 @@ public class DrawPanel extends JPanel {
 				if (arg0.hasChildren()){
 					//System.out.println("ADD user with Key: "+arg1+ arg0.getKey());
 					Random r = new Random();
-					int x = r.nextInt(getSize().width);
+					int x = r.nextInt(getSize().width); // spawn 
 					int y = r.nextInt(getSize().height);
 						User user = new User(arg0.getKey(),x,y);
 						if (!users.contains(user)){
@@ -68,7 +70,6 @@ public class DrawPanel extends JPanel {
 				 		}
 				}
 			}
-			
 			@Override
 			public void onCancelled(FirebaseError arg0) {
 				
@@ -79,24 +80,48 @@ public class DrawPanel extends JPanel {
 	//Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
-		super.paint(g);
+		//super.paint(g);   
 		Graphics2D g2= (Graphics2D) g;
 		g2.setFont(font);
-		g2.setColor(Color.LIGHT_GRAY);
-		g2.fillRect(0, 0, getSize().width, getSize().height);
+		//g2.setColor(Color.LIGHT_GRAY);
+		g2.setPaint(new Color(255,255,255,10));  
+		g2.fillRect(0, 0, getSize().width, getSize().height); // repaint background
 		g2.setColor(Color.BLACK);
-		g.drawString("ScreenNbr: "+Constants.screenNbr, 10,  20);
+		g2.drawString("ScreenNbr: "+Constants.screenNbr, 10,  20);
 		//Test
 		for (User user : users) {
 			int x = (int)(user.getxRel()*getSize().width);
 			int y = (int)(user.getyRel()*getSize().height);
-			g2.setColor( user.getColor());
-			g2.fillOval(x,y, 10, 10);
+			int x2 =(int)(user.pxPos*getSize().width);
+			int y2 = (int)(user.pyPos*getSize().height);
+			
+			g2.setColor(user.getColor());
+			g2.fillOval(x-50,y-50, 100, 100);
+			
+			
+
+			g2.setColor(Color.BLUE);
+			g2.fillOval(x2-25,y2-25, 50, 50);
+			user.pxPos= user.xPos;
+			user.pyPos= user.yPos;
+			x2 =(int)(user.pxPos*getSize().width);
+			y2 = (int)(user.pyPos*getSize().height);
+			
+			
 			g2.setColor(Color.BLACK);
 			g.drawString(user.getId(),x+15,y+15);
+
 		}
 		
 	}
+
+	@Override
+	public void run() {
+	
+	            	 repaint();
+
+	}
+
 }
 
 	
