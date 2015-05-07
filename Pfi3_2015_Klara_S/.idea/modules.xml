@@ -1,0 +1,23 @@
+<<<<<<< HEAD
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Pfi3_2015_Klara_S.iml" filepath="$PROJECT_DIR$/Pfi3_2015_Klara_S.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScreenAndroid/ScreenAndroid.iml" filepath="$PROJECT_DIR$/ScreenAndroid/ScreenAndroid.iml" />
+    </modules>
+  </component>
+</project>
+
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Pfi3_2015_Klara_S.iml" filepath="$PROJECT_DIR$/Pfi3_2015_Klara_S.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ScreenAndroid/ScreenAndroid.iml" filepath="$PROJECT_DIR$/ScreenAndroid/ScreenAndroid.iml" />
+    </modules>
+  </component>
+</project>
+
+>>>>>>> refs/remotes/origin/master
