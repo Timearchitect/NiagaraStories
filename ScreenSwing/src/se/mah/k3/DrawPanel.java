@@ -45,6 +45,7 @@ public class DrawPanel extends JPanel implements Runnable{
 				createRegularWords();
 				createThemeWords();
 				
+				
 				// use method getText from the word class to set text to "word1" in the firebase db. 
 				myFirebaseRef.child("Word1").setValue(w.getText());
 			//	myFirebaseRef.child("Word1").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -217,6 +218,10 @@ themedWords.child("word"+i).setValue(themeWords[i]);
 
 }
 
-}
 
 }
+
+
+}
+
+
