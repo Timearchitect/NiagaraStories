@@ -1,5 +1,9 @@
 package se.mah.k3;
 
+// This is the class for the word-object. It contains the words that
+// the user will have displayed in their mobile app. 
+// It also contains a boolean to check if the word is active or not.
+
 public class Word {
 	public boolean active = false;
 	public String text = "";
