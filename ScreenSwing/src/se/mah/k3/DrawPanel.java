@@ -29,13 +29,18 @@ public class DrawPanel extends JPanel implements Runnable{
 	private Color backgroundColor =new Color(255,255,255,10);
     public static int myFrame = 0;
     
-
+	// Creates an instance of the word object
+    Word w = new Word("ord1");
+	
 	public DrawPanel() {
-		 
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
-		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
-		myFirebaseRef.removeValue(); //Cleans out everything
-		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
+				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
+	
+				myFirebaseRef.removeValue(); //Cleans out everything
+				
+				// use method getText from the word class to set text to "word1" in the firebase db. 
+				myFirebaseRef.child("Word1").setValue(w.getText());
+				myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {}
@@ -177,4 +182,3 @@ public class DrawPanel extends JPanel implements Runnable{
 
 }
 
-	
