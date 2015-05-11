@@ -34,9 +34,12 @@ public class DrawPanel extends JPanel implements Runnable{
 		 
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
-		myFirebaseRef.removeValue(); //Cleans out everything
-		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
+	myFirebaseRef.removeValue(); //Cleans out everything
+	myFirebaseRef.child("word1").setValue("New Word! Yay!");
+	myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
+		
+
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {}
 			
@@ -93,7 +96,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		 int HEIGHT = (int)getSize().height;
 		particles.add(new Particle(r.nextInt(WIDTH),0));
 		particles.add(new Particle(r.nextInt(WIDTH),0));
-		Graphics2D g2= (Graphics2D) g; // grafik object behövs för att canvas ska paint på
+		Graphics2D g2= (Graphics2D) g; // grafik object behï¿½vs fï¿½r att canvas ska paint pï¿½
 		g2.setFont(font); // init typsnitt
 		//g2.setColor(Color.LIGHT_GRAY);
 	    g2.setPaint(backgroundColor);  // color it med opacity  
