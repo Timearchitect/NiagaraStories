@@ -25,7 +25,11 @@ public class DrawPanel extends JPanel implements Runnable{
 	//A vector is like an ArrayList a little bit slower but Thread-safe. This means that it can handle concurrent changes. 
 	private Vector<User> users = new Vector<User>();
 	Font font = new Font("Verdana", Font.BOLD, 20);
-	
+	private Random r = new Random(); // randomize siffror
+	private Color backgroundColor =new Color(255,255,255,10);
+    public static int myFrame = 0;
+    
+
 	public DrawPanel() {
 		 
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
@@ -84,62 +88,92 @@ public class DrawPanel extends JPanel implements Runnable{
 	//Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
-		//super.paint(g);   
-		Random r = new Random();
-		particles.add(new Particle(r.nextInt(getSize().width),0));
-		Graphics2D g2= (Graphics2D) g;
-		g2.setFont(font);
+		//super.paint(g);    // no opacity repaint
+		 int WIDTH = (int)getSize().width;
+		 int HEIGHT = (int)getSize().height;
+		particles.add(new Particle(r.nextInt(WIDTH),0));
+		particles.add(new Particle(r.nextInt(WIDTH),0));
+		Graphics2D g2= (Graphics2D) g; // grafik object behövs för att canvas ska paint på
+		g2.setFont(font); // init typsnitt
 		//g2.setColor(Color.LIGHT_GRAY);
-		g2.setPaint(new Color(255,255,255,10));  
-		g2.fillRect(0, 0, getSize().width, getSize().height); // repaint background
-		g2.setColor(Color.BLACK);
-		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size(), 10,  20);
+	    g2.setPaint(backgroundColor);  // color it med opacity  
+		//g2.setPaint(new Color(r.nextInt(255),r.nextInt(255),r.nextInt(255)));  // color it med opacity  
+		g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
+		g2.setColor(Color.BLACK); // svart system color
+		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size() + "  frame :"+myFrame, 10,  20);
 		//Test
 		for (User user : users) {
-			int x = (int)(user.getxRel()*getSize().width);
-			int y = (int)(user.getyRel()*getSize().height);
+
+
+			
+			int x = (int)(user.getxRel()*WIDTH); // skalad x pos
+			int y = (int)(user.getyRel()*HEIGHT); // skalad y pos
 			int x2;
 			int y2;
 			
 			g2.setColor(user.getColor());
 			g2.fillOval(x-50,y-50, 100, 100);
 			
-			x2 =(int)(user.getpxRel()*getSize().width);
-			y2 =(int)(user.getpyRel()*getSize().height);
+			x2 =(int)(user.getpxRel()*WIDTH);
+			y2 =(int)(user.getpyRel()*HEIGHT);
 			g2.setColor(Color.BLUE);
 			g2.fillOval(x2-25,y2-25, 50, 50);
 			user.setpxRel(user.getxRel());
 			user.setpyRel(user.getyRel());
 			
-			
-			
 			g2.setColor(Color.BLACK);
 			g.drawString(user.getId(),x+15,y+15);
 			
-			for(Particle p: particles){ // run all particles
-				p.update();
-				p.display(g2);
-			  if(p.y>getSize().height){
-				  particles.remove(p);
-				 // g2.fillOval((int)p.x,(int)p.y, 100, 100);
-			  }
-			}
 			/*for( int i=0; i<particles.size(); i++){ // run all particles
 				particles.get(i).update();
 				particles.get(i).display(g2);
 			  if(particles.get(i).y>getSize().height)particles.remove(i);
 			}*/
 		}
-
 		
-	}
+		
+		for(int i=0; i<particles.size();i++){ // run all particles
+			particles.get(i).update();
+			particles.get(i).display(g2);
+			if(particles.get(i).y>HEIGHT){
+		
+			//  if(particles.get(i).y>500){
 
-	@Override
-	public void run() {
+			particles.remove(i);
+			 //System.out.println("removed!!!");
+			  // g2.fillOval((int)p.x,(int)p.y, 100, 100);
+		  }
+		}
+		/*for(Particle p: particles){ // run all particles
+			p.update();
+			p.display(g2);
+			  if(p.y>500){
+
+			particles.remove(p);
+			 System.out.println("removed!!!");
+			  // g2.fillOval((int)p.x,(int)p.y, 100, 100);
+		  }
+		}*/
+	}
 	
-	            	 repaint();
+    public void run() {
+       // while(DrawPanel.myFrame < 1000){
+            while(true){
+ 	
+            try{
+                System.out.println("Expl Thread: "+(++DrawPanel.myFrame));
+                repaint(); // repaint() 
+                Thread.sleep(4);
+            } catch (InterruptedException iex) {
+                System.out.println("Exception in thread: "+iex.getMessage());
+            }
+        }
+    }
+    public void update( Graphics  g )
+    {
+          paint( g );
+    }
 
-	}
 
 }
 
