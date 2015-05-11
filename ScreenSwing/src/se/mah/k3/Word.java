@@ -19,7 +19,7 @@ public String getText(){
 public void setText(String text){
 	this.text=text;
 }
-public boolean getActive(){
+public boolean ifActive(){
 	return active;
 }
 

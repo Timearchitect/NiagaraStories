@@ -4,7 +4,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
@@ -22,6 +25,7 @@ import com.firebase.client.ValueEventListener;
 public class DrawPanel extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
 	private Firebase myFirebaseRef;
+	private Firebase regularWordsRef;
 	public ArrayList<Particle> particles = new ArrayList<Particle>();
 	//A vector is like an ArrayList a little bit slower but Thread-safe. This means that it can handle concurrent changes. 
 	private Vector<User> users = new Vector<User>();
@@ -36,9 +40,10 @@ public class DrawPanel extends JPanel implements Runnable{
 	public DrawPanel() {
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
-	
+				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 				myFirebaseRef.removeValue(); //Cleans out everything
-				
+				createRegularWords();
+				createThemeWords();
 				
 				// use method getText from the word class to set text to "word1" in the firebase db. 
 				myFirebaseRef.child("Word1").setValue(w.getText());
@@ -196,7 +201,22 @@ public class DrawPanel extends JPanel implements Runnable{
     {
           paint( g );
     }
+public void createRegularWords(){
+	 Firebase wordList = myFirebaseRef.child("Regular Words");
+	String[] regularWords = {"hey!", "let's", "drink", "beer", "and", "code", "stuff", "?"};
+for (int i=0; i < regularWords.length; i++){	
+wordList.child("word"+i).setValue(regularWords[i]);
 
+}
+}
+public void createThemeWords(){
+	 Firebase themedWords = myFirebaseRef.child("Themed Words");
+	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java"};
+for (int i=0; i < themeWords.length; i++){	
+themedWords.child("word"+i).setValue(themeWords[i]);
 
 }
 
+}
+
+}
