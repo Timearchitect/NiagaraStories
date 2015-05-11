@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
@@ -39,12 +40,18 @@ public class DrawPanel extends JPanel implements Runnable{
 	
 	public DrawPanel() {
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
-				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
-				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
+				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // Root
+				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
 				myFirebaseRef.removeValue(); //Cleans out everything
+				
+				// Run method to generate "general" words
 				createRegularWords();
+				
+				// Run method to generate "themed" words
 				createThemeWords();
 				
+				// Run method that listens for change in word list (active words for example).
+				wordListener();
 				
 				// use method getText from the word class to set text to "word1" in the firebase db. 
 				myFirebaseRef.child("Word1").setValue(w.getText());
@@ -183,6 +190,7 @@ public class DrawPanel extends JPanel implements Runnable{
 			  // g2.fillOval((int)p.x,(int)p.y, 100, 100);
 		  }
 		}*/
+	
 	}
 	
     public void run() {
@@ -190,7 +198,7 @@ public class DrawPanel extends JPanel implements Runnable{
             while(true){
  	
             try{
-                System.out.println("Expl Thread: "+(++DrawPanel.myFrame));
+                // System.out.println("Expl Thread: "+(++DrawPanel.myFrame));
                 repaint(); // repaint() 
                 Thread.sleep(4);
             } catch (InterruptedException iex) {
@@ -204,20 +212,69 @@ public class DrawPanel extends JPanel implements Runnable{
     }
 public void createRegularWords(){
 	 Firebase wordList = myFirebaseRef.child("Regular Words");
-	String[] regularWords = {"hey!", "let's", "drink", "beer", "and", "code", "stuff", "?"};
+	String[] regularWords = {"hey!", "let's", "go", "to", "the", "park", "and", "have", "an", "ice cream"};
 for (int i=0; i < regularWords.length; i++){	
-wordList.child("word"+i).setValue(regularWords[i]);
+wordList.child("word"+i+"/text").setValue(regularWords[i]);
 
 }
 }
 public void createThemeWords(){
 	 Firebase themedWords = myFirebaseRef.child("Themed Words");
-	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java"};
+	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java", "code", "brainstorm", "laser"};
 for (int i=0; i < themeWords.length; i++){	
-themedWords.child("word"+i).setValue(themeWords[i]);
+themedWords.child("word"+i+"/text").setValue(themeWords[i]);
 
 }
 
+
+}
+
+// Method to listen for updates in the words list
+private void wordListener() {
+
+     // Creating a ref to a random child in the Regular Words tree on firebase
+    Firebase fireBaseWords = myFirebaseRef.child("Regular Words");
+
+    // Adding a child event listener to the firebasewords ref, to check for active words
+
+    fireBaseWords.addChildEventListener(new ChildEventListener() {
+		
+		@Override
+		public void onChildRemoved(DataSnapshot arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onChildMoved(DataSnapshot arg0, String arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onChildChanged(DataSnapshot snapshot, String arg1) {
+			// TODO Auto-generated method stub
+			String isActive = "inactive";
+			String changedWord = (String) snapshot.child("text").getValue().toString();
+			if(snapshot.child("Active").getValue().toString()=="true"){
+				 isActive = "active!";
+				}
+			
+			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
+		}
+		
+		@Override
+		public void onChildAdded(DataSnapshot arg0, String arg1) {
+			// TODO Auto-generated method stub
+			System.out.println("child added");
+		}
+		
+		@Override
+		public void onCancelled(FirebaseError arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+	}); 
 
 }
 

@@ -5,12 +5,12 @@ package se.mah.k3;
 // It also contains a boolean to check if the word is active or not.
 
 public class Word {
-	public boolean active = false;
+	public boolean isActive = false;
 	public String text = "";
 
 
 public Word(String text) {
-this.active = false;
+this.isActive = false;
 this.text = text;
 }
 public String getText(){
@@ -19,8 +19,8 @@ public String getText(){
 public void setText(String text){
 	this.text=text;
 }
-public boolean ifActive(){
-	return active;
+public boolean isActive(){
+	return isActive;
 }
 
 }
