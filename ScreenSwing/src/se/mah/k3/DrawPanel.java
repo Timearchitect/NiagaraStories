@@ -34,12 +34,9 @@ public class DrawPanel extends JPanel implements Runnable{
 		 
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // alrik
-	myFirebaseRef.removeValue(); //Cleans out everything
-	myFirebaseRef.child("word1").setValue("New Word! Yay!");
-	myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.removeValue(); //Cleans out everything
+		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
-		
-
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {}
 			

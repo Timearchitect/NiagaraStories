@@ -64,11 +64,14 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); //Listen to keyboard
 	    manager.addKeyEventDispatcher(this);
 		setFullscreen(true);
+			   //   DrawPanel canvas = new DrawPanel();
+			        Thread t = new Thread(panel);
+			        t.start();
 		
 	}
 	  static void gameLoop() {
 		
-		  panel.run();
+		  // panel.run();
 		
 		 
 	  }
