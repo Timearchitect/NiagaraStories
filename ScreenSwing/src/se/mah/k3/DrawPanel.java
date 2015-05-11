@@ -15,6 +15,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 //Mergetest
 
@@ -38,8 +39,22 @@ public class DrawPanel extends JPanel implements Runnable{
 	
 				myFirebaseRef.removeValue(); //Cleans out everything
 				
+				
 				// use method getText from the word class to set text to "word1" in the firebase db. 
 				myFirebaseRef.child("Word1").setValue(w.getText());
+			//	myFirebaseRef.child("Word1").addListenerForSingleValueEvent(new ValueEventListener() {
+
+				myFirebaseRef.child("Word1").addValueEventListener(new ValueEventListener() {
+				    @Override
+				    public void onDataChange(DataSnapshot snapshot) {
+				        System.out.println(snapshot.getValue());
+				        w.setText(snapshot.getValue().toString());
+				    }
+				    @Override
+				    public void onCancelled(FirebaseError firebaseError) {
+				    }
+				});
+				
 				myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
@@ -52,8 +67,9 @@ public class DrawPanel extends JPanel implements Runnable{
 			@Override
 			public void onChildChanged(DataSnapshot arg0, String arg1) {
 				Iterable<DataSnapshot> dsList= arg0.getChildren();
+				
 				Collections.sort(users);
-				int place = Collections.binarySearch(users, new User(arg0.getKey(),0,0)); //Find the user usernama has to be unique uses the method compareTo in User
+				int place = Collections.binarySearch(users, new User(arg0.getKey(),0,0)); //Find the user username has to be unique uses the method compareTo in User
 				 for (DataSnapshot dataSnapshot : dsList) {					 
 					 if (dataSnapshot.getKey().equals("xRel")){
 						 users.get(place).setxRel((double)dataSnapshot.getValue());
@@ -106,6 +122,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
 		g2.setColor(Color.BLACK); // svart system color
 		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size() + "  frame :"+myFrame, 10,  20);
+		
 		//Test
 		for (User user : users) {
 
@@ -127,6 +144,7 @@ public class DrawPanel extends JPanel implements Runnable{
 			user.setpyRel(user.getyRel());
 			
 			g2.setColor(Color.BLACK);
+			g2.drawString(w.getText(),x,y);
 			g.drawString(user.getId(),x+15,y+15);
 			
 			/*for( int i=0; i<particles.size(); i++){ // run all particles
