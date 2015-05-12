@@ -9,29 +9,50 @@ public class Word {
 	public String text = "";
 	public int x;
 	public int y;
+	public int w;
+	public int h;
+
+	public Word(String text) {
+		this.isActive = false;
+		this.text = text;
+	}
+	public String getText(){
+		return text;
+	}
+	public int getX(){
+		return x;
+	}
+	public int getY(){
+		return y;
+	}
+
+	public void setW(int w){
+		int length = text.length();
+		int width = length*10;
+		w = width;
+		this.w = w;
+	}
+
+	public int getW(){
+		return w;
+	}
 	
+	public void setH(int h){
+		int length = text.length();
+		int height = (int) (length*1.1);
+		h = height;
+		this.h = h;
+	}
 
-public Word(String text) {
-this.isActive = false;
-this.text = text;
-}
-public String getText(){
-	return text;
-}
-public int getX(){
-	return x;
-}
-public int getY(){
-	return y;
-}
+	public int getH(){
+		return h;
+	}
 
-public void setText(String text){
-	this.text=text;
-}
+	public void setText(String text){
+		this.text=text;
+	}
 
-public boolean isActive(){
-	return isActive;
-
-}
-
+	public boolean isActive(){
+		return isActive;
+	}
 }

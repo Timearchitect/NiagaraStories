@@ -5,18 +5,14 @@ import java.awt.Event;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JPanel;
-
-import java.util.EventObject;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -24,32 +20,49 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
-//Mergetest
-
 public class DrawPanel extends JPanel implements Runnable{
 	private static final long serialVersionUID = 1L;
+	
 	private Firebase myFirebaseRef;
 	private Firebase regularWordsRef;
+	
 	public ArrayList<Particle> particles = new ArrayList<Particle>();
 	//A vector is like an ArrayList a little bit slower but Thread-safe. This means that it can handle concurrent changes. 
 	private Vector<User> users = new Vector<User>();
+	
 	Font font = new Font("Verdana", Font.BOLD, 20);
+	
 	private Random r = new Random(); // randomize siffror
-	private Color backgroundColor =new Color(255,255,255,10);
+	
+	Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
+	//private Color backgroundColor =new Color(255,255,255,10);
+	
     public static int myFrame;
     int WIDTH,HEIGHT;
 	// Creates an instance of the word object
-    Word w = new Word("ord1");
+    
+	public String changedWord = "word";
+    Word w = new Word(changedWord);
+	String wordBg = "#009688";
+	Color wordBackground = (hexToRgb(wordBg));
 	
-	
+	public static Color hexToRgb(String colorString) {
+		return new Color (
+			Integer.valueOf(colorString.substring(1, 3), 16),
+			Integer.valueOf(colorString.substring(3, 5), 16),
+			Integer.valueOf(colorString.substring(5, 7), 16)
+		);
+	}
 	public DrawPanel() {
 		w.x=800;
 		w.y=400;
-		w.isActive=true;
+		w.w=100;
+		w.h=60;
+		w.isActive=false;
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // Root
 				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
-				myFirebaseRef.removeValue(); //Cleans out everything
+				//myFirebaseRef.removeValue(); //Cleans out everything
 				
 				// Run method to generate "general" words
 				createRegularWords();
@@ -110,8 +123,8 @@ public class DrawPanel extends JPanel implements Runnable{
 				if (arg0.hasChildren()){
 					//System.out.println("ADD user with Key: "+arg1+ arg0.getKey());
 					//Random r = new Random();
-					int x = r.nextInt(getSize().width); // spawn 
-					int y = r.nextInt(getSize().height);
+					int x = r.nextInt(getSize().width + 1); // spawn 
+					int y = r.nextInt(getSize().height + 1);
 						User user = new User(arg0.getKey(),x,y);
 						if (!users.contains(user)){
 							users.add(user);
@@ -132,17 +145,26 @@ public class DrawPanel extends JPanel implements Runnable{
 		//super.paint(g);    // no opacity repaint
 		  WIDTH = (int)getSize().width;
 		  HEIGHT = (int)getSize().height;
-		 for(int i=0;i<4;i++){
+		/* for(int i=0;i<4;i++){
 			 particles.add(new Particle(r.nextInt(WIDTH),0));
-		 }
+		 }*/
+		
 		Graphics2D g2= (Graphics2D) g; // grafik object beh�vs f�r att canvas ska paint p�
 		g2.setFont(font); // init typsnitt
-	    g2.setPaint(backgroundColor);  // color it med opacity  
-		g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
+	    //g2.setPaint(backgroundColor);  // color it med opacity  
+		//g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
 		g2.setColor(Color.BLACK); // svart system color
 		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size() + "  frame :"+myFrame, 10,  20);
 		
-		//Test
+		//BufferedImage tmpImg = new BufferedImage(bg.getWidth(this) + 1, bg.getHeight(this) + 1, BufferedImage.TYPE_INT_ARGB);
+		//Graphics2D g2d = (Graphics2D) tmpImg.getGraphics();
+		//g2d.setComposite(AlphaComposite.SrcOver.derive(0.5f));
+		//set Transparency level from 0.0f - 1.0f
+		//g2d.drawImage(bg, 0, 0, null);
+		//bg = tmpImg;
+		
+		g2.drawImage(bg, 0, 0, WIDTH + 1, HEIGHT + 1, this);
+
 		for (User user : users) {
 			int x = (int)(user.getxRel()*WIDTH); // skalad x pos
 			int y = (int)(user.getyRel()*HEIGHT); // skalad y pos
@@ -166,6 +188,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		}
 		
 		
+		
 		for(int i=0; i<particles.size();i++){ // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
@@ -178,10 +201,13 @@ public class DrawPanel extends JPanel implements Runnable{
 		}
 		
 		//for(int i=0; i<words.size();i++){
-			//	g2.drawRect(w.x, w.y, , height);
+					
 			if(w.isActive){
-				g2.setColor(Color.black);
+				g2.setColor(wordBackground);
+				g2.fillRect((int)(w.x-(w.w*0.25)), (int)(w.y-(w.h*0.5)), w.w, w.h);
+				g2.setColor(Color.white);
 				g2.drawString(w.getText(), w.x, w.y);
+
 			}
 		//}
 	
@@ -246,11 +272,12 @@ private void wordListener() {
 		public void onChildChanged(DataSnapshot snapshot, String arg1) {
 			// TODO Auto-generated method stub
 			String isActive = "inactive";
-			String changedWord = (String) snapshot.child("text").getValue().toString();
+			changedWord = (String) snapshot.child("text").getValue().toString();
 			if(snapshot.child("Active").getValue().toString()=="true"){
 				 isActive = "active!";
 			}
 			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
+			
 		}
 		
 		@Override
