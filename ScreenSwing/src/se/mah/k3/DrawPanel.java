@@ -205,18 +205,24 @@ public void update( Graphics  g )
 }
     
 public void createRegularWords(){
+	int count=0;
 	Firebase wordList = myFirebaseRef.child("Regular Words");
 	String[] regularWords = {"hey!", "let's", "go", "to", "the", "park", "and", "have", "an", "ice cream"};
 	for (int i=0; i < regularWords.length; i++){	
 		wordList.child("word"+i+"/text").setValue(regularWords[i]);
+		count++;
 	}
+	myFirebaseRef.child("Regular Words Size").setValue(count);
 }
 public void createThemeWords(){
+	int count=0;
 	Firebase themedWords = myFirebaseRef.child("Themed Words");
 	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java", "code", "brainstorm", "laser"};
 	for (int i=0; i < themeWords.length; i++){	
 		themedWords.child("word"+i+"/text").setValue(themeWords[i]);
+		count++;
 	}
+	myFirebaseRef.child("Themed Words Size").setValue(count);
 	
 }
 
@@ -250,6 +256,7 @@ private void wordListener() {
 			if(snapshot.child("Active").getValue().toString()=="true"){
 				 isActive = "active!";
 			}
+			
 			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
 		}
 		
