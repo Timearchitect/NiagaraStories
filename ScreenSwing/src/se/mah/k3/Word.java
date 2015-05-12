@@ -27,11 +27,9 @@ public int getY(){
 public void setText(String text){
 	this.text=text;
 }
-<<<<<<< HEAD
-public boolean isActive(){
-=======
+
 public boolean ifActive(){
->>>>>>> branch 'master' of https://github.com/Timearchitect/NiagaraStories.git
+
 	return active;
 }
 
