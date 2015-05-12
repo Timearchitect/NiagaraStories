@@ -29,7 +29,6 @@ public void setText(String text){
 }
 
 public boolean ifActive(){
-
 	return active;
 }
 
