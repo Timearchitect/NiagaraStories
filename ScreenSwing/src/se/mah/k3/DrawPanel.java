@@ -76,18 +76,25 @@ public class DrawPanel extends JPanel implements Runnable{
 				
 				// use method getText from the word class to set text to "word1" in the firebase db. 
 				myFirebaseRef.child("Word1").setValue(w.getText());
-			//	myFirebaseRef.child("Word1").addListenerForSingleValueEvent(new ValueEventListener() {
+				//	myFirebaseRef.child("Word1").addListenerForSingleValueEvent(new ValueEventListener() {
 
 				myFirebaseRef.child("Word1").addValueEventListener(new ValueEventListener() {
 				    @Override
 				    public void onDataChange(DataSnapshot snapshot) {
 				        System.out.println(snapshot.getValue());
 				        w.setText(snapshot.getValue().toString());
+				
+					        if (snapshot.getKey().equals("Active")){
+								w.isActive=Boolean.parseBoolean((String) snapshot.getValue());
+								System.out.println(snapshot.getValue());
+							}
+						 
 				    }
 				    @Override
 				    public void onCancelled(FirebaseError firebaseError) {
 				    }
 				});
+				
 				
 				myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
@@ -232,18 +239,24 @@ public void update( Graphics  g )
 }
     
 public void createRegularWords(){
+	int count=0;
 	Firebase wordList = myFirebaseRef.child("Regular Words");
 	String[] regularWords = {"hey!", "let's", "go", "to", "the", "park", "and", "have", "an", "ice cream"};
 	for (int i=0; i < regularWords.length; i++){	
 		wordList.child("word"+i+"/text").setValue(regularWords[i]);
+		count++;
 	}
+	myFirebaseRef.child("Regular Words Size").setValue(count);
 }
 public void createThemeWords(){
+	int count=0;
 	Firebase themedWords = myFirebaseRef.child("Themed Words");
 	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java", "code", "brainstorm", "laser"};
 	for (int i=0; i < themeWords.length; i++){	
 		themedWords.child("word"+i+"/text").setValue(themeWords[i]);
+		count++;
 	}
+	myFirebaseRef.child("Themed Words Size").setValue(count);
 	
 }
 
@@ -277,6 +290,7 @@ private void wordListener() {
 			if(snapshot.child("Active").getValue().toString()=="true"){
 				 isActive = "active!";
 			}
+			
 			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
 			
 		}
