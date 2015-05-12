@@ -217,6 +217,7 @@ public void createThemeWords(){
 	for (int i=0; i < themeWords.length; i++){	
 		themedWords.child("word"+i+"/text").setValue(themeWords[i]);
 	}
+	
 }
 
 // Method to listen for updates in the words list
