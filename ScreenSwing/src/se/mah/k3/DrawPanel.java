@@ -43,6 +43,7 @@ public class DrawPanel extends JPanel implements Runnable{
     
 	public String changedWord = "word";
     Word w = new Word(changedWord);
+    
 	String wordBg = "#009688";
 	Color wordBackground = (hexToRgb(wordBg));
 	
