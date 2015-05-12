@@ -7,12 +7,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+
+import java.util.EventObject;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -59,11 +65,11 @@ public class DrawPanel extends JPanel implements Runnable{
 		w.y=400;
 		w.w=100;
 		w.h=60;
-		w.isActive=false;
+		w.isActive=true;
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // Root
 				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
-				//myFirebaseRef.removeValue(); //Cleans out everything
+				myFirebaseRef.removeValue(); //Cleans out everything
 				
 				// Run method to generate "general" words
 				createRegularWords();
