@@ -3,6 +3,7 @@ package se.mah.k3;
 import java.awt.Color;
 import java.awt.Event;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -33,6 +34,7 @@ public class DrawPanel extends JPanel implements Runnable{
 	private Firebase regularWordsRef;
 	
 	public ArrayList<Particle> particles = new ArrayList<Particle>();
+	public ArrayList<Word> words = new ArrayList<Word>();
 	//A vector is like an ArrayList a little bit slower but Thread-safe. This means that it can handle concurrent changes. 
 	private Vector<User> users = new Vector<User>();
 	
@@ -44,7 +46,7 @@ public class DrawPanel extends JPanel implements Runnable{
 	//private Color backgroundColor =new Color(255,255,255,10);
 	
     public static int myFrame;
-    int WIDTH,HEIGHT;
+    int WIDTH = 1500,HEIGHT= 1000;
 	// Creates an instance of the word object
     
 	public String changedWord = "word";
@@ -52,6 +54,8 @@ public class DrawPanel extends JPanel implements Runnable{
     
 	String wordBg = "#009688";
 	Color wordBackground = (hexToRgb(wordBg));
+	int margin=20;
+	
 	
 	public static Color hexToRgb(String colorString) {
 		return new Color (
@@ -60,12 +64,13 @@ public class DrawPanel extends JPanel implements Runnable{
 			Integer.valueOf(colorString.substring(5, 7), 16)
 		);
 	}
+	
 	public DrawPanel() {
 		w.x=800;
 		w.y=400;
 		w.w=100;
 		w.h=60;
-		w.isActive=true;
+		w.active=true;
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // Root
 				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
@@ -90,8 +95,10 @@ public class DrawPanel extends JPanel implements Runnable{
 				        System.out.println(snapshot.getValue());
 				        w.setText(snapshot.getValue().toString());
 				
+				        
+
 					        if (snapshot.getKey().equals("Active")){
-								w.isActive=Boolean.parseBoolean((String) snapshot.getValue());
+								w.active=Boolean.parseBoolean((String) snapshot.getValue());
 								System.out.println(snapshot.getValue());
 							}
 						 
@@ -102,8 +109,8 @@ public class DrawPanel extends JPanel implements Runnable{
 				});
 				
 				
-				myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
-		myFirebaseRef.addChildEventListener(new ChildEventListener() {
+			myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);  //Has to be same as on the app. So place specific can't you see the screen you don't know the number
+			myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {}
 			
@@ -159,16 +166,30 @@ public class DrawPanel extends JPanel implements Runnable{
 		//super.paint(g);    // no opacity repaint
 		  WIDTH = (int)getSize().width;
 		  HEIGHT = (int)getSize().height;
+		 
 		/* for(int i=0;i<4;i++){
 			 particles.add(new Particle(r.nextInt(WIDTH),0));
 		 }*/
 		
 		Graphics2D g2= (Graphics2D) g; // grafik object beh�vs f�r att canvas ska paint p�
+		g2.drawImage(bg, 0, 0, WIDTH + 1, HEIGHT + 1, this);
 		g2.setFont(font); // init typsnitt
+		FontMetrics metrics = g2.getFontMetrics(font);
+		w.w = metrics.stringWidth(w.text);
+		w.h = metrics.getHeight();
+		for(Word word: words){
+			word.w = metrics.stringWidth(word.text);
+			word.h = metrics.getHeight();
+			
+		}
+		// get the advance of my text in this font
+		// and render context
+
+		
 	    //g2.setPaint(backgroundColor);  // color it med opacity  
 		//g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
 		g2.setColor(Color.BLACK); // svart system color
-		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size() + "  frame :"+myFrame, 10,  20);
+		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size() + "  frame :"+myFrame +"      words: "+words.size(), 10,  20);
 		
 		//BufferedImage tmpImg = new BufferedImage(bg.getWidth(this) + 1, bg.getHeight(this) + 1, BufferedImage.TYPE_INT_ARGB);
 		//Graphics2D g2d = (Graphics2D) tmpImg.getGraphics();
@@ -177,7 +198,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		//g2d.drawImage(bg, 0, 0, null);
 		//bg = tmpImg;
 		
-		g2.drawImage(bg, 0, 0, WIDTH + 1, HEIGHT + 1, this);
+		
 
 		for (User user : users) {
 			int x = (int)(user.getxRel()*WIDTH); // skalad x pos
@@ -202,28 +223,36 @@ public class DrawPanel extends JPanel implements Runnable{
 		}
 		
 		
-		
 		for(int i=0; i<particles.size();i++){ // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
 			if(particles.get(i).y>HEIGHT){
 				particles.remove(i);
 			}
-			//for(Word w:words){
-				if(w.isActive)particles.get(i).collisionCircle(w.x,w.y);
-			//}
+			for(Word word:words){
+				if(word.active)particles.get(i).collisionCircle(word.x,word.y);
+			}
+			
+			if(w.active)particles.get(i).collisionCircle(w.x,w.y); // 
+			
 		}
 		
-		//for(int i=0; i<words.size();i++){
-					
-			if(w.isActive){
+		
+		for(Word word:words){
+			if(word.active){
 				g2.setColor(wordBackground);
-				g2.fillRect((int)(w.x-(w.w*0.25)), (int)(w.y-(w.h*0.5)), w.w, w.h);
+				g2.fillRect((int)(word.x-(word.w*0.5))-margin, (int)(word.y-(word.h*0.5)-margin*0.5), word.w+margin*2, word.h+margin);
 				g2.setColor(Color.white);
-				g2.drawString(w.getText(), w.x, w.y);
-
+				g2.drawString(word.getText(), (int)(word.x-word.w*0.5), (int)(word.y+word.h*0.25));
 			}
-		//}
+		}
+			if(w.active){
+				g2.setColor(wordBackground);
+				g2.fillRect((int)(w.x-(w.w*0.5))-margin, (int)(w.y-(w.h*0.5)-margin*0.5), w.w+margin*2, w.h+margin);
+				g2.setColor(Color.white);
+				g2.drawString(w.getText(), (int)(w.x-w.w*0.5), (int)(w.y+w.h*0.25));
+			}
+		
 	
 	}
 	
@@ -250,6 +279,9 @@ public void createRegularWords(){
 	String[] regularWords = {"hey!", "let's", "go", "to", "the", "park", "and", "have", "an", "ice cream"};
 	for (int i=0; i < regularWords.length; i++){	
 		wordList.child("word"+i+"/text").setValue(regularWords[i]);
+		words.add(new Word(regularWords[i]));
+		words.get(words.size()-1).x =  r.nextInt(WIDTH); // skalad x pos
+		words.get(words.size()-1).y =  r.nextInt(HEIGHT); // skalad y pos
 		count++;
 	}
 	myFirebaseRef.child("Regular Words Size").setValue(count);
@@ -260,7 +292,10 @@ public void createThemeWords(){
 	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java", "code", "brainstorm", "laser"};
 	for (int i=0; i < themeWords.length; i++){	
 		themedWords.child("word"+i+"/text").setValue(themeWords[i]);
-		count++;
+		words.add(new Word(themeWords[i]));
+		words.get(words.size()-1).x = r.nextInt(WIDTH); // skalad x pos
+		words.get(words.size()-1).y = r.nextInt(HEIGHT); // skalad y pos
+		count++;	
 	}
 	myFirebaseRef.child("Themed Words Size").setValue(count);
 	
@@ -296,7 +331,8 @@ private void wordListener() {
 			if(snapshot.child("Active").getValue().toString()=="true"){
 				 isActive = "active!";
 			}
-			
+			String s=snapshot.getRef().toString();
+			words.get(Integer.parseInt(s.substring(63))).active=true;
 			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
 			
 		}

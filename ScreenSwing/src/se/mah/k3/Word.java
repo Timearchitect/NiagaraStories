@@ -4,55 +4,60 @@ package se.mah.k3;
 // the user will have displayed in their mobile app. 
 // It also contains a boolean to check if the word is active or not.
 
+
 public class Word {
-	public boolean isActive = false;
+	public boolean active = false;
 	public String text = "";
-	public int x;
-	public int y;
-	public int w;
-	public int h;
+	public int x, y;
+	public int w, h;
 
 	public Word(String text) {
-		this.isActive = false;
+		this.active = false;
 		this.text = text;
 	}
+	
 	public String getText(){
 		return text;
 	}
-	public int getX(){
+	
+	public void setXPos(int xPos){
+		this.x = xPos;
+	}
+	
+	public int getXPos(){
 		return x;
 	}
-	public int getY(){
+	
+	public void setYPos(int yPos){
+		this.y = yPos;
+	}
+	
+	public int getYPos(){
 		return y;
 	}
 
-	public void setW(int w){
-		int length = text.length();
-		int width = length*10;
-		w = width;
-		this.w = w;
+	public void setWidth(int width){
+		this.w = width;
 	}
 
-	public int getW(){
+	public int getWidth(){
 		return w;
 	}
 	
-	public void setH(int h){
-		int length = text.length();
-		int height = (int) (length*1.1);
-		h = height;
-		this.h = h;
+	public void setHeight(int height){
+		this.h = height;
 	}
 
-	public int getH(){
+	public int getHeight(){
 		return h;
 	}
 
 	public void setText(String text){
-		this.text=text;
+		this.text = text;
 	}
 
 	public boolean isActive(){
-		return isActive;
+		return active;
 	}
+
 }
