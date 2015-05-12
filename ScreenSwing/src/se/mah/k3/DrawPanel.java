@@ -1,6 +1,7 @@
 package se.mah.k3;
 
 import java.awt.Color;
+import java.awt.Event;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -14,6 +15,8 @@ import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+
+import java.util.EventObject;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -38,7 +41,10 @@ public class DrawPanel extends JPanel implements Runnable{
 	// Creates an instance of the word object
     Word w = new Word("ord1");
 	
+	
 	public DrawPanel() {
+		w.x=500;
+		w.y=300;
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // Root
 				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
@@ -179,6 +185,12 @@ public class DrawPanel extends JPanel implements Runnable{
 			 //System.out.println("removed!!!");
 			  // g2.fillOval((int)p.x,(int)p.y, 100, 100);
 		  }
+			
+			
+			//for(Word w:words){
+				particles.get(i).collisionCircle(w.x,w.y);
+				
+			//}
 		}
 		/*for(Particle p: particles){ // run all particles
 			p.update();
@@ -276,6 +288,10 @@ private void wordListener() {
 		}
 	}); 
 
+}
+
+public void MouseEvent(Event e) {
+	
 }
 
 
