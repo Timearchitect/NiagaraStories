@@ -23,6 +23,7 @@ public class Particle {
 	public void update(){
 		x+=(int)vx;
 		y+=(int)vy;
+		vx*=0.93;
 		vx+=ax;
 		vy+=ay;
 	}
@@ -43,7 +44,6 @@ public class Particle {
 		b= _y-y;
 		c=(float) Math.sqrt((a*a)+(b*b));
 		if(c<StrokeWidth){
-			System.out.println("collision!!!!");
 		vy*=(-1)*0.5;
 		vx=r.nextInt(10)-5;
 		}

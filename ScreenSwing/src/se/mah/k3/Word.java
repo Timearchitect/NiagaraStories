@@ -9,6 +9,7 @@ public class Word {
 	public String text = "";
 	public int x;
 	public int y;
+	
 
 public Word(String text) {
 this.isActive = false;

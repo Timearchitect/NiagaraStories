@@ -36,15 +36,16 @@ public class DrawPanel extends JPanel implements Runnable{
 	Font font = new Font("Verdana", Font.BOLD, 20);
 	private Random r = new Random(); // randomize siffror
 	private Color backgroundColor =new Color(255,255,255,10);
-    public static int myFrame = 0;
-    
+    public static int myFrame;
+    int WIDTH,HEIGHT;
 	// Creates an instance of the word object
     Word w = new Word("ord1");
 	
 	
 	public DrawPanel() {
-		w.x=500;
-		w.y=300;
+		w.x=800;
+		w.y=400;
+		w.isActive=true;
 		//myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 				myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/");  // Root
 				regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
@@ -108,7 +109,7 @@ public class DrawPanel extends JPanel implements Runnable{
 			public void onChildAdded(DataSnapshot arg0, String arg1) {
 				if (arg0.hasChildren()){
 					//System.out.println("ADD user with Key: "+arg1+ arg0.getKey());
-					Random r = new Random();
+					//Random r = new Random();
 					int x = r.nextInt(getSize().width); // spawn 
 					int y = r.nextInt(getSize().height);
 						User user = new User(arg0.getKey(),x,y);
@@ -129,24 +130,20 @@ public class DrawPanel extends JPanel implements Runnable{
 	@Override
 	public void paint(Graphics g) {
 		//super.paint(g);    // no opacity repaint
-		 int WIDTH = (int)getSize().width;
-		 int HEIGHT = (int)getSize().height;
-		particles.add(new Particle(r.nextInt(WIDTH),0));
-		particles.add(new Particle(r.nextInt(WIDTH),0));
+		  WIDTH = (int)getSize().width;
+		  HEIGHT = (int)getSize().height;
+		 for(int i=0;i<4;i++){
+			 particles.add(new Particle(r.nextInt(WIDTH),0));
+		 }
 		Graphics2D g2= (Graphics2D) g; // grafik object beh�vs f�r att canvas ska paint p�
 		g2.setFont(font); // init typsnitt
-		//g2.setColor(Color.LIGHT_GRAY);
 	    g2.setPaint(backgroundColor);  // color it med opacity  
-		//g2.setPaint(new Color(r.nextInt(255),r.nextInt(255),r.nextInt(255)));  // color it med opacity  
 		g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
 		g2.setColor(Color.BLACK); // svart system color
 		g2.drawString("ScreenNbr: "+Constants.screenNbr+ "   particles:"+ particles.size() + "  frame :"+myFrame, 10,  20);
 		
 		//Test
 		for (User user : users) {
-
-
-			
 			int x = (int)(user.getxRel()*WIDTH); // skalad x pos
 			int y = (int)(user.getyRel()*HEIGHT); // skalad y pos
 			int x2;
@@ -166,11 +163,6 @@ public class DrawPanel extends JPanel implements Runnable{
 			g2.drawString(w.getText(),x,y);
 			g.drawString(user.getId(),x+15,y+15);
 			
-			/*for( int i=0; i<particles.size(); i++){ // run all particles
-				particles.get(i).update();
-				particles.get(i).display(g2);
-			  if(particles.get(i).y>getSize().height)particles.remove(i);
-			}*/
 		}
 		
 		
@@ -178,67 +170,53 @@ public class DrawPanel extends JPanel implements Runnable{
 			particles.get(i).update();
 			particles.get(i).display(g2);
 			if(particles.get(i).y>HEIGHT){
-		
-			//  if(particles.get(i).y>500){
-
-			particles.remove(i);
-			 //System.out.println("removed!!!");
-			  // g2.fillOval((int)p.x,(int)p.y, 100, 100);
-		  }
-			
-			
+				particles.remove(i);
+			}
 			//for(Word w:words){
-				particles.get(i).collisionCircle(w.x,w.y);
-				
+				if(w.isActive)particles.get(i).collisionCircle(w.x,w.y);
 			//}
 		}
-		/*for(Particle p: particles){ // run all particles
-			p.update();
-			p.display(g2);
-			  if(p.y>500){
-
-			particles.remove(p);
-			 System.out.println("removed!!!");
-			  // g2.fillOval((int)p.x,(int)p.y, 100, 100);
-		  }
-		}*/
+		
+		//for(int i=0; i<words.size();i++){
+			//	g2.drawRect(w.x, w.y, , height);
+			if(w.isActive){
+				g2.setColor(Color.black);
+				g2.drawString(w.getText(), w.x, w.y);
+			}
+		//}
 	
 	}
 	
-    public void run() {
-       // while(DrawPanel.myFrame < 1000){
-            while(true){
- 	
-            try{
-                // System.out.println("Expl Thread: "+(++DrawPanel.myFrame));
-                repaint(); // repaint() 
-                Thread.sleep(4);
-            } catch (InterruptedException iex) {
-                System.out.println("Exception in thread: "+iex.getMessage());
-            }
+public void run() {
+   // while(DrawPanel.myFrame < 1000){
+        while(true){
+        try{
+            // System.out.println("Expl Thread: "+(++DrawPanel.myFrame));
+            repaint(); // repaint() 
+            Thread.sleep(3);
+        } catch (InterruptedException iex) {
+            System.out.println("Exception in thread: "+iex.getMessage());
         }
     }
-    public void update( Graphics  g )
-    {
-          paint( g );
-    }
-public void createRegularWords(){
-	 Firebase wordList = myFirebaseRef.child("Regular Words");
-	String[] regularWords = {"hey!", "let's", "go", "to", "the", "park", "and", "have", "an", "ice cream"};
-for (int i=0; i < regularWords.length; i++){	
-wordList.child("word"+i+"/text").setValue(regularWords[i]);
-
 }
+public void update( Graphics  g )
+{
+      paint( g );
+}
+    
+public void createRegularWords(){
+	Firebase wordList = myFirebaseRef.child("Regular Words");
+	String[] regularWords = {"hey!", "let's", "go", "to", "the", "park", "and", "have", "an", "ice cream"};
+	for (int i=0; i < regularWords.length; i++){	
+		wordList.child("word"+i+"/text").setValue(regularWords[i]);
+	}
 }
 public void createThemeWords(){
-	 Firebase themedWords = myFirebaseRef.child("Themed Words");
+	Firebase themedWords = myFirebaseRef.child("Themed Words");
 	String[] themeWords = {"DNS","floppy", "gamer", "geek", "tech", "firewall", "router", "java", "code", "brainstorm", "laser"};
-for (int i=0; i < themeWords.length; i++){	
-themedWords.child("word"+i+"/text").setValue(themeWords[i]);
-
-}
-
-
+	for (int i=0; i < themeWords.length; i++){	
+		themedWords.child("word"+i+"/text").setValue(themeWords[i]);
+	}
 }
 
 // Method to listen for updates in the words list
@@ -270,8 +248,7 @@ private void wordListener() {
 			String changedWord = (String) snapshot.child("text").getValue().toString();
 			if(snapshot.child("Active").getValue().toString()=="true"){
 				 isActive = "active!";
-				}
-			
+			}
 			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
 		}
 		
