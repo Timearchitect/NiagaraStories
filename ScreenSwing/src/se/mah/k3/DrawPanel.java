@@ -223,6 +223,7 @@ public class DrawPanel extends JPanel implements Runnable{
 		}
 		
 		
+		
 		for(int i=0; i<particles.size();i++){ // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
@@ -330,9 +331,13 @@ private void wordListener() {
 			changedWord = (String) snapshot.child("text").getValue().toString();
 			if(snapshot.child("Active").getValue().toString()=="true"){
 				 isActive = "active!";
+				//words.get().active=true;
+				
 			}
 			String s=snapshot.getRef().toString();
 			words.get(Integer.parseInt(s.substring(63))).active=true;
+			 System.out.println(s.substring(63));
+	
 			System.out.println("Change in child! The word "+"\""+changedWord+"\""+" is now "+isActive);
 			
 		}
