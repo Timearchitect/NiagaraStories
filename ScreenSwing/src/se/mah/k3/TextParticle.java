@@ -11,7 +11,8 @@ import java.io.IOException;
 
 public class TextParticle extends Particle {
 String text;
-float w,h,opacity;
+float w,h,opacity ;
+boolean kill;
 	public TextParticle(int x, int y,float _w,float _h,int _vx,int _vy,String _text) {
 		super(x, y);
 		vx=_vx;
@@ -19,7 +20,8 @@ float w,h,opacity;
 		w=_w;
 		h=_h;
 		text=_text;
-		 opacity=200;
+		opacity=200;
+		
 	}
 
 	public void display(Graphics g) {
@@ -40,9 +42,9 @@ float w,h,opacity;
 		
 		g2.setFont(font);
 		
-		g2.setRenderingHint(
+		/*g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);*/
 		
 		g2.setColor(new Color(255,255,255,(int)opacity));
 		g2.drawString(text, (int)(x-w*0.5), (int)(y+ h * 0.25));
@@ -53,5 +55,9 @@ float w,h,opacity;
 		vx*=0.85;
 		vy*=0.94;
 		opacity*=0.90;
+		if(opacity<10)kill();
+	}
+	public void kill(){
+		this.kill=true;
 	}
 }

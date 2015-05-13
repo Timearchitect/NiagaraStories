@@ -215,7 +215,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (Word word : words) {
 			word.w = metrics.stringWidth(word.text);
 			word.h = metrics.getHeight();
-
 		}
 		//Smooth the fonts
 		g2.setRenderingHint(
@@ -260,7 +259,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		}
 
-		for (int i = 0; i < particles.size(); i++) { // run all particles
+		for (int i = particles.size()-1; 0<i ; i--) {  // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
 			if (particles.get(i).y > HEIGHT) {
@@ -290,9 +289,10 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 		
 		
-		for (int i = 0; i < overParticles.size(); i++) { // run all particles
+		for (int i = overParticles.size()-1; 0 <i ; i--) { // run all overparticles
 			overParticles.get(i).update();
 			overParticles.get(i).display(g2);
+			if(overParticles.get(i).kill)overParticles.remove(i);
 		}
 
 	}
@@ -320,6 +320,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		String[] regularWords = { "easier", "interesting", "honest", "forests", "Saturday", "dinner", "comfortable", "gently", "fresh", "rest", "pal", "warmth", "rest", "welcome", "dearest", "useful", "safe", "better", "piano", "silk", "relif", "ryhme", "hi", "agree", "water", "pal" };
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
+			wordList.child("word" + i + "/Active").setValue(false);
 			words.add(new Word(regularWords[i]));
 			words.get(words.size() - 1).x = r.nextInt(WIDTH); // skalad x pos
 			words.get(words.size() - 1).y = r.nextInt(HEIGHT); // skalad y pos
@@ -365,22 +366,27 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
-				String isActive = "inactive";
+				//String isActive = "inactive";
+				String isActive = "";
 				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
-					isActive = "active!";
+					isActive = "true";
 					// words.get().active=true;
+				}else{
+					isActive = "false";
 				}
 				String s = snapshot.getRef().toString();
 				int index=Integer.parseInt(s.substring(63));
-				if(!words.get(index).active){ // listen for active changes and execute appear/disappear
+				if(!isActive.equals("true")){ // listen for active changes and execute appear/disappear
 					words.get(index).active = true;
 					words.get(index).appear(DrawPanel.this);
+			
 				}else{
 					words.get(index).active = false;
 					words.get(index).disappear(DrawPanel.this);
+		
 				}
-				System.out.println(s.substring(63));
+				System.out.println(index);
 				System.out.println("Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 
 			}
