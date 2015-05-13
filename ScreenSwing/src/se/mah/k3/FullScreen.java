@@ -3,6 +3,8 @@ package se.mah.k3;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
@@ -13,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 
 public class FullScreen extends JFrame implements KeyEventDispatcher{
 
@@ -47,6 +51,15 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 	 * Create the frame.
 	 */
 	public FullScreen() {
+		try{
+		     Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
+		     Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(24f);
+		     Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(24f);
+			} catch (IOException e) {
+			    e.printStackTrace();
+			} catch (FontFormatException e) {
+				e.printStackTrace();
+			}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

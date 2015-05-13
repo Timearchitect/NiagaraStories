@@ -10,9 +10,9 @@ import java.io.File;
 import java.io.IOException;
 
 public class TextParticle extends Particle {
-String text;
-float w,h,opacity ;
-boolean kill;
+	private String text;
+	private float w,h,opacity=255;
+	
 	public TextParticle(int x, int y,float _w,float _h,int _vx,int _vy,String _text) {
 		super(x, y);
 		vx=_vx;
@@ -20,29 +20,10 @@ boolean kill;
 		w=_w;
 		h=_h;
 		text=_text;
-		opacity=200;
-			
-
 	}
 
-	public void display(Graphics g) {
-		Graphics2D g2= (Graphics2D) g;
-		try{
-		    Font font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
-			g2.setFont(font);
-			} catch (IOException e) {
-			    e.printStackTrace();
-			} catch (FontFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		
-	
-		
-		/*g2.setRenderingHint(
-		        RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);*/
-		
+	public void display(Graphics2D g2) {
+		g2.setFont(Constants.font);
 		g2.setColor(new Color(255,255,255,(int)opacity));
 		g2.drawString(text, (int)(x-w*0.5), (int)(y+ h * 0.25));
 	}
@@ -51,10 +32,10 @@ boolean kill;
 		y+=vy;
 		vx*=0.85;
 		vy*=0.94;
-		opacity*=0.90;
+		opacity*=0.95;
 		if(opacity<10)kill();
 	}
 	public void kill(){
-		this.kill=true;
+		dead=true;
 	}
 }

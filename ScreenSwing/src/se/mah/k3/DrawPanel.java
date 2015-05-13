@@ -28,57 +28,31 @@ import com.firebase.client.ValueEventListener;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 
-	private Firebase myFirebaseRef;
-	private Firebase regularWordsRef;
-	public static ArrayList<Particle> particles = new ArrayList<Particle>();
-	public static ArrayList<Particle> overParticles = new ArrayList<Particle>();
+	private Firebase myFirebaseRef,regularWordsRef,themedWordsRef;
+	public static ArrayList<Particle> particles = new ArrayList<Particle>(), overParticles = new ArrayList<Particle>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
 	// A vector is like an ArrayList a little bit slower but Thread-safe. This
 	// means that it can handle concurrent changes.
 	private Vector<User> users = new Vector<User>();
-	Graphics2D g2;
-   static Font font = new Font("Verdana", Font.BOLD, 20);
+	public Graphics2D g2;
+	//static Font font = new Font("Verdana", Font.BOLD, 20);
 	private Random r = new Random(); // randomize siffror
-
-	Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
+	private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
 	// private Color backgroundColor =new Color(255,255,255,10);
-	public static int myFrame;
+	public static int myFrame; 
 	int WIDTH=1800,HEIGHT=1000;
 	// Creates an instance of the word object
-
 	public String changedWord = "word";
 	// Word w = new Word(changedWord);
 
-	String wordBg = "#009688";
-	Color wordBackground = (hexToRgb(wordBg));
-	int margin = 10;
-
-	public static Color hexToRgb(String colorString) {
-		return new Color(Integer.valueOf(colorString.substring(1, 3), 16),
-				Integer.valueOf(colorString.substring(3, 5), 16),
-				Integer.valueOf(colorString.substring(5, 7), 16));
-	}
 
 
 	public DrawPanel() {
-		try{
-		    font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(24f);
-		    
-			} catch (IOException e) {
-			    e.printStackTrace();
-			} catch (FontFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		/*w.x = 800;
-		w.y = 400;
-		w.w = 100;
-		w.h = 60;
-		w.active = true;
-		 */
+
 		// myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
+		themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords"); // Regular Words Tree
 		myFirebaseRef.removeValue(); // Cleans out everything
 
 		// Run method to generate "general" words
@@ -181,16 +155,12 @@ public class DrawPanel extends JPanel implements Runnable {
 	// Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
+		WIDTH = (int) getSize().width+ 1;
+		HEIGHT = (int) getSize().height+ 1;
 
-		WIDTH = (int) getSize().width;
-		HEIGHT = (int) getSize().height;
-		for(int i=0;i<4;i++){
-			 particles.add(new Particle(r.nextInt(WIDTH),0)); 
-		}
 		g2 = (Graphics2D) g; // grafik object beh�vs f�r at // canvas ska paint p�
-		g2.drawImage(bg, 0, 0, WIDTH + 1, HEIGHT + 1, this);
-		g2.setFont(font); // init typsnitt
-		FontMetrics metrics = g2.getFontMetrics(font);
+		g2.drawImage(bg, 0, 0, WIDTH , HEIGHT , this);
+		FontMetrics metrics = g2.getFontMetrics(Constants.font);
 		/*w.w = metrics.stringWidth(w.text);
 		w.h = metrics.getHeight();*/
 		for (Word word : words) {
@@ -205,9 +175,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		g2.setColor(Color.BLACK); // svart system color
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 10, 20);
-
+		for(int i=0;i<8;i++){
+			 particles.add(new Particle((int)r.nextInt(WIDTH),0)); 
+		}
 		// BufferedImage tmpImg = new BufferedImage(bg.getWidth(this) + 1,
 		// bg.getHeight(this) + 1, BufferedImage.TYPE_INT_ARGB);
 		// Graphics2D g2d = (Graphics2D) tmpImg.getGraphics();
@@ -245,44 +215,35 @@ public class DrawPanel extends JPanel implements Runnable {
 				particles.remove(i);
 			}
 			for (Word word : words) {
-				if (word.active)particles.get(i).collisionCircle(word.x, word.y,margin);
+				if (word.active)particles.get(i).collisionCircle(word.x, word.y,word.margin);
 			}
-
-			//if (w.active)particles.get(i).collisionCircle(w.x, w.y,margin); //
-
 		}
 
 		for (Word word : words) {
 			if (word.active) {
-				g2.setColor(wordBackground);
-				g2.fillRect((int) (word.x + 3 - (word.w * 0.5)) - margin,(int) (word.y + 3 - (word.h * 0.5) - margin * 0.5), word.w+ margin * 2, word.h + 6);
-				g2.setColor(Color.white);
-				g2.drawString(word.getText(), (int) (word.x - word.w * 0.5),(int) (word.y + word.h * 0.25));
+				word.update();
+				word.display(g2);
 			}
 		}
-		
-		/*if (w.active) {
-			g2.setColor(wordBackground);
-			g2.fillRect((int) (w.x + 3 - (w.w * 0.5)) - margin, (int) (w.y + 3 - (w.h * 0.5) - margin * 0.5), w.w + margin * 2, w.h + 6);
-			g2.setColor(Color.white);
-			g2.drawString(w.getText(), (int) (w.x - w.w * 0.5),(int) (w.y + w.h * 0.25));
-		}*/
-		
 		
 		for (int i = overParticles.size()-1; 0 <i ; i--) { // run all overparticles
 			overParticles.get(i).update();
 			overParticles.get(i).display(g2);
-			if(overParticles.get(i).kill)overParticles.remove(i);
+			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
+		
+		g2.setColor(Color.BLACK); // svart system color
+		g2.setFont(Constants.boldFont); // init typsnitt
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
 
 	}
 
-	public void run() { // threa
+	public void run() { // threading
 
 		while (true) {
 			try {
 				repaint(); // repaint()
-				Thread.sleep(3);
+				Thread.sleep(2);
 			} catch (InterruptedException iex) {
 				System.out.println("Exception in thread: " + iex.getMessage());
 			}
@@ -296,7 +257,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createRegularWords() {
 		int count = 0;
 		Firebase wordList = myFirebaseRef.child("Regular Words");
-		String[] regularWords = { "easier", "interesting", "honest", "forests", "Saturday", "dinner", "comfortable", "gently", "fresh", "rest", "pal", "warmth", "rest", "welcome", "dearest", "useful", "safe", "better", "piano", "silk", "relif", "ryhme", "hi", "agree", "water", "pal" };
+		String[] regularWords = { "easier", "interesting", "honest", "forests", "Saturday", "dinner", "comfortable", "gently", "fresh", "rest", "pal", "warmth", "rest", "welcome", "dearest", "useful", "safe", "better", "piano", "silk", "relif", "ryhme", "android", "agree", "water", "prototype" };
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
