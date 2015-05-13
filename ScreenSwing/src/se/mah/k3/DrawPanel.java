@@ -8,6 +8,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	// means that it can handle concurrent changes.
 	private Vector<User> users = new Vector<User>();
 
-    static Font font = new Font("Verdana", Font.BOLD, 20);
+   static Font font = new Font("Verdana", Font.BOLD, 20);
 
 	private Random r = new Random(); // randomize siffror
 
@@ -68,15 +69,20 @@ public class DrawPanel extends JPanel implements Runnable {
 				Integer.valueOf(colorString.substring(5, 7), 16));
 	}
 
+
 	public DrawPanel() {
 		try{
-		    font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(18f);
+		    font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(24f);
+		    
 			} catch (IOException e) {
 			    e.printStackTrace();
 			} catch (FontFormatException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		
+		
+		
 		w.x = 800;
 		w.y = 400;
 		w.w = 100;
@@ -195,9 +201,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		HEIGHT = (int) getSize().height;
 
 		
-		for(int i=0;i<4;i++){
+		/*for(int i=0;i<4;i++){
 			 particles.add(new Particle(r.nextInt(WIDTH),0)); 
-		}
+		}*/
 
 		Graphics2D g2 = (Graphics2D) g; // grafik object beh�vs f�r att
 										// canvas ska paint p�
@@ -211,6 +217,11 @@ public class DrawPanel extends JPanel implements Runnable {
 			word.h = metrics.getHeight();
 
 		}
+		//Smooth the fonts
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		
 		// get the advance of my text in this font
 		// and render context
 
