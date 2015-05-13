@@ -38,18 +38,16 @@ public class DrawPanel extends JPanel implements Runnable {
 	private Vector<User> users = new Vector<User>();
 	Graphics2D g2;
    static Font font = new Font("Verdana", Font.BOLD, 20);
-
 	private Random r = new Random(); // randomize siffror
 
 	Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
 	// private Color backgroundColor =new Color(255,255,255,10);
-
 	public static int myFrame;
-	int WIDTH = 1500, HEIGHT = 1000;
+	int WIDTH=1800,HEIGHT=1000;
 	// Creates an instance of the word object
 
 	public String changedWord = "word";
-	 Word w = new Word(changedWord);
+	// Word w = new Word(changedWord);
 
 	String wordBg = "#009688";
 	Color wordBackground = (hexToRgb(wordBg));
@@ -72,14 +70,12 @@ public class DrawPanel extends JPanel implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
-		
-		w.x = 800;
+		/*w.x = 800;
 		w.y = 400;
 		w.w = 100;
 		w.h = 60;
 		w.active = true;
-
+		 */
 		// myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree
@@ -91,17 +87,16 @@ public class DrawPanel extends JPanel implements Runnable {
 		// Run method to generate "themed" words
 		createThemeWords();
 
-		// Run method that listens for change in word list (active words for
-		// example).
+		// Run method that listens for change in word list (active words for example).
 		wordListener();
 
 		// use method getText from the word class to set text to "word1" in the
 		// firebase db.
-		myFirebaseRef.child("Word1").setValue(w.getText());
+// myFirebaseRef.child("Word1").setValue(w.getText());
 		// myFirebaseRef.child("Word1").addListenerForSingleValueEvent(new
 		// ValueEventListener() {
 
-		myFirebaseRef.child("Word1").addValueEventListener(
+/*		myFirebaseRef.child("Word1").addValueEventListener(
 				new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot snapshot) {
@@ -120,7 +115,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					public void onCancelled(FirebaseError firebaseError) {
 					}
 				});
-
+*/
 		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
@@ -180,35 +175,29 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			}
 		});
-		 HEIGHT= this.getHeight()+1;
-		 WIDTH= this.getWidth()+1;
+
 	}
 
 	// Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
-		// super.paint(g); // no opacity repaint
+
 		WIDTH = (int) getSize().width;
 		HEIGHT = (int) getSize().height;
-
-		
-		/*for(int i=0;i<4;i++){
+		for(int i=0;i<4;i++){
 			 particles.add(new Particle(r.nextInt(WIDTH),0)); 
-		}*/
-
-		g2 = (Graphics2D) g; // grafik object beh�vs f�r att
-										// canvas ska paint p�
+		}
+		g2 = (Graphics2D) g; // grafik object beh�vs f�r at // canvas ska paint p�
 		g2.drawImage(bg, 0, 0, WIDTH + 1, HEIGHT + 1, this);
 		g2.setFont(font); // init typsnitt
 		FontMetrics metrics = g2.getFontMetrics(font);
-		w.w = metrics.stringWidth(w.text);
-		w.h = metrics.getHeight();
+		/*w.w = metrics.stringWidth(w.text);
+		w.h = metrics.getHeight();*/
 		for (Word word : words) {
 			word.w = metrics.stringWidth(word.text);
 			word.h = metrics.getHeight();
 		}
 		//smooth font
-		
 		g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
 		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -216,8 +205,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		// g2.setPaint(backgroundColor); // color it med opacity
-		// g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
 		g2.setColor(Color.BLACK); // svart system color
 		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 10, 20);
 
@@ -261,7 +248,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				if (word.active)particles.get(i).collisionCircle(word.x, word.y,margin);
 			}
 
-			if (w.active)particles.get(i).collisionCircle(w.x, w.y,margin); //
+			//if (w.active)particles.get(i).collisionCircle(w.x, w.y,margin); //
 
 		}
 
@@ -273,12 +260,13 @@ public class DrawPanel extends JPanel implements Runnable {
 				g2.drawString(word.getText(), (int) (word.x - word.w * 0.5),(int) (word.y + word.h * 0.25));
 			}
 		}
-		if (w.active) {
+		
+		/*if (w.active) {
 			g2.setColor(wordBackground);
 			g2.fillRect((int) (w.x + 3 - (w.w * 0.5)) - margin, (int) (w.y + 3 - (w.h * 0.5) - margin * 0.5), w.w + margin * 2, w.h + 6);
 			g2.setColor(Color.white);
 			g2.drawString(w.getText(), (int) (w.x - w.w * 0.5),(int) (w.y + w.h * 0.25));
-		}
+		}*/
 		
 		
 		for (int i = overParticles.size()-1; 0 <i ; i--) { // run all overparticles
@@ -289,11 +277,10 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	}
 
-	public void run() {
-		// while(DrawPanel.myFrame < 1000){
+	public void run() { // threa
+
 		while (true) {
 			try {
-				// System.out.println("Expl Thread: "+(++DrawPanel.myFrame));
 				repaint(); // repaint()
 				Thread.sleep(3);
 			} catch (InterruptedException iex) {
@@ -314,8 +301,8 @@ public class DrawPanel extends JPanel implements Runnable {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
 			words.add(new Word(regularWords[i]));
-			words.get(words.size() - 1).x = r.nextInt(WIDTH); // skalad x pos
-			words.get(words.size() - 1).y = r.nextInt(HEIGHT); // skalad y pos
+			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
+			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
 			count++;
 		}
 		myFirebaseRef.child("Regular Words Size").setValue(count);
@@ -328,8 +315,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (int i = 0; i < themeWords.length; i++) {
 			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
 			words.add(new Word(themeWords[i]));
-			words.get(words.size() - 1).x = r.nextInt(WIDTH); // skalad x pos
-			words.get(words.size() - 1).y = r.nextInt(HEIGHT); // skalad y pos
+			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
+			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
 			count++;
 		}
 		myFirebaseRef.child("Themed Words Size").setValue(count);
@@ -358,12 +345,10 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
-<<<<<<< HEAD
+
 				//String isActive = "inactive";
 				String isActive = "";
-=======
-				String isActive = "active";
->>>>>>> branch 'master' of https://github.com/Timearchitect/NiagaraStories.git
+
 				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
@@ -380,8 +365,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				}else{
 					words.get(index).active = false;
 					words.get(index).disappear(DrawPanel.this);
-		
 				}
+				
 				System.out.println(index);
 				System.out.println("Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 

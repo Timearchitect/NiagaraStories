@@ -21,18 +21,15 @@ boolean kill;
 		h=_h;
 		text=_text;
 		opacity=200;
-		
+			
+
 	}
 
 	public void display(Graphics g) {
 		Graphics2D g2= (Graphics2D) g;
-		
-		 Font font = new Font("Roboto-Regular", Font.BOLD, 20);
-			
-		
 		try{
-		    font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
-		    
+		    Font font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
+			g2.setFont(font);
 			} catch (IOException e) {
 			    e.printStackTrace();
 			} catch (FontFormatException e) {
@@ -40,7 +37,7 @@ boolean kill;
 				e.printStackTrace();
 			}
 		
-		g2.setFont(font);
+	
 		
 		/*g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
