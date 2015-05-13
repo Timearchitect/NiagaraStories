@@ -361,8 +361,14 @@ public class DrawPanel extends JPanel implements Runnable {
 					// words.get().active=true;
 				}
 				String s = snapshot.getRef().toString();
-				words.get(Integer.parseInt(s.substring(63))).active = true;
-				words.get(Integer.parseInt(s.substring(63))).appear(DrawPanel.this);
+				int index=Integer.parseInt(s.substring(63));
+				if(!words.get(index).active){ // listen for active changes and execute appear/disappear
+					words.get(index).active = true;
+					words.get(index).appear(DrawPanel.this);
+				}else{
+					words.get(index).active = false;
+					words.get(index).disappear(DrawPanel.this);
+				}
 				System.out.println(s.substring(63));
 				System.out.println("Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 
