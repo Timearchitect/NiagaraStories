@@ -40,9 +40,9 @@ float w,h,opacity;
 		
 		g2.setFont(font);
 		
-		g2.setRenderingHint(
+		/*g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);*/
 		
 		g2.setColor(new Color(255,255,255,(int)opacity));
 		g2.drawString(text, (int)(x-w*0.5), (int)(y+ h * 0.25));
