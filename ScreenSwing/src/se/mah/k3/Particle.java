@@ -21,7 +21,7 @@ public class Particle {
 	}
 	
 	public void update(){
-		x+=(int)vx;
+		x+=Math.round(vx);
 		y+=(int)vy;
 		vx*=0.93;
 		vx+=ax;
@@ -34,20 +34,19 @@ public class Particle {
 		g2.setStroke(new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
 	
 	//	g2.drawString(Character.(r.nextInt()*300));
-		g2.drawLine((int)x,(int) y, (int)x, (int)(y-vy));
+		g2.drawLine((int)x,(int) y, (int)x, (int)(y-vy*2));
 		//g2.fillOval((int)x,(int) y, 20, 20);
 	}
 	
-	public void collisionCircle(int _x,int _y){
-		float a,b,c;
+	public void collisionCircle(int _x,int _y, int _radius){
+		float a,b,dist;
 		a=_x-x;
 		b= _y-y;
-		c=(float) Math.sqrt((a*a)+(b*b));
-		if(c<StrokeWidth){
+		dist=(float) Math.sqrt((a*a)+(b*b));
+		if(dist-_radius<StrokeWidth){
 		vy*=(-1)*0.5;
 		vx=r.nextInt(10)-5;
 		}
-		
 		
 		
 	}

@@ -16,9 +16,7 @@ import java.awt.event.KeyEvent;
 
 public class FullScreen extends JFrame implements KeyEventDispatcher{
 
-	/**
-	 * 
-	 */
+
 	private static DrawPanel panel;
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;

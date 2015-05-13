@@ -6,7 +6,7 @@ package se.mah.k3;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word {
-	public boolean active = false;
+	public boolean active = true;
 	public String text = "";
 	public int x, y;
 	public int w, h;
@@ -58,5 +58,14 @@ public class Word {
 
 	public boolean isActive(){
 		return active;
+	}
+	
+	public void appear(){
+		
+		
+	}
+	public void disappear(){
+		
+		
 	}
 }
