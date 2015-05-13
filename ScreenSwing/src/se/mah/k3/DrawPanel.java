@@ -306,7 +306,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createRegularWords() {
 		int count = 0;
 		Firebase wordList = myFirebaseRef.child("Regular Words");
-		String[] regularWords = { "hey!", "let's", "go", "to", "the", "park","and", "have", "an", "ice cream" };
+		String[] regularWords = { "easier", "interesting", "honest", "forests", "Saturday", "dinner", "comfortable", "gently", "fresh", "rest", "pal", "warmth", "rest", "welcome", "dearest", "useful", "safe", "better", "piano", "silk", "relif", "ryhme", "hi", "agree", "water", "pal" };
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			words.add(new Word(regularWords[i]));
