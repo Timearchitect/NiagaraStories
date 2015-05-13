@@ -12,20 +12,12 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JPanel;
-
-import java.util.EventObject;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -44,7 +36,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	// A vector is like an ArrayList a little bit slower but Thread-safe. This
 	// means that it can handle concurrent changes.
 	private Vector<User> users = new Vector<User>();
-
+	Graphics2D g2;
    static Font font = new Font("Verdana", Font.BOLD, 20);
 
 	private Random r = new Random(); // randomize siffror
@@ -61,7 +53,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	String wordBg = "#009688";
 	Color wordBackground = (hexToRgb(wordBg));
-	int margin = 20;
+	int margin = 10;
 
 	public static Color hexToRgb(String colorString) {
 		return new Color(Integer.valueOf(colorString.substring(1, 3), 16),
@@ -80,7 +72,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
 		
 		
 		w.x = 800;
@@ -205,7 +196,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			 particles.add(new Particle(r.nextInt(WIDTH),0)); 
 		}*/
 
-		Graphics2D g2 = (Graphics2D) g; // grafik object beh�vs f�r att
+		g2 = (Graphics2D) g; // grafik object beh�vs f�r att
 										// canvas ska paint p�
 		g2.drawImage(bg, 0, 0, WIDTH + 1, HEIGHT + 1, this);
 		g2.setFont(font); // init typsnitt
@@ -216,10 +207,11 @@ public class DrawPanel extends JPanel implements Runnable {
 			word.w = metrics.stringWidth(word.text);
 			word.h = metrics.getHeight();
 		}
-		//Smooth the fonts
+		//smooth font
+		
 		g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		
 		// get the advance of my text in this font
 		// and render context
@@ -237,7 +229,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		// g2d.drawImage(bg, 0, 0, null);
 		// bg = tmpImg;
 
-		for (User user : users) {
+		/*for (User user : users) {
 			int x = (int) (user.getxRel() * WIDTH); // skalad x pos
 			int y = (int) (user.getyRel() * HEIGHT); // skalad y pos
 			int x2;
@@ -257,7 +249,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			g2.drawString(w.getText(), x, y);
 			g.drawString(user.getId(), x + 15, y + 15);
 
-		}
+		}*/
 
 		for (int i = particles.size()-1; 0<i ; i--) {  // run all particles
 			particles.get(i).update();
@@ -276,14 +268,14 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (Word word : words) {
 			if (word.active) {
 				g2.setColor(wordBackground);
-				g2.fillRect((int) (word.x - (word.w * 0.5)) - margin,(int) (word.y - (word.h * 0.5) - margin * 0.5), word.w+ margin * 2, word.h + margin);
+				g2.fillRect((int) (word.x + 3 - (word.w * 0.5)) - margin,(int) (word.y + 3 - (word.h * 0.5) - margin * 0.5), word.w+ margin * 2, word.h + 6);
 				g2.setColor(Color.white);
 				g2.drawString(word.getText(), (int) (word.x - word.w * 0.5),(int) (word.y + word.h * 0.25));
 			}
 		}
 		if (w.active) {
 			g2.setColor(wordBackground);
-			g2.fillRect((int) (w.x - (w.w * 0.5)) - margin, (int) (w.y- (w.h * 0.5) - margin * 0.5), w.w + margin * 2, w.h+ margin);
+			g2.fillRect((int) (w.x + 3 - (w.w * 0.5)) - margin, (int) (w.y + 3 - (w.h * 0.5) - margin * 0.5), w.w + margin * 2, w.h + 6);
 			g2.setColor(Color.white);
 			g2.drawString(w.getText(), (int) (w.x - w.w * 0.5),(int) (w.y + w.h * 0.25));
 		}
@@ -366,8 +358,12 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
+<<<<<<< HEAD
 				//String isActive = "inactive";
 				String isActive = "";
+=======
+				String isActive = "active";
+>>>>>>> branch 'master' of https://github.com/Timearchitect/NiagaraStories.git
 				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
