@@ -37,13 +37,14 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	private Firebase myFirebaseRef;
 	private Firebase regularWordsRef;
-	public ArrayList<Particle> particles = new ArrayList<Particle>();
-	public ArrayList<Word> words = new ArrayList<Word>();
+	public static ArrayList<Particle> particles = new ArrayList<Particle>();
+	public static ArrayList<Particle> overParticles = new ArrayList<Particle>();
+	public static ArrayList<Word> words = new ArrayList<Word>();
 	// A vector is like an ArrayList a little bit slower but Thread-safe. This
 	// means that it can handle concurrent changes.
 	private Vector<User> users = new Vector<User>();
 
-    Font font = new Font("Verdana", Font.BOLD, 20);
+    static Font font = new Font("Verdana", Font.BOLD, 20);
 
 	private Random r = new Random(); // randomize siffror
 
@@ -55,7 +56,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	// Creates an instance of the word object
 
 	public String changedWord = "word";
-	Word w = new Word(changedWord);
+	 Word w = new Word(changedWord);
 
 	String wordBg = "#009688";
 	Color wordBackground = (hexToRgb(wordBg));
@@ -216,9 +217,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		// g2.setPaint(backgroundColor); // color it med opacity
 		// g2.fillRect(0, 0, WIDTH, HEIGHT); // repaint background
 		g2.setColor(Color.BLACK); // svart system color
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"
-				+ particles.size() + "  frame :" + myFrame + "      words: "
-				+ words.size(), 10, 20);
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 10, 20);
 
 		// BufferedImage tmpImg = new BufferedImage(bg.getWidth(this) + 1,
 		// bg.getHeight(this) + 1, BufferedImage.TYPE_INT_ARGB);
@@ -257,12 +256,10 @@ public class DrawPanel extends JPanel implements Runnable {
 				particles.remove(i);
 			}
 			for (Word word : words) {
-				if (word.active)
-					particles.get(i).collisionCircle(word.x, word.y,margin);
+				if (word.active)particles.get(i).collisionCircle(word.x, word.y,margin);
 			}
 
-			if (w.active)
-				particles.get(i).collisionCircle(w.x, w.y,margin); //
+			if (w.active)particles.get(i).collisionCircle(w.x, w.y,margin); //
 
 		}
 
@@ -279,6 +276,12 @@ public class DrawPanel extends JPanel implements Runnable {
 			g2.fillRect((int) (w.x - (w.w * 0.5)) - margin, (int) (w.y- (w.h * 0.5) - margin * 0.5), w.w + margin * 2, w.h+ margin);
 			g2.setColor(Color.white);
 			g2.drawString(w.getText(), (int) (w.x - w.w * 0.5),(int) (w.y + w.h * 0.25));
+		}
+		
+		
+		for (int i = 0; i < overParticles.size(); i++) { // run all particles
+			overParticles.get(i).update();
+			overParticles.get(i).display(g2);
 		}
 
 	}
@@ -352,19 +355,16 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
 				String isActive = "inactive";
-				changedWord = (String) snapshot.child("text").getValue()
-						.toString();
+				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "active!";
 					// words.get().active=true;
-
 				}
 				String s = snapshot.getRef().toString();
 				words.get(Integer.parseInt(s.substring(63))).active = true;
+				words.get(Integer.parseInt(s.substring(63))).appear(DrawPanel.this);
 				System.out.println(s.substring(63));
-
-				System.out.println("Change in child! The word " + "\""
-						+ changedWord + "\"" + " is now " + isActive);
+				System.out.println("Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 
 			}
 

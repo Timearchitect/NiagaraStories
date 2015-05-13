@@ -32,10 +32,7 @@ public class Particle {
 		Graphics2D g2= (Graphics2D) g;
 		g2.setColor(particleColor);
 		g2.setStroke(new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND));
-	
-	//	g2.drawString(Character.(r.nextInt()*300));
 		g2.drawLine((int)x,(int) y, (int)x, (int)(y-vy*2));
-		//g2.fillOval((int)x,(int) y, 20, 20);
 	}
 	
 	public void collisionCircle(int _x,int _y, int _radius){
@@ -51,3 +48,5 @@ public class Particle {
 		
 	}
 }
+
+

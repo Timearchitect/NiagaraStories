@@ -60,12 +60,17 @@ public class Word {
 		return active;
 	}
 	
-	public void appear(){
+	public void appear(DrawPanel dp){
 		
-		
+		dp.overParticles.add(new TextParticle(x,y,w,h,10,0,text));
+		dp.overParticles.add(new TextParticle(x,y,w,h,-10,0,text));
+		dp.overParticles.add(new TextParticle(x,y,w,h,5,0,text));
+		dp.overParticles.add(new TextParticle(x,y,w,h,-5,0,text));
+
 	}
-	public void disappear(){
+	public void disappear(DrawPanel dp){
 		
-		
+		dp.overParticles.add(new TextParticle(x,y,w,h,0,10,text));
+		dp.overParticles.add(new TextParticle(x,y,w,h,0,-10,text));
 	}
 }
