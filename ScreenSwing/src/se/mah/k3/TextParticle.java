@@ -29,7 +29,5 @@ public class TextParticle extends Particle {
 		opacity*=0.95;
 		if(opacity<10)kill();
 	}
-	public void kill(){
-		dead=true;
-	}
+
 }

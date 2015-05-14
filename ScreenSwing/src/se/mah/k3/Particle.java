@@ -6,15 +6,20 @@ import java.awt.Graphics2D;
 import java.util.Random;
 
 public class Particle {
-		public float x,y,vx,vy,ax,ay;
+		public float x;
+		public float y;
+		public float vx;
+		public float vy;
+		public float ax;
+		public float ay;
 		public boolean dead;
-		private int StrokeWidth=40;
-		private Color particleColor= Constants.waterColor;
-		private Random r= new Random();
-		private BasicStroke squareStroke = new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
-	public Particle(int _x, int _y){
-		x=_x;
-		y=_y;
+		protected int StrokeWidth=40;
+		protected Color particleColor= Constants.waterColor;
+		protected Random r= new Random();
+		protected BasicStroke squareStroke = new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+	public Particle(int x2, int y2){
+		x=x2;
+		y=y2;
 		vy=5;
 		ay=(float) 0.5;
 	}
@@ -45,6 +50,7 @@ public class Particle {
 		}
 		
 	}
+	public void kill(){
+		dead=true;
+	}
 }
-
-

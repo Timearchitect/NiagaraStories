@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +46,37 @@ public class DrawPanel extends JPanel implements Runnable  {
 
 
 	public DrawPanel() {
+this.addMouseListener(new MouseAdapter() {
+	 
+    public void mousePressed(MouseEvent e) {
+      if (e.getButton() == MouseEvent.NOBUTTON) {
+      	System.out.println(" no button clicked");
+      } else if (e.getButton() == MouseEvent.BUTTON1) {
+         	System.out.println(" left button clicked");
+      } else if (e.getButton() == MouseEvent.BUTTON2) {
+         	System.out.println(" middle button clicked");
+      } else if (e.getButton() == MouseEvent.BUTTON3) {
+         	System.out.println(" right button clicked");
+      }
+      overParticles.add( new Ripple(e.getX(),e.getY()));
+     // System.out.println("Number of click: " + e.getClickCount());
+    //  System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+    }
+    public void mouseReleased(MouseEvent e) {
+	        if (e.getButton() == MouseEvent.NOBUTTON) {
+	        	System.out.println(" no button Release");
+	        } else if (e.getButton() == MouseEvent.BUTTON1) {
+	           	System.out.println(" left button Release");
+	        } else if (e.getButton() == MouseEvent.BUTTON2) {
+	           	System.out.println(" middle button Release");
+	        } else if (e.getButton() == MouseEvent.BUTTON3) {
+	           	System.out.println(" right button Release");
+	        }
+
+	       // System.out.println("Number of click: " + e.getClickCount());
+	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
+	      }
+  });
 
 		// myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
@@ -207,12 +240,15 @@ public class DrawPanel extends JPanel implements Runnable  {
 		for (int i = particles.size()-1; 0<i ; i--) {  // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
-			if (particles.get(i).y > HEIGHT) {
-				particles.remove(i);
-			}
 			for (Word word : words) {
 				if (word.active)particles.get(i).collisionCircle(word.x, word.y,word.margin);
 			}
+			if (particles.get(i).y > HEIGHT) {
+				particles.remove(i);
+			}
+			if(particles.get(i).dead)particles.remove(i);
+		
+	
 		}
 
 		for (Word word : words) {
@@ -241,7 +277,7 @@ public class DrawPanel extends JPanel implements Runnable  {
 				repaint(); // repaint()
 				Thread.sleep(2);
 			} catch (InterruptedException iex) {
-				System.out.println("Exception in thread: " + iex.getMessage());
+				//System.out.println("Exception in thread: " + iex.getMessage());
 			}
 		}
 	}
