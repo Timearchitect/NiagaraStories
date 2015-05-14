@@ -2,7 +2,6 @@ package se.mah.k3;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.Random;
 
@@ -10,7 +9,7 @@ public class Particle {
 		public float x,y,vx,vy,ax,ay;
 		public boolean dead;
 		private int StrokeWidth=40;
-		private Color particleColor= Color.BLUE;
+		private Color particleColor= Constants.waterColor;
 		private Random r= new Random();
 		private BasicStroke squareStroke = new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public Particle(int _x, int _y){

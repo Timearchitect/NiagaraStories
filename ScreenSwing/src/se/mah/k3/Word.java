@@ -67,7 +67,7 @@ public class Word {
 		dp.overParticles.add(new TextParticle(x,y,w,h,-10,0,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,5,0,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,-5,0,text));
-
+		active=true;
 	}
 	public void disappear(DrawPanel dp){
 		
@@ -80,7 +80,7 @@ public class Word {
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,-2,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,-5,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,-10,text));
-
+		active=false;
 
 	}
 

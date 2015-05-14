@@ -2,9 +2,6 @@ package se.mah.k3;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontFormatException;
-import java.io.File;
-import java.io.IOException;
 
 
 
@@ -13,8 +10,9 @@ import java.io.IOException;
 	public static Font font,lightFont,boldFont ;
 	public static int screenNbr=145;
 	public static String wordBg = "#009688";
-	public static Color wordBackground = (hexToRgb(Constants.wordBg));
-
+	public static String waterC = "#90caf9";
+	public static Color wordBackground = (hexToRgb(wordBg));
+	public static Color waterColor = (hexToRgb(waterC));
 	
 
 	public static Color hexToRgb(String colorString) {

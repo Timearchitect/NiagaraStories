@@ -2,16 +2,13 @@ package se.mah.k3;
 
 import java.awt.Color;
 import java.awt.Event;
-import java.awt.Font;
-import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.io.File;
-import java.io.IOException;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -23,9 +20,8 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
-public class DrawPanel extends JPanel implements Runnable {
+public class DrawPanel extends JPanel implements Runnable ,MouseListener {
 	private static final long serialVersionUID = 1L;
 
 	private Firebase myFirebaseRef,regularWordsRef,themedWordsRef;
@@ -40,11 +36,11 @@ public class DrawPanel extends JPanel implements Runnable {
 	private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
 	// private Color backgroundColor =new Color(255,255,255,10);
 	public static int myFrame; 
-	int WIDTH=1800,HEIGHT=1000;
+	int WIDTH=1920,HEIGHT=1080;
 	// Creates an instance of the word object
 	public String changedWord = "word";
 	// Word w = new Word(changedWord);
-
+	
 
 
 	public DrawPanel() {
@@ -320,16 +316,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				String s = snapshot.getRef().toString();
 				int index=Integer.parseInt(s.substring(63));
 				if(!isActive.equals("true")){ // listen for active changes and execute appear/disappear
-					words.get(index).active = true;
 					words.get(index).appear(DrawPanel.this);
-			
 				}else{
-					words.get(index).active = false;
 					words.get(index).disappear(DrawPanel.this);
 				}
-				
-				System.out.println(index);
-				System.out.println("Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
+				System.out.println(index+"Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 
 			}
 
@@ -345,7 +336,38 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	}
 
-	public void MouseEvent(Event e) {
+
+	@Override
+	public void mouseClicked(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(" x: "+getX() +"   y: " +getY());
+	}
+
+	@Override
+	public void mouseEntered(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(" x: "+getX() +"   y: " +getY());
+
+	}
+
+	@Override
+	public void mouseExited(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(" x: "+getX() +"   y: " +getY());
+
+	}
+
+	@Override
+	public void mousePressed(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(" x: "+getX() +"   y: " +getY());
+
+	}
+
+	@Override
+	public void mouseReleased(java.awt.event.MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(" x: "+getX() +"   y: " +getY());
 
 	}
 

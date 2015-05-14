@@ -14,11 +14,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 
-public class FullScreen extends JFrame implements KeyEventDispatcher{
+public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener, MouseListener, MouseMotionListener {
 
 
 	private static DrawPanel panel;
@@ -68,7 +73,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 		contentPane.setLayout(new BorderLayout(0, 0));
 		//DrawPanel panel = new DrawPanel();
 		 panel = new DrawPanel();
-		 
+		 panel.addMouseMotionListener(this);
 		//panel.setOpaque(false);
 		//panel.setBackground( new Color(255, 0, 0, 20) );
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -122,6 +127,71 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
      		}
         }
         return false;
+	}
+
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(" x: "+getX() +"   y: " +getY());
+	}
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(" hej");
+	}
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(" hej");
+	}
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(" pressed");
+	}
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(" released");
+	}
+
+
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println("dragged"+" x: "+arg0.getX() +"   y: " +arg0.getY());
+	}
+
+
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+		System.out.println(" move"+" x: "+arg0.getX() +"   y: " +arg0.getY());
+	}
+
+
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		// TODO Auto-generated method stub
+		System.out.println(" action");
 	}
 	
 	
