@@ -21,7 +21,7 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
-public class DrawPanel extends JPanel implements Runnable ,MouseListener {
+public class DrawPanel extends JPanel implements Runnable  {
 	private static final long serialVersionUID = 1L;
 
 	private Firebase myFirebaseRef,regularWordsRef,themedWordsRef;
@@ -305,23 +305,30 @@ public class DrawPanel extends JPanel implements Runnable ,MouseListener {
 
 				//String isActive = "inactive";
 				String isActive = "";
-
+				String s = snapshot.getRef().toString();
+				int index=Integer.parseInt(s.substring(63));
+				
 				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
+					words.get(index).appear(DrawPanel.this);
 					// words.get().active=true;
 				}else{
 					isActive = "false";
-				}
-				String s = snapshot.getRef().toString();
-				int index=Integer.parseInt(s.substring(63));
-				if(!isActive.equals("true")){ // listen for active changes and execute appear/disappear
-					words.get(index).appear(DrawPanel.this);
-				}else{
 					words.get(index).disappear(DrawPanel.this);
 				}
-				System.out.println(index+"Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
+				System.out.println(index+" Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
+				
+				if (snapshot.child("x").getValue() != null) {
+					words.get(index).x=(int) (Float.valueOf(snapshot.child("x").getValue().toString())*WIDTH);
+					System.out.println("x is written to "+ index + "  word "+words.get(index).x);
 
+				}
+				if (snapshot.child("y").getValue() != null) {
+					words.get(index).y=(int)  (Float.valueOf(snapshot.child("y").getValue().toString())*HEIGHT);
+					System.out.println("y is written to "+ index + "  word "+words.get(index).y);
+				}
+				
 			}
 
 			@Override
@@ -337,38 +344,5 @@ public class DrawPanel extends JPanel implements Runnable ,MouseListener {
 	}
 
 
-	@Override
-	public void mouseClicked(java.awt.event.MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println(" x: "+getX() +"   y: " +getY());
-	}
-
-	@Override
-	public void mouseEntered(java.awt.event.MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println(" x: "+getX() +"   y: " +getY());
-
-	}
-
-	@Override
-	public void mouseExited(java.awt.event.MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println(" x: "+getX() +"   y: " +getY());
-
-	}
-
-	@Override
-	public void mousePressed(java.awt.event.MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println(" x: "+getX() +"   y: " +getY());
-
-	}
-
-	@Override
-	public void mouseReleased(java.awt.event.MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		System.out.println(" x: "+getX() +"   y: " +getY());
-
-	}
 
 }

@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -73,7 +74,25 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		contentPane.setLayout(new BorderLayout(0, 0));
 		//DrawPanel panel = new DrawPanel();
 		 panel = new DrawPanel();
-		 panel.addMouseMotionListener(this);
+		 //panel.addMouseMotionListener(this);
+
+		 panel.addMouseListener(new MouseAdapter() {
+		      public void mouseClicked(MouseEvent e) {
+		        if (e.getButton() == MouseEvent.NOBUTTON) {
+		        	System.out.println(" no button clicked");
+		        } else if (e.getButton() == MouseEvent.BUTTON1) {
+		           	System.out.println(" left button clicked");
+		        } else if (e.getButton() == MouseEvent.BUTTON2) {
+		           	System.out.println(" middle button clicked");
+		        } else if (e.getButton() == MouseEvent.BUTTON3) {
+		           	System.out.println(" right button clicked");
+		        }
+
+		        System.out.println("Number of click: " + e.getClickCount());
+		        System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
+		      }
+		    });
+
 		//panel.setOpaque(false);
 		//panel.setBackground( new Color(255, 0, 0, 20) );
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -158,7 +177,8 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println(" pressed");
+		
+		System.out.println(" pressed "+e.getButton());
 	}
 
 
