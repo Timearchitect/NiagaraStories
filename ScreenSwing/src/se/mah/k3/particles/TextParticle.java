@@ -1,7 +1,9 @@
-package se.mah.k3;
+package se.mah.k3.particles;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import se.mah.k3.Constants;
 
 public class TextParticle extends Particle {
 	private String text;

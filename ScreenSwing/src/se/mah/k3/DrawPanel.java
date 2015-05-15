@@ -21,6 +21,10 @@ import java.util.Vector;
 
 import javax.swing.JPanel;
 
+import se.mah.k3.particles.Particle;
+import se.mah.k3.particles.RippleParticle;
+import se.mah.k3.particles.WaterParticle;
+
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -77,11 +81,11 @@ public class DrawPanel extends JPanel implements Runnable  {
     	  if(w.active){
     		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
     			 grabedWord=w;
-    				grabedWord.grabed(DrawPanel.this);
+    			grabedWord.grabed(DrawPanel.this);
     		 } 
     	  }
       }
-      overParticles.add( new Ripple((int)mouseX,(int)mouseY,40));
+      overParticles.add( new RippleParticle((int)mouseX,(int)mouseY,40));
      // System.out.println("Number of click: " + e.getClickCount());
     //  System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
@@ -100,7 +104,7 @@ public class DrawPanel extends JPanel implements Runnable  {
 	        	grabedWord.released(DrawPanel.this);
 	        	grabedWord=null;
 	        }
-	        overParticles.add( new Ripple(e.getX(),e.getY()));
+	        overParticles.add( new RippleParticle(e.getX(),e.getY()));
 	       // System.out.println("Number of click: " + e.getClickCount());
 	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
 	      }
@@ -120,7 +124,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		   		grabedWord.x=e.getX();
 		   		grabedWord.y=e.getY();
 		   	}
-	        overParticles.add( new Ripple(e.getX(),e.getY(),20));
+	        overParticles.add( new RippleParticle(e.getX(),e.getY(),20));
 	       // System.out.println("Number of click: " + e.getClickCount());
 	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
 	      }

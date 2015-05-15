@@ -3,6 +3,9 @@ package se.mah.k3;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import se.mah.k3.particles.FrameParticle;
+import se.mah.k3.particles.TextParticle;
+
 
 //This is the class for the word object. It contains the words that
 //the user will have displayed in their mobile app. 
@@ -86,7 +89,7 @@ public class Word {
 	}
 	
 	public void grabed(DrawPanel dp){
-		dp.overParticles.add( new FrameParticle(x,y,this));
+		dp.overParticles.add( new FrameParticle(x,y,this,0));
 	}
 
 	

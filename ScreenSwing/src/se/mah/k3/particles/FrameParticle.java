@@ -1,8 +1,10 @@
-package se.mah.k3;
+package se.mah.k3.particles;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import se.mah.k3.Word;
 
 public class FrameParticle extends Particle {
 	float w,h,margin,increment,opacity=255;
@@ -24,7 +26,7 @@ public class FrameParticle extends Particle {
 		margin=_w.margin;
 		w=_w.w;
 		h=_w.h;
-		increment=10;
+		increment=5;
 		}
 	public void update(){
 		x+=Math.round(vx);
@@ -36,9 +38,9 @@ public class FrameParticle extends Particle {
 		w+=increment;
 		h+=increment;
 		rectStroke = new BasicStroke(increment);
-		increment*=0.5;
+		increment*=0.8;
 		opacity*=0.90;
-		if(increment<1)kill();
+		if(opacity<5)kill();
 	}
 	
 	public void display(Graphics2D g2) {

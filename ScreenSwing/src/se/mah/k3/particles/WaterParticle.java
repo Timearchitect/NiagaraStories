@@ -1,4 +1,4 @@
-package se.mah.k3;
+package se.mah.k3.particles;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

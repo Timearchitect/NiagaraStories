@@ -1,9 +1,11 @@
-package se.mah.k3;
+package se.mah.k3.particles;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
+
+import se.mah.k3.Constants;
 
 public abstract class Particle {
 		public float x,y,vx,vy,ax,ay;
