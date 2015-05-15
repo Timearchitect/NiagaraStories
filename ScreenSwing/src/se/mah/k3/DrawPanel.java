@@ -1,16 +1,19 @@
 package se.mah.k3;
 
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -25,7 +28,6 @@ import com.firebase.client.FirebaseError;
 
 public class DrawPanel extends JPanel implements Runnable  {
 	private static final long serialVersionUID = 1L;
-
 	private Firebase myFirebaseRef,regularWordsRef,themedWordsRef;
 	public static ArrayList<Particle> particles = new ArrayList<Particle>(), overParticles = new ArrayList<Particle>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
@@ -39,31 +41,71 @@ public class DrawPanel extends JPanel implements Runnable  {
 	// private Color backgroundColor =new Color(255,255,255,10);
 	public static int myFrame; 
 	int WIDTH=1920,HEIGHT=1080;
-	// Creates an instance of the word object
+	 // mouse variable
 	public String changedWord = "word";
-	// Word w = new Word(changedWord);
-	
-
+	float offsetX,offsetY;
+	boolean hold;
+	Word grabedWord;
+	// GrapicsConfig
+    private GraphicsConfiguration config =
+    		GraphicsEnvironment.getLocalGraphicsEnvironment()
+    			.getDefaultScreenDevice()
+    			.getDefaultConfiguration();
+	   // create a hardware accelerated image
+    public final BufferedImage create(final int width, final int height,
+    		final boolean alpha) {
+    	return config.createCompatibleImage(width, height, alpha
+    			? Transparency.TRANSLUCENT : Transparency.OPAQUE);
+    }
+    
 
 	public DrawPanel() {
-this.addMouseListener(new MouseAdapter() {
+		this.addMouseListener(new MouseAdapter() {
 	 
     public void mousePressed(MouseEvent e) {
+    	float mouseX=e.getX(),mouseY=e.getY();
       if (e.getButton() == MouseEvent.NOBUTTON) {
       	System.out.println(" no button clicked");
       } else if (e.getButton() == MouseEvent.BUTTON1) {
          	System.out.println(" left button clicked");
-      } else if (e.getButton() == MouseEvent.BUTTON2) {
+      }/* else if (e.getButton() == MouseEvent.BUTTON2) {
          	System.out.println(" middle button clicked");
       } else if (e.getButton() == MouseEvent.BUTTON3) {
          	System.out.println(" right button clicked");
+      }*/
+      for(Word w:words){
+    	  if(w.active){
+    		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
+    			 grabedWord=w;
+    		 } 
+    	  }
       }
-      overParticles.add( new Ripple(e.getX(),e.getY()));
+      overParticles.add( new Ripple((int)mouseX,(int)mouseY,40));
      // System.out.println("Number of click: " + e.getClickCount());
     //  System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
+ 
     public void mouseReleased(MouseEvent e) {
 	        if (e.getButton() == MouseEvent.NOBUTTON) {
+	        	System.out.println(" no button Release");
+	        } else if (e.getButton() == MouseEvent.BUTTON1) {
+	           	System.out.println(" left button Release");
+	        } /*else if (e.getButton() == MouseEvent.BUTTON2) {
+	           	System.out.println(" middle button Release");
+	        } else if (e.getButton() == MouseEvent.BUTTON3) {
+	           	System.out.println(" right button Release");
+	        }*/
+	        if(grabedWord != null){
+	        	grabedWord=null;
+	        }
+	        overParticles.add( new Ripple(e.getX(),e.getY()));
+	       // System.out.println("Number of click: " + e.getClickCount());
+	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
+	      }
+  });
+this.addMouseMotionListener (new MouseMotionAdapter() {
+	   public void mouseDragged(MouseEvent e) {
+		   /* if (e.getButton() == MouseEvent.NOBUTTON) {
 	        	System.out.println(" no button Release");
 	        } else if (e.getButton() == MouseEvent.BUTTON1) {
 	           	System.out.println(" left button Release");
@@ -71,13 +113,16 @@ this.addMouseListener(new MouseAdapter() {
 	           	System.out.println(" middle button Release");
 	        } else if (e.getButton() == MouseEvent.BUTTON3) {
 	           	System.out.println(" right button Release");
-	        }
-
+	        }*/
+		   	if(grabedWord!=null){
+		   		grabedWord.x=e.getX();
+		   		grabedWord.y=e.getY();
+		   	}
+	        overParticles.add( new Ripple(e.getX(),e.getY(),20));
 	       // System.out.println("Number of click: " + e.getClickCount());
 	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
 	      }
-  });
-
+});
 		// myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords"); // Regular Words Tree

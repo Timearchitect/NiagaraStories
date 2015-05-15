@@ -57,6 +57,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 * Create the frame.
 	 */
 	public FullScreen() {
+
 		try{
 		     Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
 		     Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(24f);

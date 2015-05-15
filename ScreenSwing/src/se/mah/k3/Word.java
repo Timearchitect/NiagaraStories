@@ -9,7 +9,7 @@ import java.awt.Graphics2D;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word {
-	public boolean active = true;
+	public boolean active = true,grabed;
 	public String text = "";
 	public int x, y, w, h, margin = 10;
 	public Word(String text) {

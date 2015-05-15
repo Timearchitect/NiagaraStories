@@ -6,12 +6,7 @@ import java.awt.Graphics2D;
 import java.util.Random;
 
 public class Particle {
-		public float x;
-		public float y;
-		public float vx;
-		public float vy;
-		public float ax;
-		public float ay;
+		public float x,y,vx,vy,ax,ay;
 		public boolean dead;
 		protected int StrokeWidth=40;
 		protected Color particleColor= Constants.waterColor;
