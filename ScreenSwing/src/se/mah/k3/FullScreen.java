@@ -136,7 +136,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		System.out.println(" x: "+getX() +"   y: " +getY());
 	}
 
@@ -144,7 +143,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		System.out.println(" hej");
 	}
 
@@ -152,7 +150,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		System.out.println(" hej");
 	}
 
@@ -160,8 +157,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 		System.out.println(" pressed "+e.getButton());
 	}
 
@@ -169,7 +164,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		System.out.println(" released");
 	}
 
@@ -177,7 +171,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		// TODO Auto-generated method stub
 		System.out.println("dragged"+" x: "+arg0.getX() +"   y: " +arg0.getY());
 	}
 
@@ -185,8 +178,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void mouseMoved(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
 		System.out.println(" move"+" x: "+arg0.getX() +"   y: " +arg0.getY());
 	}
 
@@ -194,7 +185,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
 		System.out.println(" action");
 	}
 	

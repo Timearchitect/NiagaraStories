@@ -5,21 +5,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-public abstract class Particle {
-		public float x,y,vx,vy,ax,ay;
-		public boolean dead;
-		protected int StrokeWidth=40;
-		protected Color particleColor= Constants.waterColor;
-		protected Random r= new Random();
-		protected BasicStroke squareStroke = new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
-	public Particle(int x2, int y2){
+public class WaterParticle extends Particle {
+
+
+	public WaterParticle(int x2, int y2){
+		super(x2,y2);
 		x=x2;
 		y=y2;
+		vy=5;
+		ay=(float) 0.5;
 	}
 	
 	public void update(){
 		x+=Math.round(vx);
-		y+=Math.round(vy);
+		y+=(int)vy;
+		vx*=0.93;
 		vx+=ax;
 		vy+=ay;
 	}
@@ -27,7 +27,7 @@ public abstract class Particle {
 	public void display(Graphics2D g2) {
 		g2.setColor(particleColor);
 		g2.setStroke(squareStroke);
-		g2.drawLine((int)x,(int) y,(int) x, (int)y);
+		g2.drawLine((int)x,(int) y, (int)x, (int)(y-vy*2));
 	}
 	
 	public void collisionCircle(int _x,int _y, int _radius){

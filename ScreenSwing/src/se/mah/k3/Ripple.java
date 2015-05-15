@@ -12,12 +12,6 @@ public class Ripple extends Particle{
 		super((int)_x,(int)_y);
 		x=_x;
 		y=_y;
-		//w=50;
-		//h=50;
-		//vx=0;
-		//vy=0;
-		//ax=0;
-		//ay=0;
 		increment=_increment;
 	}
 
@@ -25,12 +19,6 @@ public class Ripple extends Particle{
 		super((int)_x,(int)_y);
 		x=_x;
 		y=_y;
-		//w=50;
-		//h=50;
-		//vx=0;
-		//vy=0;
-		//ax=0;
-		//ay=0;
 		increment=50;
 		}
 	public void update(){

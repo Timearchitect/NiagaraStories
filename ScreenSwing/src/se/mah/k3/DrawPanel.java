@@ -77,6 +77,7 @@ public class DrawPanel extends JPanel implements Runnable  {
     	  if(w.active){
     		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
     			 grabedWord=w;
+    				grabedWord.grabed(DrawPanel.this);
     		 } 
     	  }
       }
@@ -96,6 +97,7 @@ public class DrawPanel extends JPanel implements Runnable  {
 	           	System.out.println(" right button Release");
 	        }*/
 	        if(grabedWord != null){
+	        	grabedWord.released(DrawPanel.this);
 	        	grabedWord=null;
 	        }
 	        overParticles.add( new Ripple(e.getX(),e.getY()));
@@ -250,7 +252,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		// and render context
 
 		for(int i=0;i<8;i++){
-			 particles.add(new Particle((int)r.nextInt(WIDTH),0)); 
+			 particles.add(new WaterParticle((int)r.nextInt(WIDTH),0)); 
 		}
 		// BufferedImage tmpImg = new BufferedImage(bg.getWidth(this) + 1,
 		// bg.getHeight(this) + 1, BufferedImage.TYPE_INT_ARGB);
@@ -342,6 +344,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
 			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
 			count++;
+		
 		}
 		myFirebaseRef.child("Regular Words Size").setValue(count);
 	}

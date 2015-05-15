@@ -80,8 +80,18 @@ public class Word {
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,-2,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,-5,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,-10,text));
+		
 		active=false;
+		
+	}
+	
+	public void grabed(DrawPanel dp){
+		dp.overParticles.add( new FrameParticle(x,y,this));
+	}
 
+	
+	public void released(DrawPanel dp){
+		dp.overParticles.add( new FrameParticle(x,y,this));
 	}
 
 	public void display(Graphics2D g2) {
