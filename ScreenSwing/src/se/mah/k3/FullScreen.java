@@ -27,7 +27,7 @@ import java.io.IOException;
 public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener, MouseListener, MouseMotionListener {
 
 
-	private static DrawPanel panel;
+	public static DrawPanel panel;
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private boolean inFullScreenMode = false;

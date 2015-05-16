@@ -12,10 +12,12 @@ import se.mah.k3.particles.TextParticle;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word {
+	DrawPanel dp;
 	public boolean active = true,grabed;
 	public String text = "";
 	public int x, y, w, h, margin = 10;
-	public Word(String text) {
+	public Word(String text,DrawPanel _dp) {
+		dp=_dp;
 		this.active = false;
 		this.text = text;
 	}
@@ -63,8 +65,10 @@ public class Word {
 	public boolean isActive(){
 		return active;
 	}
-	
-	public void appear(DrawPanel dp){
+	public void respond(){
+		dp.overParticles.add( new FrameParticle(x,y,this,0));
+	}
+	public void appear(){
 		
 		dp.overParticles.add(new TextParticle(x,y,w,h,10,0,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,-10,0,text));
@@ -72,7 +76,7 @@ public class Word {
 		dp.overParticles.add(new TextParticle(x,y,w,h,-5,0,text));
 		active=true;
 	}
-	public void disappear(DrawPanel dp){
+	public void disappear(){
 		
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,10,text));
 		dp.overParticles.add(new TextParticle(x,y,w,h,0,5,text));
@@ -88,12 +92,12 @@ public class Word {
 		
 	}
 	
-	public void grabed(DrawPanel dp){
+	public void grabed(){
 		dp.overParticles.add( new FrameParticle(x,y,this,0));
 	}
 
 	
-	public void released(DrawPanel dp){
+	public void released(){
 		dp.overParticles.add( new FrameParticle(x,y,this));
 	}
 

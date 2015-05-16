@@ -20,6 +20,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
@@ -38,7 +39,7 @@ public class DrawPanel extends JPanel implements Runnable  {
 	// A vector is like an ArrayList a little bit slower but Thread-safe. This
 	// means that it can handle concurrent changes.
 	private Vector<User> users = new Vector<User>();
-	public Graphics2D g2;
+	public static Graphics2D g2;
 	//static Font font = new Font("Verdana", Font.BOLD, 20);
 	private Random r = new Random(); // randomize siffror
 	private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
@@ -47,7 +48,7 @@ public class DrawPanel extends JPanel implements Runnable  {
 	int WIDTH=1920,HEIGHT=1080;
 	 // mouse variable
 	public String changedWord = "word";
-	float offsetX,offsetY;
+	private float offsetX,offsetY,mouseX,mouseY,pMouseX,pMouseY;
 	boolean hold;
 	Word grabedWord;
 	// GrapicsConfig
@@ -67,64 +68,98 @@ public class DrawPanel extends JPanel implements Runnable  {
 		this.addMouseListener(new MouseAdapter() {
 	 
     public void mousePressed(MouseEvent e) {
-    	float mouseX=e.getX(),mouseY=e.getY();
+    	 mouseX=e.getX();
+    	 mouseY=e.getY();
       if (e.getButton() == MouseEvent.NOBUTTON) {
       	System.out.println(" no button clicked");
       } else if (e.getButton() == MouseEvent.BUTTON1) {
          	System.out.println(" left button clicked");
-      }/* else if (e.getButton() == MouseEvent.BUTTON2) {
+            for(Word w:words){
+          	  if(w.active){
+          		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
+          			grabedWord=w;
+          			grabedWord.grabed();
+          			offsetX=w.x-mouseX;
+          			offsetY=w.y-mouseY;
+          		 } 
+          	  }
+            }
+            overParticles.add( new RippleParticle((int)mouseX,(int)mouseY,40));
+      } else if (e.getButton() == MouseEvent.BUTTON2) {
          	System.out.println(" middle button clicked");
+         	  for(Word w:words){
+         		  w.respond();
+                 
+         	  }
+         	 overParticles.add( new RippleParticle((int)mouseX,(int)mouseY,200));
       } else if (e.getButton() == MouseEvent.BUTTON3) {
          	System.out.println(" right button clicked");
-      }*/
-      for(Word w:words){
-    	  if(w.active){
-    		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
-    			 grabedWord=w;
-    			grabedWord.grabed(DrawPanel.this);
-    		 } 
-    	  }
+         	for(Word w:words){
+            		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
+            			 if(w.active){w.disappear();}else{w.appear();}
+            		 } 
+            	  
+              }
       }
-      overParticles.add( new RippleParticle((int)mouseX,(int)mouseY,40));
+
      // System.out.println("Number of click: " + e.getClickCount());
     //  System.out.println("Click position (X, Y):  " + e.getX() + ", " + e.getY());
     }
  
     public void mouseReleased(MouseEvent e) {
+   	 mouseX=e.getX();
+   	 mouseY=e.getY();
 	        if (e.getButton() == MouseEvent.NOBUTTON) {
 	        	System.out.println(" no button Release");
 	        } else if (e.getButton() == MouseEvent.BUTTON1) {
+	        	  if(grabedWord != null){
+	  	        	grabedWord.released();
+	  	        	grabedWord=null;
+	  	        }
+	  	        overParticles.add( new RippleParticle((int)mouseX,(int)mouseY));
 	           	System.out.println(" left button Release");
-	        } /*else if (e.getButton() == MouseEvent.BUTTON2) {
+	        } else if (e.getButton() == MouseEvent.BUTTON2) {
 	           	System.out.println(" middle button Release");
-	        } else if (e.getButton() == MouseEvent.BUTTON3) {
+	        } /*else if (e.getButton() == MouseEvent.BUTTON3) {
 	           	System.out.println(" right button Release");
 	        }*/
-	        if(grabedWord != null){
-	        	grabedWord.released(DrawPanel.this);
-	        	grabedWord=null;
-	        }
-	        overParticles.add( new RippleParticle(e.getX(),e.getY()));
+	      
 	       // System.out.println("Number of click: " + e.getClickCount());
 	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
 	      }
   });
 this.addMouseMotionListener (new MouseMotionAdapter() {
-	   public void mouseDragged(MouseEvent e) {
-		   /* if (e.getButton() == MouseEvent.NOBUTTON) {
-	        	System.out.println(" no button Release");
-	        } else if (e.getButton() == MouseEvent.BUTTON1) {
-	           	System.out.println(" left button Release");
-	        } else if (e.getButton() == MouseEvent.BUTTON2) {
-	           	System.out.println(" middle button Release");
-	        } else if (e.getButton() == MouseEvent.BUTTON3) {
-	           	System.out.println(" right button Release");
+	   public void mouseDragged(MouseEvent ev) {
+	    	 mouseX=ev.getX();
+	    	 mouseY=ev.getY();
+		    /*if (ev.getButton() == MouseEvent.NOBUTTON) {
+	        	System.out.println(" no button dragged");
+	        } else if (ev.getButton() == MouseEvent.BUTTON1) {
+	        	System.out.println(" left button dragged");
+	        } else if (ev.getButton() == MouseEvent.BUTTON2) {
+	           	System.out.println(" middle button dragged");
+	        } else if (ev.getButton() == MouseEvent.BUTTON3) {
+	           	System.out.println(" right button dragged");
 	        }*/
-		   	if(grabedWord!=null){
-		   		grabedWord.x=e.getX();
-		   		grabedWord.y=e.getY();
-		   	}
-	        overParticles.add( new RippleParticle(e.getX(),e.getY(),20));
+           	
+		    if (SwingUtilities.isLeftMouseButton(ev)) {
+	        	System.out.println("left");
+	        	if(grabedWord!=null){
+			   		grabedWord.x=(int) (mouseX+offsetX);
+			   		grabedWord.y=(int) (mouseY+offsetY);
+          		//	offsetX=mouseX-w.x;
+          			//offsetY=mouseY-w.y;
+			   	}
+		        overParticles.add( new RippleParticle((int) mouseX,(int) mouseY,20));
+		    }
+		    if (SwingUtilities.isMiddleMouseButton(ev)) {
+	        	System.out.println("middle");
+		    }
+		    if (SwingUtilities.isRightMouseButton(ev)) {
+	        	System.out.println("right");
+		    }
+		    
+        	
 	       // System.out.println("Number of click: " + e.getClickCount());
 	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
 	      }
@@ -218,8 +253,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 					User user = new User(arg0.getKey(), x, y);
 					if (!users.contains(user)) {
 						users.add(user);
-						user.setColor(new Color(r.nextInt(255), r.nextInt(255),
-								r.nextInt(255)));
+						user.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
 					}
 				}
 			}
@@ -344,7 +378,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
-			words.add(new Word(regularWords[i]));
+			words.add(new Word(regularWords[i],DrawPanel.this));
 			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
 			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
 			count++;
@@ -359,7 +393,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		String[] themeWords = { "DNS", "floppy", "gamer", "geek", "tech","firewall", "router", "java", "code", "brainstorm", "laser" };
 		for (int i = 0; i < themeWords.length; i++) {
 			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
-			words.add(new Word(themeWords[i]));
+			words.add(new Word(themeWords[i],DrawPanel.this));
 			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
 			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
 			count++;
@@ -399,11 +433,11 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
-					words.get(index).appear(DrawPanel.this);
+					words.get(index).appear();
 					// words.get().active=true;
 				}else{
 					isActive = "false";
-					words.get(index).disappear(DrawPanel.this);
+					words.get(index).disappear();
 				}
 				System.out.println(index+" Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 				

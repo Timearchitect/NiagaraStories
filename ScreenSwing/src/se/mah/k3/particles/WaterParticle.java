@@ -36,10 +36,10 @@ public class WaterParticle extends Particle {
 		yDiff= _y-y;
 		dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
 		//dist=(float) Math.sqrt(Math.pow(xDiff,2)+Math.pow(yDiff,2));
-		if(dist-_radius<StrokeWidth){
-		vy*=(-1)*0.5;
-		vx=r.nextInt(10)-5;
-		}
+			if(dist-_radius<StrokeWidth){
+			vy*=(-1)*0.5;
+			vx=r.nextInt(10)-5;
+			}
 		
 	}
 	public void kill(){
