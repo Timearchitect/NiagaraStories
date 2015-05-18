@@ -3,6 +3,8 @@ package se.mah.k3;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
@@ -12,12 +14,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.io.IOException;
 
-public class FullScreen extends JFrame implements KeyEventDispatcher{
+public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener, MouseListener, MouseMotionListener {
 
 
-	private static DrawPanel panel;
+	public static DrawPanel panel;
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private boolean inFullScreenMode = false;
@@ -47,6 +57,16 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 	 * Create the frame.
 	 */
 	public FullScreen() {
+
+		try{
+		     Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
+		     Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(24f);
+		     Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(24f);
+			} catch (IOException e) {
+			    e.printStackTrace();
+			} catch (FontFormatException e) {
+				e.printStackTrace();
+			}
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -55,7 +75,8 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
 		contentPane.setLayout(new BorderLayout(0, 0));
 		//DrawPanel panel = new DrawPanel();
 		 panel = new DrawPanel();
-		 
+		 //panel.addMouseMotionListener(this);
+
 		//panel.setOpaque(false);
 		//panel.setBackground( new Color(255, 0, 0, 20) );
 		contentPane.add(panel, BorderLayout.CENTER);
@@ -109,6 +130,62 @@ public class FullScreen extends JFrame implements KeyEventDispatcher{
      		}
         }
         return false;
+	}
+
+
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		System.out.println(" x: "+getX() +"   y: " +getY());
+	}
+
+
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		System.out.println(" hej");
+	}
+
+
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		System.out.println(" hej");
+	}
+
+
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		System.out.println(" pressed "+e.getButton());
+	}
+
+
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		System.out.println(" released");
+	}
+
+
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		System.out.println("dragged"+" x: "+arg0.getX() +"   y: " +arg0.getY());
+	}
+
+
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		System.out.println(" move"+" x: "+arg0.getX() +"   y: " +arg0.getY());
+	}
+
+
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		System.out.println(" action");
 	}
 	
 	
