@@ -207,8 +207,8 @@ public class DrawPanel extends JPanel implements Runnable {
 			word.w = metrics.stringWidth(word.text);
 			word.h = metrics.getHeight();
 		}
-		//smooth font
 		
+		//smooth font
 		g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
 		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -358,12 +358,8 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
-<<<<<<< HEAD
-				//String isActive = "inactive";
-				String isActive = "";
-=======
+
 				String isActive = "active";
->>>>>>> branch 'master' of https://github.com/Timearchitect/NiagaraStories.git
 				changedWord = (String) snapshot.child("text").getValue().toString();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
