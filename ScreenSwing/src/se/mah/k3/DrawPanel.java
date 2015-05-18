@@ -431,6 +431,15 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 				int index=Integer.parseInt(s.substring(63));
 				
 				changedWord = (String) snapshot.child("text").getValue().toString();
+				if (snapshot.child("x").getValue() != null) {
+					words.get(index).x=(int) (Float.valueOf(snapshot.child("x").getValue().toString())*WIDTH);
+					System.out.println("x is written to "+ index + "  word "+words.get(index).x);
+
+				}
+				if (snapshot.child("y").getValue() != null) {
+					words.get(index).y=(int)  (Float.valueOf(snapshot.child("y").getValue().toString())*HEIGHT);
+					System.out.println("y is written to "+ index + "  word "+words.get(index).y);
+				}
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
 					words.get(index).appear();
@@ -441,15 +450,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 				}
 				System.out.println(index+" Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
 				
-				if (snapshot.child("x").getValue() != null) {
-					words.get(index).x=(int) (Float.valueOf(snapshot.child("x").getValue().toString())*WIDTH);
-					System.out.println("x is written to "+ index + "  word "+words.get(index).x);
 
-				}
-				if (snapshot.child("y").getValue() != null) {
-					words.get(index).y=(int)  (Float.valueOf(snapshot.child("y").getValue().toString())*HEIGHT);
-					System.out.println("y is written to "+ index + "  word "+words.get(index).y);
-				}
 				
 			}
 
