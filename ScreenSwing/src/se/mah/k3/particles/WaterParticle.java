@@ -5,8 +5,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
-public class WaterParticle extends Particle {
+import se.mah.k3.DrawPanel;
 
+public class WaterParticle extends Particle {
+	private Random r =  new Random();
 
 	public WaterParticle(int x2, int y2){
 		super(x2,y2);
@@ -28,6 +30,7 @@ public class WaterParticle extends Particle {
 		g2.setColor(particleColor);
 		g2.setStroke(squareStroke);
 		g2.drawLine((int)x,(int) y, (int)x, (int)(y-vy*2));
+		
 	}
 	
 	public void collisionCircle(int _x,int _y, int _radius){
@@ -43,6 +46,8 @@ public class WaterParticle extends Particle {
 		
 	}
 	public void kill(){
+		if((int)r.nextInt(20)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,(int)y)); //splash
 		dead=true;
+		
 	}
 }

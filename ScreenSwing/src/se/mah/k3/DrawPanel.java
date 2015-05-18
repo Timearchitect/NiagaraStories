@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
+import se.mah.k3.particles.SplashParticle;
 import se.mah.k3.particles.WaterParticle;
 
 import com.firebase.client.ChildEventListener;
@@ -94,6 +95,7 @@ public class DrawPanel extends JPanel implements Runnable  {
          	 overParticles.add( new RippleParticle((int)mouseX,(int)mouseY,200));
       } else if (e.getButton() == MouseEvent.BUTTON3) {
          	System.out.println(" right button clicked");
+         	overParticles.add(new SplashParticle((int)mouseX,(int)mouseY));
          	for(Word w:words){
             		 if(w.x+w.margin+w.w*0.5 > mouseX && w.x-w.margin-w.w*0.5<mouseX &&w.y+w.margin+w.h*0.5 > mouseY && w.y-w.margin-w.h*0.5<mouseY){
             			 if(w.active){w.disappear();}else{w.appear();}
@@ -328,8 +330,9 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 			for (Word word : words) {
 				if (word.active)particles.get(i).collisionCircle(word.x, word.y,word.margin);
 			}
-			if (particles.get(i).y > HEIGHT) {
-				particles.remove(i);
+			if (particles.get(i).y > HEIGHT ) {
+				particles.get(i).kill();
+				//particles.remove(i);
 			}
 			if(particles.get(i).dead)particles.remove(i);
 		
