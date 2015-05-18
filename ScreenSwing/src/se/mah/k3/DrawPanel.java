@@ -281,7 +281,6 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 			word.w = metrics.stringWidth(word.text);
 			word.h = metrics.getHeight();
 		}
-
 		//smooth font
 		g2.setRenderingHint(
 		        RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -412,7 +411,6 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 
 		// Adding a child event listener to the firebasewords ref, to check for
 		// active words
-
 		fireBaseWords.addChildEventListener(new ChildEventListener() {
 
 			@Override
