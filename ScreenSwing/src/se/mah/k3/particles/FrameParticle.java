@@ -14,8 +14,8 @@ public class FrameParticle extends Particle {
 		x=_x;
 		y=_y;
 		margin=_w.margin;
-		w=_w.w;
-		h=_w.h;
+		w=_w.width;
+		h=_w.height;
 		increment=_increment;
 	}
 
@@ -24,8 +24,8 @@ public class FrameParticle extends Particle {
 		x=_x;
 		y=_y;
 		margin=_w.margin;
-		w=_w.w;
-		h=_w.h;
+		w=_w.width;
+		h=_w.height;
 		increment=5;
 		}
 	public void update(){
