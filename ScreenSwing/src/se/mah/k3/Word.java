@@ -12,12 +12,13 @@ import se.mah.k3.particles.TextParticle;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word {
-	DrawPanel dp;
+	public enum State {onTray, hold, placed,locked};
+	State state=State.onTray;
 	public boolean active = true,grabed;
 	public String text = "";
 	public int x, y, w, h, margin = 10;
-	public Word(String text,DrawPanel _dp) {
-		dp=_dp;
+	public Word(String text) {
+	//	dp=_dp;
 		this.active = false;
 		this.text = text;
 	}
@@ -66,39 +67,38 @@ public class Word {
 		return active;
 	}
 	public void respond(){
-		dp.overParticles.add( new FrameParticle(x,y,this,0));
+		DrawPanel.overParticles.add( new FrameParticle(x,y,this,0));
 	}
 	public void appear(){
 		
-		dp.overParticles.add(new TextParticle(x,y,w,h,10,0,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,-10,0,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,5,0,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,-5,0,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,10,0,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,-10,0,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,5,0,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,-5,0,text));
 		active=true;
 	}
 	public void disappear(){
 		
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,10,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,5,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,2,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,10,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,5,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,2,text));
 		
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,0,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,0,text));
 		
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,-2,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,-5,text));
-		dp.overParticles.add(new TextParticle(x,y,w,h,0,-10,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,-2,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,-5,text));
+		DrawPanel.overParticles.add(new TextParticle(x,y,w,h,0,-10,text));
 		
 		active=false;
 		
 	}
 	
 	public void grabed(){
-		dp.overParticles.add( new FrameParticle(x,y,this,0));
+		DrawPanel.overParticles.add( new FrameParticle(x,y,this,0));
 	}
-
 	
 	public void released(){
-		dp.overParticles.add( new FrameParticle(x,y,this));
+		DrawPanel.overParticles.add( new FrameParticle(x,y,this));
 	}
 
 	public void display(Graphics2D g2) {
@@ -111,6 +111,11 @@ public class Word {
 	}
 
 	public void update() {
-		// TODO Auto-generated method stub
+		
 	}
+	
+	public int getState(){
+		return state.ordinal();
+	}
+	
 }

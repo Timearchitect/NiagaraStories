@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import se.mah.k3.Constants;
+import se.mah.k3.DrawPanel;
 
 public class TextParticle extends Particle {
 	private String text;
@@ -18,10 +19,10 @@ public class TextParticle extends Particle {
 		text=_text;
 	}
 
-	public void display(Graphics2D g2) {
-		g2.setFont(Constants.font);
-		g2.setColor(new Color(255,255,255,(int)opacity));
-		g2.drawString(text, (int)(x-w*0.5), (int)(y+ h * 0.25));
+	public void display() {
+		DrawPanel.g2.setFont(Constants.font);
+		DrawPanel.g2.setColor(new Color(255,255,255,(int)opacity));
+		DrawPanel.g2.drawString(text, (int)(x-w*0.5), (int)(y+ h * 0.25));
 	}
 	public void update(){
 		x+=vx;

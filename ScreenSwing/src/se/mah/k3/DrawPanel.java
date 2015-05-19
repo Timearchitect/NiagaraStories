@@ -48,10 +48,11 @@ public class DrawPanel extends JPanel implements Runnable  {
 	public static int myFrame; 
 	int WIDTH=1920,HEIGHT=1080;
 	 // mouse variable
+	Word grabedWord;
 	public String changedWord = "word";
 	private float offsetX,offsetY,mouseX,mouseY,pMouseX,pMouseY;
 	boolean hold;
-	Word grabedWord;
+	boolean onesRun=true;
 	// GrapicsConfig
     private GraphicsConfiguration config =
     		GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -63,7 +64,20 @@ public class DrawPanel extends JPanel implements Runnable  {
     	return config.createCompatibleImage(width, height, alpha
     			? Transparency.TRANSLUCENT : Transparency.OPAQUE);
     }
-    
+    public void setup(){
+    	WIDTH = (int) getSize().width;
+		HEIGHT = (int) getSize().height;
+		FontMetrics metrics = g2.getFontMetrics(Constants.font);
+		for (Word word : words) { // ini words height
+			word.w = metrics.stringWidth(word.text);
+			word.h = metrics.getHeight();
+		}
+		//smooth font
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    	onesRun=false;
+    }
 
 	public DrawPanel() {
 		this.addMouseListener(new MouseAdapter() {
@@ -90,7 +104,6 @@ public class DrawPanel extends JPanel implements Runnable  {
          	System.out.println(" middle button clicked");
          	  for(Word w:words){
          		  w.respond();
-                 
          	  }
          	 overParticles.add( new RippleParticle((int)mouseX,(int)mouseY,200));
       } else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -162,8 +175,6 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		    }
 		    
         	
-	       // System.out.println("Number of click: " + e.getClickCount());
-	       // System.out.println("Release position (X, Y):  " + e.getX() + ", " + e.getY());
 	      }
 });
 		// myFirebaseRef = new Firebase("https://blinding-heat-7399.firebaseio.com/"); // mattias/Lars
@@ -183,31 +194,10 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 
 		// use method getText from the word class to set text to "word1" in the
 		// firebase db.
-// myFirebaseRef.child("Word1").setValue(w.getText());
-		// myFirebaseRef.child("Word1").addListenerForSingleValueEvent(new
-		// ValueEventListener() {
-
-/*		myFirebaseRef.child("Word1").addValueEventListener(
-				new ValueEventListener() {
-					@Override
-					public void onDataChange(DataSnapshot snapshot) {
-						System.out.println(snapshot.getValue());
-						w.setText(snapshot.getValue().toString());
-
-						if (snapshot.getKey().equals("Active")) {
-							w.active = Boolean.parseBoolean((String) snapshot
-									.getValue());
-							System.out.println(snapshot.getValue());
-						}
-
-					}
-
-					@Override
-					public void onCancelled(FirebaseError firebaseError) {
-					}
-				});
-*/
 		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("ScreenWidth").setValue(1000); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("ScreenHeight").setValue(800); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {
@@ -250,8 +240,8 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 					// System.out.println("ADD user with Key: "+arg1+
 					// arg0.getKey());
 					// Random r = new Random();
-					int x = r.nextInt(getSize().width + 1); // spawn
-					int y = r.nextInt(getSize().height + 1);
+					int x = r.nextInt(getSize().width+1 ); // spawn
+					int y = r.nextInt(getSize().height+1);
 					User user = new User(arg0.getKey(), x, y);
 					if (!users.contains(user)) {
 						users.add(user);
@@ -271,26 +261,12 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 	// Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
-		WIDTH = (int) getSize().width+ 1;
-		HEIGHT = (int) getSize().height+ 1;
-
 		g2 = (Graphics2D) g; // grafik object beh�vs f�r at // canvas ska paint p�
-		g2.drawImage(bg, 0, 0, WIDTH , HEIGHT , this);
-		FontMetrics metrics = g2.getFontMetrics(Constants.font);
-		/*w.w = metrics.stringWidth(w.text);
-		w.h = metrics.getHeight();*/
-		for (Word word : words) {
-			word.w = metrics.stringWidth(word.text);
-			word.h = metrics.getHeight();
-		}
-		//smooth font
-		g2.setRenderingHint(
-		        RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		
+		if(onesRun)setup();
 		// get the advance of my text in this font
 		// and render context
-
+		
+		g2.drawImage(bg, 0, 0, WIDTH , HEIGHT , this); 
 		for(int i=0;i<8;i++){
 			 particles.add(new WaterParticle((int)r.nextInt(WIDTH),0)); 
 		}
@@ -301,6 +277,13 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		// set Transparency level from 0.0f - 1.0f
 		// g2d.drawImage(bg, 0, 0, null);
 		// bg = tmpImg;
+		//		
+		//		 Image image= new BufferedImage(width,height,BufferedImage.TYPE_INT_ARGB);
+		//		// Graphics g = image.getGraphics();
+		//		 //if( g instanceof Graphics2D ){
+		//		 //Graphics2D g2 = (Graphics2D) g;
+		//		g2.drawImage(bg, 0, 0, null);
+		//		 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN, 0.2f));
 
 		/*for (User user : users) {
 			int x = (int) (user.getxRel() * WIDTH); // skalad x pos
@@ -321,7 +304,6 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 			g2.setColor(Color.BLACK);
 			g2.drawString(w.getText(), x, y);
 			g.drawString(user.getId(), x + 15, y + 15);
-
 		}*/
 
 		for (int i = particles.size()-1; 0<i ; i--) {  // run all particles
@@ -332,11 +314,9 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 			}
 			if (particles.get(i).y > HEIGHT ) {
 				particles.get(i).kill();
-				//particles.remove(i);
 			}
 			if(particles.get(i).dead)particles.remove(i);
 		
-	
 		}
 
 		for (Word word : words) {
@@ -351,11 +331,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 			overParticles.get(i).display(g2);
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
-		
-		g2.setColor(Color.BLACK); // svart system color
-		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
-
+		displayDebugText();
 	}
 
 	public void run() { // threading
@@ -381,9 +357,9 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
-			words.add(new Word(regularWords[i],DrawPanel.this));
-			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
-			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
+			words.add(new Word(regularWords[i]));
+			words.get(words.size() - 1).x = r.nextInt(WIDTH); // skalad x pos
+			words.get(words.size() - 1).y = r.nextInt(HEIGHT); // skalad y pos
 			count++;
 		
 		}
@@ -396,9 +372,9 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		String[] themeWords = { "DNS", "floppy", "gamer", "geek", "tech","firewall", "router", "java", "code", "brainstorm", "laser" };
 		for (int i = 0; i < themeWords.length; i++) {
 			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
-			words.add(new Word(themeWords[i],DrawPanel.this));
-			words.get(words.size() - 1).x = r.nextInt(WIDTH+1); // skalad x pos
-			words.get(words.size() - 1).y = r.nextInt(HEIGHT+1); // skalad y pos
+			words.add(new Word(themeWords[i]));
+			words.get(words.size() - 1).x = r.nextInt(WIDTH); // skalad x pos
+			words.get(words.size() - 1).y = r.nextInt(HEIGHT); // skalad y pos
 			count++;
 		}
 		myFirebaseRef.child("Themed Words Size").setValue(count);
@@ -436,7 +412,6 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 				if (snapshot.child("x").getValue() != null) {
 					words.get(index).x=(int) (Float.valueOf(snapshot.child("x").getValue().toString())*WIDTH);
 					System.out.println("x is written to "+ index + "  word "+words.get(index).x);
-
 				}
 				if (snapshot.child("y").getValue() != null) {
 					words.get(index).y=(int)  (Float.valueOf(snapshot.child("y").getValue().toString())*HEIGHT);
@@ -451,9 +426,6 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 					words.get(index).disappear();
 				}
 				System.out.println(index+" Change in child! The word " + "\""+ changedWord + "\"" + " is now " + isActive);
-				
-
-				
 			}
 
 			@Override
@@ -468,6 +440,12 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 
 	}
 
+	
+	public void displayDebugText(){
+		g2.setColor(Color.BLACK); // svart system color
+		g2.setFont(Constants.boldFont); // init typsnitt
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
+	}
 
 
 }
