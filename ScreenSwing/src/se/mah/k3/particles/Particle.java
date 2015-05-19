@@ -47,4 +47,9 @@ public abstract class Particle {
 	public void kill(){
 		dead=true;
 	}
+
+	public void collisionVSParticle(Particle p) {
+	
+		
+	}
 }

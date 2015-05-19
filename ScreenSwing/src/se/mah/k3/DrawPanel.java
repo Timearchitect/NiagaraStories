@@ -1,5 +1,6 @@
 package se.mah.k3;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -14,11 +15,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -43,7 +47,8 @@ public class DrawPanel extends JPanel implements Runnable  {
 	public static Graphics2D g2;
 	//static Font font = new Font("Verdana", Font.BOLD, 20);
 	private Random r = new Random(); // randomize siffror
-	private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
+	private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.bmp");
+	public static BufferedImage bimage,mist;
 	// private Color backgroundColor =new Color(255,255,255,10);
 	public static int myFrame; 
 	int WIDTH=1920,HEIGHT=1080;
@@ -80,6 +85,14 @@ public class DrawPanel extends JPanel implements Runnable  {
     }
 
 	public DrawPanel() {
+         bimage = null;
+        try {
+        	bimage = ImageIO.read(new File("images/background.bmp"));
+        	mist = ImageIO.read(new File("images/mist.png"));
+            System.out.println("yo");
+        } catch (IOException e) {
+        		System.out.println("no");
+        }
 		this.addMouseListener(new MouseAdapter() {
 	 
     public void mousePressed(MouseEvent e) {
@@ -265,8 +278,10 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		if(onesRun)setup();
 		// get the advance of my text in this font
 		// and render context
-		
-		g2.drawImage(bg, 0, 0, WIDTH , HEIGHT , this); 
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
+		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
+			g2.drawImage(bimage, 0, 0, WIDTH , HEIGHT , this); 
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 		for(int i=0;i<8;i++){
 			 particles.add(new WaterParticle((int)r.nextInt(WIDTH),0)); 
 		}
@@ -285,6 +300,19 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		//		g2.drawImage(bg, 0, 0, null);
 		//		 g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN, 0.2f));
 
+		
+		 // Creates a background BufferedImage with an Alpha layer so that AlphaCompositing works
+      //  BufferedImage bg2 = new BufferedImage (WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        
+        // Sets AlphaComposite to type SRC_OUT with a transparency of 100%
+            // Convert BufferedImage to G2D. Effects applied to G2D are applied to the original BufferedImage automatically.
+
+        // Applies the compositing effect to the following fill
+       // g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OUT, 1.0f));
+
+        // Draws the imported image (j) into the background BufferedImage (bg).
+      //  g2.drawImage(bg2, 0, 0, null);
+		
 		/*for (User user : users) {
 			int x = (int) (user.getxRel() * WIDTH); // skalad x pos
 			int y = (int) (user.getyRel() * HEIGHT); // skalad y pos
@@ -329,6 +357,9 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		for (int i = overParticles.size()-1; 0 <i ; i--) { // run all overparticles
 			overParticles.get(i).update();
 			overParticles.get(i).display(g2);
+			for(Particle p:particles){
+				overParticles.get(i).collisionVSParticle(p);
+			}
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
 		displayDebugText();
@@ -339,7 +370,7 @@ this.addMouseMotionListener (new MouseMotionAdapter() {
 		while (true) {
 			try {
 				repaint(); // repaint()
-				Thread.sleep(2);
+				Thread.sleep(20);
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
 			}

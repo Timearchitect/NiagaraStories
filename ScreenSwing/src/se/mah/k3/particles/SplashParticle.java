@@ -13,17 +13,21 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import se.mah.k3.DrawPanel;
+
 public class SplashParticle extends Particle {
-	private Image img;
+	//private Image img;
 	Random r = new Random();
 	private float angle,opacity=1;
 	private int w,h;
 	private AffineTransform tx = new AffineTransform(),oldTransform;
 	public SplashParticle(int _x, int _y) {
 		super(_x,_y);
-		 img = Toolkit.getDefaultToolkit().getImage("images/mist.png");
-		 w=img.getWidth(null);
-		 h=img.getHeight(null);
+		 //img = Toolkit.getDefaultToolkit().getImage("images/mist.png");
+		 //w=img.getWidth(null);
+		 //h=img.getHeight(null);
+			w=200;
+			h=200;
 		 angle= r.nextInt(360);
 	}
 	public void update(){
@@ -54,7 +58,7 @@ public class SplashParticle extends Particle {
 				g2.translate(x,y);
 				g2.rotate(Math.toRadians(angle));
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)opacity));
-					g2.drawImage(img, (int)-(w*0.5), (int)-(h*0.5), w, h, null);
+					g2.drawImage(DrawPanel.mist, (int)-(w*0.5), (int)-(h*0.5), w, h, null);
 			g2.setTransform(oldTransform);
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 					  
