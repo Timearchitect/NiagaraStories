@@ -10,10 +10,10 @@ import se.mah.k3.Constants;
 public abstract class Particle {
 		public float x,y,vx,vy,ax,ay;
 		public boolean dead;
-		protected int StrokeWidth=40;
+		protected int StrokeWidth=10;
 		protected Color particleColor= Constants.waterColor;
 		protected Random r= new Random();
-		protected BasicStroke squareStroke = new BasicStroke(StrokeWidth, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+		protected BasicStroke squareStroke = new BasicStroke(StrokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	public Particle(int x2, int y2){
 		x=x2;
 		y=y2;

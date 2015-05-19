@@ -15,9 +15,10 @@ public class Word {
 	public String text = "";
 	public int xPos, yPos, width, height, margin = 10;
 	
-	public Word(String _text, DrawPanel _drawPanel) {
+	public Word(String _text, DrawPanel _drawPanel, String _owner) {
 		this.text = _text;
 		this.drawPanel = _drawPanel;
+		this.owner = _owner;
 		this.active = false;
 	}
 	
