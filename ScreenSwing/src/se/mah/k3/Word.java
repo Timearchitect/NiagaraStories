@@ -10,18 +10,33 @@ import se.mah.k3.particles.TextParticle;
 
 public class Word {
 	DrawPanel drawPanel;
+	public String type="";
 	public boolean active = true, selected;
-	public String owner = "";
+	public String ownerId = "";
+	public User owner;
 	public enum State {onTray, hold, placed,locked};
 	State state=State.onTray;
 	public String text = "";
-	public int xPos, yPos, width, height, margin = 10;
+	public int xPos, yPos,txPos,tyPos, width, height, margin = 10;
 	
-	public Word(String _text, DrawPanel _drawPanel, String _owner) {
+	public Word(String _text, DrawPanel _drawPanel, String _ownerId) {
 		this.text = _text;
 		this.drawPanel = _drawPanel;
-		this.owner = _owner;
+		this.ownerId = _ownerId;
 		this.active = false;
+		
+	}
+	
+	public void setUser(User _u){ 
+		if(!owner.equals(_u)){
+			owner=_u;
+			ownerId=_u.getId();
+		}
+	}
+	
+	public User getUser(){
+		return owner;
+		
 	}
 	
 	public String getText(){
@@ -68,12 +83,12 @@ public class Word {
 		return active;
 	}
 	
-	public void setOwner(String _owner){
-		this.owner = _owner;
+	public void setOwner(String _ownerId){
+		this.ownerId = _ownerId;
 	}
 	
 	public String getOwner(){
-		return owner;
+		return ownerId;
 	}
 	
 	public void respond(){
@@ -118,10 +133,16 @@ public class Word {
 	}
 	
 	public void update() {
-		
+		//txPos=Math.cos(angle);
+		//tyPos=Math.sin(angle);
 	}
 	
 	public int getState(){
 		return state.ordinal();
 	}	
+	
+	public void setState(int i){
+		//state= i;
+	}	
+	
 }

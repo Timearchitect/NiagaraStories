@@ -38,7 +38,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	// A vector is like an ArrayList a little bit slower but Thread-safe. This
 	// means that it can handle concurrent changes.
-	private ArrayList<User> userList = new ArrayList<User>();
+	private static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
 	//private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.bmp");
@@ -80,11 +80,10 @@ public class DrawPanel extends JPanel implements Runnable {
     }
     
 	public DrawPanel() {
-         bimage = null;
+    //     bimage = null;
         try {
         	bimage = ImageIO.read(new File("images/background.bmp"));
         	mist = ImageIO.read(new File("images/mist.png"));
-            System.out.println("yo");
         } catch (IOException e) {
         		System.out.println("no");
         }
@@ -160,10 +159,9 @@ public class DrawPanel extends JPanel implements Runnable {
 					}
 
 					overParticles.add( new RippleParticle((int)mouseX,(int)mouseY));
-					//System.out.println(" left button Release");
+
 
 				} else if (e.getButton() == MouseEvent.BUTTON2) {
-					//System.out.println(" middle button Release");
 				}
 			}
 		});
@@ -184,11 +182,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 
 				if (SwingUtilities.isMiddleMouseButton(ev)) {
-					//System.out.println("middle");
+
 				}
 
 				if (SwingUtilities.isRightMouseButton(ev)) {
-					//System.out.println("right");
+
 				}
 			}
 		});
@@ -229,13 +227,14 @@ public class DrawPanel extends JPanel implements Runnable {
 					
 				for (DataSnapshot dataSnapshot : dsList) {
 					User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
-					
+
 					for(User ul:userList){
-							if(ul.getId().equals(u.getId())){ 
-								ul.xPos = u.xPos;
-								ul.yPos = u.yPos;
+							if(ul.getId().equals(u.getId())){ // check if it has the same ID
+								//ul.xTar = u.xPos;
+								//ul.yTar = u.yPos;
+								ul.xTar = u.xTar;
+								ul.yTar = u.yTar;
 								u=null;
-								System.out.println("update user" + ul.xPos);
 							}
 						}	
 				
@@ -316,7 +315,10 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.get(i).display(g2);
 
 			for (Word word : words) {
-				if (word.active)particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
+				if (word.active){
+					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
+					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
+					}
 			}
 
 			if (particles.get(i).y > Constants.screenHeight ) {
@@ -345,33 +347,21 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		for (User user : userList) {
-			int x = (int) (user.getxPos() * Constants.screenWidth); // skalad x pos
-			int y = (int) (user.getyPos() * Constants.screenHeight); // skalad y pos
-			//int x2;
-			//int y2;
-
-			g2.setColor(user.getColor());
-			g2.fillOval(x - 50, y - 50, 100, 100);
-
-			//x2 = (int) (user.getxPos() * Constants.screenWidth);
-			//y2 = (int) (user.getyPos() * Constants.screenHeight);
-			//g2.setColor(Color.BLUE);
-			//g2.fillOval(x2 - 25, y2 - 25, 50, 50);
-			//user.setpxRel(user.getxPos());
-			//user.setpyRel(user.getyPos());
-
-			g2.setColor(Color.BLACK);
-			g.drawString(user.getId(), x + 15, y + 15);
+			int x = user.getxPos(); // skalad x pos
+			int y = user.getyPos() ; // skalad y pos
+			user.update();
+			user.display(g2);
 		}
 		
-displayDebugText();
+		displayDebugText();
 	}
 
 	public void run() { // threading
 		while (true) {
 			try {
 				repaint(); // repaint()
-				Thread.sleep(10);
+				Thread.sleep(20);
+				
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
 			}
@@ -492,14 +482,14 @@ displayDebugText();
 				word = (String) snapshot.child("text").getValue().toString();
 
 				if (snapshot.child("x").getValue() != null) {
-					words.get(index).xPos=(int) (Float.valueOf(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
-					//System.out.println("x is written to "+ index + "  word "+words.get(index).xPos);
+					words.get(index).xPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
+					System.out.println("x is written to "+ index + "  word "+words.get(index).xPos);
 
 				}
-
+				
 				if (snapshot.child("y").getValue() != null) {
-					words.get(index).yPos=(int)  (Float.valueOf(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
-					//System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
+					words.get(index).yPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
+					System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
 				}
 
 				if (snapshot.child("Active").getValue().toString() == "true") {

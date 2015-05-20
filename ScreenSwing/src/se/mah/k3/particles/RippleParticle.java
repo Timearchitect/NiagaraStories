@@ -12,14 +12,14 @@ public class RippleParticle extends Particle{
 	BasicStroke circleStroke;
 	Graphics2D g2;
 	public RippleParticle(int _x, int _y,int _increment){
-		super((int)_x,(int)_y);
+		super(_x,_y);
 		x=_x;
 		y=_y;
 		increment=_increment;
 	}
 
 	public RippleParticle(int _x, int _y) {
-		super((int)_x,(int)_y);
+		super(_x,_y);
 		x=_x;
 		y=_y;
 		increment=50;
@@ -52,8 +52,8 @@ public class RippleParticle extends Particle{
 			if(dist<r*0.5){
 				//p.vx=0;
 				//p.vy=0;
-				p.vx-=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
-				p.vy+=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
+				p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
+				p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
 			}
 		
 		
