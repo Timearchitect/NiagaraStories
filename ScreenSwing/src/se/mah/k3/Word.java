@@ -12,6 +12,8 @@ public class Word {
 	DrawPanel drawPanel;
 	public boolean active = true, selected;
 	public String owner = "";
+	public enum State {onTray, hold, placed,locked};
+	State state=State.onTray;
 	public String text = "";
 	public int xPos, yPos, width, height, margin = 10;
 	
@@ -83,7 +85,7 @@ public class Word {
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (- margin), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (margin * 0.5), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (- margin * 0.5), 0, text));
-		
+
 		active=true;
 	}
 	
@@ -109,13 +111,17 @@ public class Word {
 
 	public void display() {
 		DrawPanel.g2.setColor(Constants.wordBackground);
-		DrawPanel.g2.fillRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height / 2) - margin / 2), width + margin * 2, height + 6);
+		DrawPanel.g2.fillRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
-		DrawPanel.g2.drawString(text, (int) (xPos - width / 2),(int) (yPos + height / 2));
+		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));
 	}
 	
 	public void update() {
-		// TODO Auto-generated method stub
+		
 	}
+	
+	public int getState(){
+		return state.ordinal();
+	}	
 }

@@ -34,6 +34,13 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	/**
 	 * Launch the application.
 	 */
+	static {
+	    System.setProperty("sun.java2d.transaccel", "True");
+	    // System.setProperty("sun.java2d.trace", "timestamp,log,count");
+	    System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
+	    System.setProperty("sun.java2d.d3d", "True");
+	    System.setProperty("sun.java2d.ddforcevram", "True");
+	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -73,6 +80,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		contentPane.setLayout(new BorderLayout(0, 0));
 		//DrawPanel panel = new DrawPanel();
 		 panel = new DrawPanel();
+	
 		 //panel.addMouseMotionListener(this);
 
 		//panel.setOpaque(false);

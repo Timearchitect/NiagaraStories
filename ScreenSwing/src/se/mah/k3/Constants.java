@@ -6,6 +6,7 @@ import java.awt.Font;
  public class Constants {
 	public static Font font,lightFont,boldFont ;
 	public static int screenNbr=145;
+	
 	public static String wordBg = "#009688";
 	public static String waterC = "#90caf9";
 	public static Color wordBackground = (hexToRgb(wordBg));

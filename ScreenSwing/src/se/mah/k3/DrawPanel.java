@@ -1,5 +1,6 @@
 package se.mah.k3;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -14,11 +15,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
-import java.util.Vector;
-
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -37,38 +38,62 @@ public class DrawPanel extends JPanel implements Runnable {
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	// A vector is like an ArrayList a little bit slower but Thread-safe. This
 	// means that it can handle concurrent changes.
-	//private Vector<User> users = new Vector<User>();
 	private ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
-	private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.png");
-	private float offsetX, offsetY, mouseX, mouseY; // mouse variable
+	public static Graphics2D g2;
+	//private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.bmp");
+	public static BufferedImage bimage, mist;
+	public static int myFrame; 
+	 // mouse variable
+	public String changedWord = "word";
+	private float offsetX,offsetY,mouseX,mouseY,pMouseX,pMouseY;
 	boolean hold;
 	Word selectedWord;
 	public static ArrayList<Particle> particles = new ArrayList<Particle>(), overParticles = new ArrayList<Particle>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
-	public static Graphics2D g2;
-	public static int myFrame;
 	User user;
-
-	// GrapicsConfig
-	private GraphicsConfiguration config =
-			GraphicsEnvironment.getLocalGraphicsEnvironment()
-			.getDefaultScreenDevice()
-			.getDefaultConfiguration();
-
-	// create a hardware accelerated image
-	public final BufferedImage create(final int width, final int height,
-			final boolean alpha) {
-		return config.createCompatibleImage(width, height, alpha
-				? Transparency.TRANSLUCENT : Transparency.OPAQUE);
-	}
-
+	boolean onesRun=true;
+	
+    private GraphicsConfiguration config =
+    		GraphicsEnvironment.getLocalGraphicsEnvironment()
+    			.getDefaultScreenDevice()
+    			.getDefaultConfiguration();
+	   // create a hardware accelerated image
+    public final BufferedImage create(final int width, final int height,
+    		final boolean alpha) {
+    	return config.createCompatibleImage(width, height, alpha
+    			? Transparency.TRANSLUCENT : Transparency.OPAQUE);
+    }
+    public void setup(){
+    	Constants.screenWidth = (int) getSize().width;
+		Constants.screenHeight = (int) getSize().height;
+		FontMetrics metrics = g2.getFontMetrics(Constants.font);
+		for (Word word : words) { // ini words height
+			word.width = metrics.stringWidth(word.text);
+			word.height = metrics.getHeight();
+		}
+		//smooth font
+		g2.setRenderingHint(
+		        RenderingHints.KEY_TEXT_ANTIALIASING,
+		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    	onesRun=false;
+    }
+    
 	public DrawPanel() {
+         bimage = null;
+        try {
+        	bimage = ImageIO.read(new File("images/background.bmp"));
+        	mist = ImageIO.read(new File("images/mist.png"));
+            System.out.println("yo");
+        } catch (IOException e) {
+        		System.out.println("no");
+        }
 		this.addMouseListener(new MouseAdapter() {
+
 			public void mousePressed(MouseEvent e) {
 				mouseX= e.getX();
 				mouseY= e.getY();
-
+				
 				if (e.getButton() == MouseEvent.NOBUTTON) {
 					//System.out.println(" no button clicked");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
@@ -179,8 +204,11 @@ public class DrawPanel extends JPanel implements Runnable {
 		// Run method that listens for change in word list (active words for example).
 		wordListener();
 
-		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);
-
+		// use method getText from the word class to set text to "word1" in the
+		// firebase db.
+		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("ScreenWidth").setValue(1000); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("ScreenHeight").setValue(800); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 
 			@Override
@@ -246,6 +274,18 @@ public class DrawPanel extends JPanel implements Runnable {
 			// Add user
 			@Override
 			public void onChildAdded(DataSnapshot arg0, String arg1) {
+				/*if (arg0.hasChildren()) {
+					// System.out.println("ADD user with Key: "+arg1+
+					// arg0.getKey());
+					// Random r = new Random();
+					int x = r.nextInt(getSize().width+1 ); // spawn
+					int y = r.nextInt(getSize().height+1);
+					User user = new User(arg0.getKey(), x, y);
+					if (!users.contains(user)) {
+						users.add(user);
+						user.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
+					}
+				}*/
 			}
 
 			@Override
@@ -257,26 +297,16 @@ public class DrawPanel extends JPanel implements Runnable {
 	// Called when the screen needs a repaint.
 	@Override
 	public void paint(Graphics g) {
-		Constants.screenWidth = (int) getSize().width;
-		Constants.screenHeight = (int) getSize().height;
-
-		g2 = (Graphics2D) g; // graphics object needed for canvas to paint
-		g2.drawImage(bg, 0, 0, Constants.screenWidth, Constants.screenHeight, this);
-		FontMetrics metrics = g2.getFontMetrics(Constants.font);
-
-		for (Word word : words) {
-			word.width = metrics.stringWidth(word.text);
-			word.height = metrics.getHeight();
-		}
-
-		//smooth font
-		g2.setRenderingHint(
-				RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
+		g2 = (Graphics2D) g; // grafik object beh�vs f�r at // canvas ska paint p�
+		if(onesRun)setup();
 		// get the advance of my text in this font
 		// and render context
 
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
+		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
+			g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
+		
 		for(int i = 0; i < 8; i++) {
 			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
 		}
@@ -307,6 +337,10 @@ public class DrawPanel extends JPanel implements Runnable {
 			overParticles.get(i).update();
 			overParticles.get(i).display(g2);
 
+			for(Particle p:particles){
+				overParticles.get(i).collisionVSParticle(p);
+			}
+			
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
 
@@ -330,16 +364,14 @@ public class DrawPanel extends JPanel implements Runnable {
 			g.drawString(user.getId(), x + 15, y + 15);
 		}
 		
-		g2.setColor(Color.BLACK);
-		g2.setFont(Constants.boldFont); // Initialize font
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
+displayDebugText();
 	}
 
 	public void run() { // threading
 		while (true) {
 			try {
 				repaint(); // repaint()
-				Thread.sleep(2);
+				Thread.sleep(10);
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
 			}
@@ -391,6 +423,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			words.add(new Word(regularWords[i],DrawPanel.this, null));
 			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
+			
 			count++;
 		}
 
@@ -423,6 +456,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			words.add(new Word(themeWords[i],DrawPanel.this, null));
 			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
+
 			count++;
 		}
 
@@ -460,6 +494,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				if (snapshot.child("x").getValue() != null) {
 					words.get(index).xPos=(int) (Float.valueOf(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
 					//System.out.println("x is written to "+ index + "  word "+words.get(index).xPos);
+
 				}
 
 				if (snapshot.child("y").getValue() != null) {
@@ -491,5 +526,11 @@ public class DrawPanel extends JPanel implements Runnable {
 			public void onCancelled(FirebaseError arg0) {
 			}
 		});
+	}
+
+	public void displayDebugText(){
+		g2.setColor(Color.BLACK); // svart system color
+		g2.setFont(Constants.boldFont); // init typsnitt
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
 	}
 }
