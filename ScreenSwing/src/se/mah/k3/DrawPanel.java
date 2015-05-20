@@ -234,6 +234,14 @@ public class DrawPanel extends JPanel implements Runnable {
 								//ul.yTar = u.yPos;
 								ul.xTar = u.xTar;
 								ul.yTar = u.yTar;
+								switch (dataSnapshot.child("state").getValue().toString()){
+									case "taping":
+										ul.state=User.State.taping;
+									break;
+									case "online":
+										ul.state=User.State.online;
+									break;
+								}
 								u=null;
 							}
 						}	

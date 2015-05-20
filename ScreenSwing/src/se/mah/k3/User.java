@@ -3,9 +3,11 @@ package se.mah.k3;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import se.mah.k3.particles.RippleParticle;
+
 public class User implements Comparable<User>{
-    public enum State {online,offline, holding,taping,idle};
-    State state=State.online;
+    public enum State {offline,online, holding,taping,droping,idle};
+    public State state=State.online;
 	final int DEFAULT_SIZE=100 ;
 	private String id;
 	int xPos, pyPos;
@@ -98,6 +100,7 @@ public class User implements Comparable<User>{
 	}
 	public void update(){
 		float xTdiff=xPos-xTar, yTdiff=yPos-yTar;
+
 		//float aDiff=angle-tAngle;
 		//tAngle=(float) Math.toDegrees(Math.atan2(yTdiff, xTdiff));
 		//angle-=(float) (aDiff*0.1);
@@ -109,5 +112,26 @@ public class User implements Comparable<User>{
 		pxPos=xPos;
 		pyPos=yPos;
 		pAngle=angle;
+		
+		switch(state.ordinal()){
+			case 0: // offline
+				
+			break;
+			case 1: // online
+				
+			break;
+			case 2: // hold
+				
+			break;
+			 case 3: 
+				 if(xTdiff<100 && yTdiff<100)taping();
+				// System.out.println("taping");
+			 break;
+		}
+	}
+	public void taping(){
+		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos));
+		state=User.State.online;
+			
 	}
 }
