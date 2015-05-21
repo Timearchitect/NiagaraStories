@@ -8,7 +8,10 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Toolkit;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -48,6 +51,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 					FullScreen frame = new FullScreen();
 					frame.setVisible(true);
 				    gameLoop(); // start the game loop
+				    frame.setIconImage(ImageIO.read(new File("assets/icon/icontiny.png")));
 				    
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,7 +66,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 * Create the frame.
 	 */
 	public FullScreen() {
-
+		
 		try{
 		     Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(24f);
 		     Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(24f);
