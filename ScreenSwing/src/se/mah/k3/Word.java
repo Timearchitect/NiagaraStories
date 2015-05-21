@@ -14,7 +14,7 @@ public class Word {
 	public boolean active = true, selected;
 	public String ownerId = "";
 	public User owner;
-	public enum State {onTray, hold, placed,locked};
+	public enum State {onTray, draging, placed,locked};
 	State state=State.onTray;
 	public String text = "";
 	public int xPos, yPos,txPos,tyPos, width, height, margin = 10;
@@ -84,6 +84,12 @@ public class Word {
 	
 	public void setOwner(String _ownerId){
 		this.ownerId = _ownerId;
+		for(User u: DrawPanel.userList){
+			if(u.getId().equals(this.getOwner())){
+				owner=u;
+			System.out.println("owner setted");
+			}
+		}
 	}
 
 	public String getOwner(){
@@ -126,13 +132,9 @@ public class Word {
 	public void display() {
 		
 		
-		if (ownerId != "false") {
+		if ( owner!=null && ownerId != "false") {
 			//DrawPanel.g2.setColor(Constants.wordStroke);
-			for(User u: DrawPanel.userList){
-				if(u.getId().equals(this.getOwner())){
-					DrawPanel.g2.setColor(u.getColor());
-				}
-			}
+			DrawPanel.g2.setColor(owner.getColor());
 		}else {
 			DrawPanel.g2.setColor(Constants.wordStroke);
 		}

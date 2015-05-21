@@ -461,18 +461,48 @@ public class DrawPanel extends JPanel implements Runnable {
 					words.get(index).yPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
 					System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
 				}
+				
+				if (snapshot.child("State").getValue() != null) {
+					System.out.println("State stuff");
+					User u = null;
+					if(words.get(index).getUser()!=null)  u=words.get(index).getUser();
+					switch(snapshot.child("State").getValue().toString()){
+						case "placed":
+						//	words.get(index).released();
+							words.get(index).setState(1);
+							System.out.println("placed");
+							words.get(index).appear();
+						break;
+						case "draging":
+							words.get(index).setState(2);
+							u.xTar=words.get(index).xPos;
+							u.yTar=words.get(index).yPos;
+							u.xPos=words.get(index).xPos;
+							u.yPos=words.get(index).yPos;
+							System.out.println("dragging");
 
+						break;
+						case "onTray":
+							words.get(index).setState(0);
+							System.out.println("on tray");
+
+						break;
+			
+					}
+					System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
+				}
+				
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
-					words.get(index).appear();
-					words.get(index).state = words.get(index).state.placed;			
+					//words.get(index).appear();
+					//words.get(index).state = words.get(index).state.placed;			
 
-					switch (words.get(index).getState()) {
-					case 2:
-						System.out.println("\"" + word + "\" placed");
-					default:
+					//	switch (words.get(index).getState()) {
+					//	case 2:
+					//		System.out.println("\"" + word + "\" placed");
+					//	default:
 						//System.out.println("\"" + word + "\" " + words.get(index).getState());
-					}
+					//	}
 
 					//System.out.println("\"" + word + "\" " + words.get(index).getState());
 					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
