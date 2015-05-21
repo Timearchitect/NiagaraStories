@@ -11,35 +11,35 @@ import se.mah.k3.particles.TextParticle;
 public class Word {
 	DrawPanel drawPanel;
 	public boolean active = true, selected;
-	public String owner = "";
-	public enum State {onTray, hold, placed,locked};
-	State state=State.onTray;
+	public String owner;
+	public enum State {onTray, hold, placed, locked};
+	State state = State.onTray;
 	public String text = "";
 	public int xPos, yPos, width, height, margin = 10;
-	
+
 	public Word(String _text, DrawPanel _drawPanel, String _owner) {
 		this.text = _text;
 		this.drawPanel = _drawPanel;
 		this.owner = _owner;
 		this.active = false;
 	}
-	
+
 	public String getText(){
 		return text;
 	}
-	
+
 	public void setXPos(int _xPos){
 		this.xPos = _xPos;
 	}
-	
+
 	public int getXPos(){
 		return xPos;
 	}
-	
+
 	public void setYPos(int _yPos){
 		this.yPos = _yPos;
 	}
-	
+
 	public int getYPos(){
 		return yPos;
 	}
@@ -51,7 +51,7 @@ public class Word {
 	public int getWidth(){
 		return width;
 	}
-	
+
 	public void setHeight(int _height){
 		this.height = _height;
 	}
@@ -67,19 +67,19 @@ public class Word {
 	public boolean isActive(){
 		return active;
 	}
-	
+
 	public void setOwner(String _owner){
 		this.owner = _owner;
 	}
-	
+
 	public String getOwner(){
 		return owner;
 	}
-	
+
 	public void respond(){
 		DrawPanel.overParticles.add(new FrameParticle(xPos, yPos, this, 0));
 	}
-	
+
 	public void appear(){
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (- margin), 0, text));
@@ -88,7 +88,7 @@ public class Word {
 
 		active=true;
 	}
-	
+
 	public void disappear(){
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, margin, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (margin * 0.5), text));
@@ -97,10 +97,10 @@ public class Word {
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.5), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (- margin), text));
-		
+
 		active=false;
 	}
-	
+
 	public void selected(){
 		DrawPanel.overParticles.add( new FrameParticle(xPos, yPos, this, 0));
 	}
@@ -110,17 +110,25 @@ public class Word {
 	}
 
 	public void display() {
-		DrawPanel.g2.setColor(Constants.wordBackground);
+		if (owner != "false") {
+			DrawPanel.g2.setColor(Constants.wordStroke);			
+		}else {
+			DrawPanel.g2.setColor(Constants.wordBackground);
+		}
+
 		DrawPanel.g2.fillRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));
 	}
-	
+
 	public void update() {
-		
 	}
-	
+
+	public void setState(State _state){
+		this.state = _state;
+	}
+
 	public int getState(){
 		return state.ordinal();
 	}	

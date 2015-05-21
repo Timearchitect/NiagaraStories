@@ -7,9 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,10 +17,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import se.mah.k3.Word.State;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.SplashParticle;
@@ -36,36 +36,33 @@ import com.firebase.client.FirebaseError;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
-	// A vector is like an ArrayList a little bit slower but Thread-safe. This
-	// means that it can handle concurrent changes.
 	private ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	//private Image bg = Toolkit.getDefaultToolkit().getImage("images/background.bmp");
 	public static BufferedImage bimage, mist;
 	public static int myFrame; 
-	 // mouse variable
 	public String changedWord = "word";
-	private float offsetX,offsetY,mouseX,mouseY,pMouseX,pMouseY;
+	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
 	boolean hold;
 	Word selectedWord;
 	public static ArrayList<Particle> particles = new ArrayList<Particle>(), overParticles = new ArrayList<Particle>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
 	User user;
-	boolean onesRun=true;
-	
-    private GraphicsConfiguration config =
-    		GraphicsEnvironment.getLocalGraphicsEnvironment()
-    			.getDefaultScreenDevice()
-    			.getDefaultConfiguration();
-	   // create a hardware accelerated image
-    public final BufferedImage create(final int width, final int height,
-    		final boolean alpha) {
-    	return config.createCompatibleImage(width, height, alpha
-    			? Transparency.TRANSLUCENT : Transparency.OPAQUE);
-    }
-    public void setup(){
-    	Constants.screenWidth = (int) getSize().width;
+	boolean onesRun=true;	
+
+	private GraphicsConfiguration config =
+			GraphicsEnvironment.getLocalGraphicsEnvironment()
+			.getDefaultScreenDevice()
+			.getDefaultConfiguration();
+	// create a hardware accelerated image
+	public final BufferedImage create(final int width, final int height,
+			final boolean alpha) {
+		return config.createCompatibleImage(width, height, alpha
+				? Transparency.TRANSLUCENT : Transparency.OPAQUE);
+	}
+
+	public void setup(){
+		Constants.screenWidth = (int) getSize().width;
 		Constants.screenHeight = (int) getSize().height;
 		FontMetrics metrics = g2.getFontMetrics(Constants.font);
 		for (Word word : words) { // ini words height
@@ -74,26 +71,26 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 		//smooth font
 		g2.setRenderingHint(
-		        RenderingHints.KEY_TEXT_ANTIALIASING,
-		        RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-    	onesRun=false;
-    }
-    
+				RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		onesRun=false;
+	}
+
 	public DrawPanel() {
-         bimage = null;
-        try {
-        	bimage = ImageIO.read(new File("images/background.bmp"));
-        	mist = ImageIO.read(new File("images/mist.png"));
-            System.out.println("yo");
-        } catch (IOException e) {
-        		System.out.println("no");
-        }
+		bimage = null;
+		try {
+			bimage = ImageIO.read(new File("images/background.bmp"));
+			mist = ImageIO.read(new File("images/mist.png"));
+			System.out.println("yo");
+		} catch (IOException e) {
+			System.out.println("no");
+		}
 		this.addMouseListener(new MouseAdapter() {
 
 			public void mousePressed(MouseEvent e) {
 				mouseX= e.getX();
 				mouseY= e.getY();
-				
+
 				if (e.getButton() == MouseEvent.NOBUTTON) {
 					//System.out.println(" no button clicked");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
@@ -134,17 +131,6 @@ public class DrawPanel extends JPanel implements Runnable {
 						} 
 					}
 				}
-			}
-
-			public void setOwnership(String owner) {
-				selectedWord.setOwner(user.getId());
-				Firebase wordList = myFirebaseRef.child("Regular Words");
-
-				for (int i = 0; i < words.size(); i++) {
-					wordList.child("word" + i + "/Owner").setValue(selectedWord.getOwner());
-				}
-
-				System.out.println("\"" + selectedWord.getText() + "\" " + "is now owned by " + selectedWord.getOwner());
 			}
 
 			public void mouseReleased(MouseEvent e) {
@@ -224,68 +210,37 @@ public class DrawPanel extends JPanel implements Runnable {
 			public void onChildChanged(DataSnapshot arg0, String arg1) {
 				Iterable<DataSnapshot> dsList = arg0.getChildren();
 				//System.out.println(arg0.getKey()+"  vem där?");
-				
+
 				if (arg0.getKey().equals("Users") && arg0.hasChildren()) {
-					
-				for (DataSnapshot dataSnapshot : dsList) {
-					User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
-					
-					for(User ul:userList){
-							if(ul.getId().equals(u.getId())){ 
-								ul.xPos = u.xPos;
-								ul.yPos = u.yPos;
-								u=null;
-								System.out.println("update user" + ul.xPos);
+					for (DataSnapshot dataSnapshot : dsList) {
+						if (dataSnapshot.child("xRel").getValue() != null && dataSnapshot.child("yRel").getValue() != null) {
+							User u = new User(dataSnapshot.getKey(), Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
+
+							for(User ul: userList){
+								if(ul.getId().equals(u.getId())){ 
+									ul.xPos = u.xPos;
+									ul.yPos = u.yPos;
+									u=null;
+									//System.out.println("update user" + ul.xPos);
+								}
+							}	
+
+							if ( u!=null){
+								userList.add(u);
+								u.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
+								System.out.println("Add user");
+								System.out.println(dataSnapshot.getKey());
 							}
-						}	
-				
-					if ( u!=null){
-						userList.add(u);
-						u.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
-						System.out.println("Add user");
-						System.out.println(dataSnapshot.getKey());
-					}
+						}
+					}	
 				}
-					/*if (dataSnapshot.getKey().equals("xRel")) {
-						users.get(place).setxRel(
-								(double) dataSnapshot.getValue() * Constants.screenWidth);
-					}
 
-					if (dataSnapshot.getKey().equals("yRel")) {
-						users.get(place).setyRel(
-								(double) dataSnapshot.getValue() * Constants.screenHeight);
-					}
-					 
-					if (dataSnapshot.getKey().equals("id")) {
-						users.get(place).setId(dataSnapshot.getValue().toString());
-						System.out.println("User id: " + dataSnapshot.getValue().toString());
-					}
-
-					if (dataSnapshot.getKey().equals("RoundTripTo")) {
-						myFirebaseRef.child(arg0.getKey())
-						.child("RoundTripBack")
-						.setValue((long) dataSnapshot.getValue() + 1);
-					}*/
-					
-				}
 				repaint();
 			}
 
 			// Add user
 			@Override
 			public void onChildAdded(DataSnapshot arg0, String arg1) {
-				/*if (arg0.hasChildren()) {
-					// System.out.println("ADD user with Key: "+arg1+
-					// arg0.getKey());
-					// Random r = new Random();
-					int x = r.nextInt(getSize().width+1 ); // spawn
-					int y = r.nextInt(getSize().height+1);
-					User user = new User(arg0.getKey(), x, y);
-					if (!users.contains(user)) {
-						users.add(user);
-						user.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
-					}
-				}*/
 			}
 
 			@Override
@@ -304,9 +259,9 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
-			g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
-		
+
 		for(int i = 0; i < 8; i++) {
 			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
 		}
@@ -340,7 +295,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for(Particle p:particles){
 				overParticles.get(i).collisionVSParticle(p);
 			}
-			
+
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
 
@@ -363,8 +318,8 @@ public class DrawPanel extends JPanel implements Runnable {
 			g2.setColor(Color.BLACK);
 			g.drawString(user.getId(), x + 15, y + 15);
 		}
-		
-displayDebugText();
+
+		displayDebugText();
 	}
 
 	public void run() { // threading
@@ -418,12 +373,12 @@ displayDebugText();
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
-			wordList.child("word" + i + "/Owner").setValue("false");
+			wordList.child("word" + i + "/Owner").setValue(false);
 
 			words.add(new Word(regularWords[i],DrawPanel.this, null));
 			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
-			
+
 			count++;
 		}
 
@@ -486,6 +441,8 @@ displayDebugText();
 				String word = "word";
 				String isActive = "";
 				String s = snapshot.getRef().toString();
+				String owner = "";
+
 
 				int index=Integer.parseInt(s.substring(63));
 
@@ -505,16 +462,27 @@ displayDebugText();
 				if (snapshot.child("Active").getValue().toString() == "true") {
 					isActive = "true";
 					words.get(index).appear();
+					words.get(index).state = words.get(index).state.placed;			
+
+					switch (words.get(index).getState()) {
+					case 2:
+						System.out.println("\"" + word + "\" placed");
+					default:
+						System.out.println("\"" + word + "\" " + words.get(index).getState());
+
+					}
+
+					//System.out.println("\"" + word + "\" " + words.get(index).getState());
+					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
 				}else {
 					isActive = "false";
 					words.get(index).disappear();
+					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 
-				if (isActive == "true") {
-					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
-				}else {
-					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
-
+				if(snapshot.child("Owner").getValue().toString() != "false") {
+					words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
+					System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 				}
 			}
 
