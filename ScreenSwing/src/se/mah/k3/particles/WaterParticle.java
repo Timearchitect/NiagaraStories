@@ -34,7 +34,6 @@ public class WaterParticle extends Particle {
 	
 	public void collisionCircle(int _x,int _y, int _radius){
 		float xDiff,yDiff,dist;
-		
 		xDiff=_x-x;
 		yDiff= _y-y;
 		dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
@@ -44,6 +43,15 @@ public class WaterParticle extends Particle {
 				vx=r.nextInt(10)-5;
 			}
 		
+	}
+	public void collisionRect(int _x,int _y, int _w,int _h){
+
+		if(_x+_w*0.5 > x &&  _x-_w*0.5 < x){
+			if(_y+_h*0.5 > y &&  _y-_h*0.5 < y){
+				vy*=(-1)*0.5;
+				vx=r.nextInt(10)-5;
+			}
+		}
 	}
 	public void kill(){
 		if((int)r.nextInt(15)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,(int)y)); //splash

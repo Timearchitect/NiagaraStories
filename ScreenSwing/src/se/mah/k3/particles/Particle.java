@@ -31,24 +31,11 @@ public abstract class Particle {
 	}
 	
 	public void collisionCircle(int _x,int _y, int _radius){
-		float xDiff,yDiff,dist;
-		xDiff=_x-x;
-		yDiff= _y-y;
-		dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
-		//dist=(float) Math.sqrt(Math.pow(xDiff,2)+Math.pow(yDiff,2));
-		if(dist-_radius< Constants.WaterStrokeWidth){
-		vy*=(-1)*0.5;
-		vx=r.nextInt(10)-5;
-		}
+
 	}
 	public void collisionRect(int _x,int _y, int _w,int _h){
 
-		if(_x+_w*0.5 > x &&  _x-_w*0.5 < x){
-			if(_y+_h*0.5 > y &&  _y-_h*0.5 < y){
-				vy*=(-1)*0.5;
-				vx=r.nextInt(10)-5;
-			}
-		}
+
 	}
 	public void kill(){
 		dead=true;

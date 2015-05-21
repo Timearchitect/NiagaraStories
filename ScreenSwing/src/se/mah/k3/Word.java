@@ -9,8 +9,8 @@ import se.mah.k3.particles.TextParticle;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word {
-	DrawPanel drawPanel;
-	public String type="";
+	//DrawPanel drawPanel;
+	private String type="";
 	public boolean active = true, selected;
 	public String ownerId = "";
 	public User owner;
@@ -18,9 +18,8 @@ public class Word {
 	State state=State.onTray;
 	public String text = "";
 	public int xPos, yPos,txPos,tyPos, width, height, margin = 10;
-	public Word(String _text, DrawPanel _drawPanel, String _ownerId) {
+	public Word(String _text, String _ownerId) {
 		this.text = _text;
-		this.drawPanel = _drawPanel;
 		this.ownerId = _ownerId;
 		this.active = false;
 		
@@ -105,7 +104,6 @@ public class Word {
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (- margin), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (margin * 0.5), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (- margin * 0.5), 0, text));
-
 		active=true;
 	}
 
@@ -130,15 +128,12 @@ public class Word {
 	}
 
 	public void display() {
-		
-		
-		if ( owner!=null && ownerId != "false") {
+		if ( owner!=null) {
 			//DrawPanel.g2.setColor(Constants.wordStroke);
 			DrawPanel.g2.setColor(owner.getColor());
 		}else {
 			DrawPanel.g2.setColor(Constants.wordStroke);
 		}
-
 		DrawPanel.g2.fillRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
@@ -158,8 +153,6 @@ public class Word {
 		return state.ordinal();
 	}	
 	
-	public void setState(int i){
-		//state= i;
-	}	
+
 	
 }

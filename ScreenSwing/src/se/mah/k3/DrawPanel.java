@@ -269,9 +269,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		// g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
-		// g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		 g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
 		for(int i = 0; i < 8; i++) {
@@ -315,8 +315,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		for (User user : userList) {
-			int x = user.getxPos(); // skalad x pos
-			int y = user.getyPos() ; // skalad y pos
 			user.update();
 			user.display(g2);
 		}
@@ -329,7 +327,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			try {
 				repaint(); // repaint()
 				Thread.sleep(20);
-
+				
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
 			}
@@ -353,7 +351,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			wordList.child("word" + i + "/Active").setValue(false);
 			wordList.child("word" + i + "/Owner").setValue(false);
 
-			words.add(new Word(regularWords[i],DrawPanel.this, null));
+			words.add(new Word(regularWords[i], null));
 			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
 
@@ -376,7 +374,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			themedWords.child("word" + i + "/Active").setValue(false);
 			themedWords.child("word" + i + "/Owner").setValue("false");
 
-			words.add(new Word(themeWords[i],DrawPanel.this, null));
+			words.add(new Word(themeWords[i], null));
 			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
 
@@ -407,9 +405,9 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
 				String word = "word";
-				String isActive = "";
+			//	String isActive = "";
 				String s = snapshot.getRef().toString();
-				String ownerId = "";
+			//	String ownerId = "";
 
 
 				int index=Integer.parseInt(s.substring(63));
@@ -419,7 +417,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				if (snapshot.child("x").getValue() != null) {
 					words.get(index).xPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
 					System.out.println("x is written to "+ index + "  word "+words.get(index).xPos);
-
 				}
 
 				if (snapshot.child("y").getValue() != null) {
@@ -430,35 +427,36 @@ public class DrawPanel extends JPanel implements Runnable {
 				if (snapshot.child("State").getValue() != null) {
 					System.out.println("State stuff");
 					User u = null;
-					if(words.get(index).getUser()!=null)  u=words.get(index).getUser();
-					switch(snapshot.child("State").getValue().toString()){
-						case "placed":
-						//	words.get(index).released();
-							words.get(index).setState(1);
-							System.out.println("placed");
-							words.get(index).appear();
-						break;
-						case "draging":
-							words.get(index).setState(2);
-							u.xTar=words.get(index).xPos;
-							u.yTar=words.get(index).yPos;
-							u.xPos=words.get(index).xPos;
-							u.yPos=words.get(index).yPos;
-							System.out.println("dragging");
-
-						break;
-						case "onTray":
-							words.get(index).setState(0);
-							System.out.println("on tray");
-
-						break;
-			
+					if(words.get(index).getUser()!=null){ 
+						u=words.get(index).getUser();
+						switch(snapshot.child("State").getValue().toString()){
+							case "placed":
+							//	words.get(index).released();
+								words.get(index).setState(Word.State.placed);
+								System.out.println("placed");
+								words.get(index).appear();
+							break;
+							case "draging":
+								words.get(index).setState(Word.State.draging);
+								u.xTar=words.get(index).xPos;
+								u.yTar=words.get(index).yPos;
+								u.xPos=words.get(index).xPos;
+								u.yPos=words.get(index).yPos;
+								System.out.println("dragging");
+	
+							break;
+							case "onTray":
+								words.get(index).setState(Word.State.onTray);
+								System.out.println("on tray");
+							break;
+				
+						}
 					}
 					System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
 				}
 				
 				if (snapshot.child("Active").getValue().toString() == "true") {
-					isActive = "true";
+				//	isActive = "true";
 					//words.get(index).appear();
 					//words.get(index).state = words.get(index).state.placed;			
 
@@ -472,12 +470,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					//System.out.println("\"" + word + "\" " + words.get(index).getState());
 					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
 				}else {
-					isActive = "false";
+				//	isActive = "false";
 					words.get(index).disappear();
 					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 
-				if(snapshot.child("Owner").getValue().toString() != "false") {
+				if(snapshot.child("Owner").getValue().toString() !=null) {
 					words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
 					System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 				}
