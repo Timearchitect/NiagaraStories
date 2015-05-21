@@ -10,8 +10,8 @@ public class TextParticle extends Particle {
 	private String text;
 	private float w,h,opacity=255;
 	
-	public TextParticle(int x, int y,float _w,float _h,int _vx,int _vy,String _text) {
-		super(x, y);
+	public TextParticle(int _x, int _y,float _w,float _h,int _vx,int _vy,String _text) {
+		super(_x, _y);
 		vx=_vx;
 		vy=_vy;
 		w=_w;
