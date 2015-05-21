@@ -37,7 +37,7 @@ import com.firebase.client.FirebaseError;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
-	private ArrayList<User> userList = new ArrayList<User>();
+	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
 	public static BufferedImage bimage, mist;
@@ -208,17 +208,18 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onChildChanged(DataSnapshot arg0, String arg1) {
 				Iterable<DataSnapshot> dsList = arg0.getChildren();
-				//System.out.println(arg0.getKey()+"  vem d�r?");
+				//System.out.println(arg0.getKey()+"  vem d�r?");
 
 				if (arg0.getKey().equals("Users") && arg0.hasChildren()) {
 
 					for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
-
+						System.out.println("new User");
 						for(User ul:userList){
-							if(u.getId() != null && ul.getId().equals(u.getId())){ // check if it has the same ID
+							if( ul.getId().equals(u.getId())){ // check if it has the same ID
+								System.out.println("USER");
 								String state="";
-								if(dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
+								if( dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
 								//ul.xTar = u.xPos;
 								//ul.yTar = u.yPos;
 								ul.xTar = u.xTar;
@@ -232,7 +233,16 @@ public class DrawPanel extends JPanel implements Runnable {
 									break;
 								}
 								u=null;
+								System.out.println("update");
+
 							}
+		
+						}
+						if ( u!=null){
+							userList.add(u);
+							u.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
+							System.out.println("Add user");
+							System.out.println(dataSnapshot.getKey());
 						}
 					}	
 				}
@@ -259,9 +269,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
+		// g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
-		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		// g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
 		for(int i = 0; i < 8; i++) {
@@ -333,32 +343,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createRegularWords() {
 		Firebase wordList = myFirebaseRef.child("Regular Words");
 		String[] regularWords = { 
-				"easier", 
-				"interesting", 
-				"honest", 
-				"forests", 
-				"Saturday", 
-				"dinner", 
-				"comfortable", 
-				"gently", 
-				"fresh", 
-				"rest", 
-				"pal", 
-				"warmth", 
-				"rest", 
-				"welcome", 
-				"dearest", 
-				"useful", 
-				"safe", 
-				"better", 
-				"piano", 
-				"silk", 
-				"relif", 
-				"ryhme", 
-				"android", 
-				"agree", 
-				"water", 
-				"prototype" 
+				"an", "introduction", "to", "icelt", "progamme:", "icelt", "is", "an", "international", "certification", "for", "teachers", "who", "like", "to", "pursue", "their", "career", "in", "this", "field.", "it", "is", "an", "abbreviation", "for", "in-service", "course", "for", "english", "language", "teachers.", "this", "course", "is", "specially", "formulated", "for", "those", "individuals", "who", "are", "already", "associated", "to", "this", "field", "and", "want", "some", "certificate.", "these", "teachers", "are", "mastered", "on", "how", "to", "be", "english", "facilitators", "for", "students", "of", "other", "languages.", "icelt", "and", "its", "utility", "cannot", "be", "hampered", "in", "any", "possible", "way.", "pre-requisites", "for", "enrolment:", "this", "course", "allows", "you", "to", "strengthen", "your", "basic", "core", "foundations", "of", "teaching", "and", "supplement", "it", "with", "other", "facilitating", "skills.", "icelt", "is", "a", "complete", "course", "of", "12", "months", "which", "skillfully", "engage", "you", "in", "different", "activities", "which", "can", "be", "integrated", "in", "your", "lessons.", "however,", "you", "have", "to", "go", "through", "an", "intense", "study", "to", "earn", "this", "certificate.", "as", "this", "course", "thoroughly", "enriches", "teaching", "strategies,", "there", "are", "some", "assignments", "and", "tasks", "to", "submit", "too.", "in", "this", "website", "http://www.queensland-assignment.com/", "you", "will", "get", "variations", "on", "how", "to", "cope", "with", "your", "assignments.", "future", "prospects", "in", "the", "completeion", "of", "icelt:", "icelt", "is", "a", "course", "which", "will", "lead", "you", "into", "a", "better", "abecedary", "of", "english", "language.", "to", "strengthen", "the", "utilization", "you", "have", "to", "go", "through", "a", "variety", "of", "tests,", "assignments", "and", "tasks.", "in", "each", "task", "you", "are", "required", "to", "practice", "lessons", "taught", "by", "your", "mentor.", "however,", "assignments", "reflect", "your", "comprehending", "and", "retaining", "of", "the", "lessons", "taught", "in", "the", "course.", "the", "main", "difference", "between", "two", "is", "simple;", "assignments", "are", "written", "and", "tasks", "are", "practical", "implication.", "having", "said", "that,", "it", "is", "worthwhile", "to", "give", "a", "glimpse", "of", "what", "actually", "tasks", "look", "like:", "tasks:", "teach", "in", "a", "class", "of", "multi-talented", "class.", "teaching", "in", "a", "group", "of", "ten", "with", "same", "interests", "and", "understanding", "level.", "facilitating", "students", "to", "learn", "from", "other", "students.", "assignments:", "how", "to", "assess", "students’", "learning?", "how", "to", "monitor", "academic", "progress", "and", "stability?", "how", "to", "intervene", "if", "someone", "is", "constantly", "unable", "to", "comprehend", "lessons", "taught?", "how", "to", "determine", "the", "placement", "or", "categorization", "of", "multiple", "intelligences?", "how", "to", "know", "the", "difference", "between", "a", "good", "student", "and", "a", "bad", "student?", "is", "it", "even", "applicable", "to", "label", "a", "student", "that", "way?", "granding", "icelt", "certificate:", "icelt", "is", "issued", "by", "cambridge", "university", "from", "the", "department", "of", "cambridge", "english", "language", "assessment.", "after", "passing", "all", "the", "exams,", "assignments", "and", "tasks", "you", "will", "be", "eligible", "to", "get", "the", "certificate", "which", "will", "be", "appreciated", "all", "over", "the", "world.", "it", "is", "known", "for", "a", "bonus", "in", "the", "field", "of", "teaching.", "utilization", "and", "demand:", "demand", "of", "this", "course", "is", "intact", "since", "it", "was", "introduced", "in", "cambridge", "university.", "many", "other", "countries", "have", "taken", "initiative", "in", "familiarizing", "this", "intensive", "course", "for", "english", "teachers.", "these", "countries", "have", "done", "tremendous", "job", "by", "getting", "their", "certificates", "affiliated", "by", "the", "university", "which", "announced", "it", "for", "the", "very", "first", "time.", "all", "in", "all,", "this", "is", "an", "opportunity", "for", "english", "teachers", "who", "are", "passionate", "about", "their", "career", "and", "want", "to", "grow", "in", "it,", "successfully.", "icelt’s", "utilization", "applies", "in", "every", "school", "let", "it", "be", "juniorfree", "reprint", "articles,", "middle", "or", "high.", "universities", "and", "colleges", "cannot", "be", "deprived", "to", "have", "such", "facilitators", "too."
 		};
 
 		int count = 0;
@@ -381,17 +366,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createThemeWords() {
 		Firebase themedWords = myFirebaseRef.child("Themed Words");
 		String[] themeWords = { 
-				"DNS", 
-				"floppy", 
-				"gamer", 
-				"geek", 
-				"tech", 
-				"firewall", 
-				"router", 
-				"java", 
-				"code", 
-				"brainstorm",
-				"laser" 
+				"an", "introduction", "to", "icelt", "progamme:", "icelt", "is", "an", "international", "certification", "for", "teachers", "who", "like", "to", "pursue", "their", "career", "in", "this", "field.", "it", "is", "an", "abbreviation", "for", "in-service", "course", "for", "english", "language", "teachers.", "this", "course", "is", "specially", "formulated", "for", "those", "individuals", "who", "are", "already", "associated", "to", "this", "field", "and", "want", "some", "certificate.", "these", "teachers", "are", "mastered", "on", "how", "to", "be", "english", "facilitators", "for", "students", "of", "other", "languages.", "icelt", "and", "its", "utility", "cannot", "be", "hampered", "in", "any", "possible", "way.", "pre-requisites", "for", "enrolment:", "this", "course", "allows", "you", "to", "strengthen", "your", "basic", "core", "foundations", "of", "teaching", "and", "supplement", "it", "with", "other", "facilitating", "skills.", "icelt", "is", "a", "complete", "course", "of", "12", "months", "which", "skillfully", "engage", "you", "in", "different", "activities", "which", "can", "be", "integrated", "in", "your", "lessons.", "however,", "you", "have", "to", "go", "through", "an", "intense", "study", "to", "earn", "this", "certificate.", "as", "this", "course", "thoroughly", "enriches", "teaching", "strategies,", "there", "are", "some", "assignments", "and", "tasks", "to", "submit", "too.", "in", "this", "website", "http://www.queensland-assignment.com/", "you", "will", "get", "variations", "on", "how", "to", "cope", "with", "your", "assignments.", "future", "prospects", "in", "the", "completeion", "of", "icelt:", "icelt", "is", "a", "course", "which", "will", "lead", "you", "into", "a", "better", "abecedary", "of", "english", "language.", "to", "strengthen", "the", "utilization", "you", "have", "to", "go", "through", "a", "variety", "of", "tests,", "assignments", "and", "tasks.", "in", "each", "task", "you", "are", "required", "to", "practice", "lessons", "taught", "by", "your", "mentor.", "however,", "assignments", "reflect", "your", "comprehending", "and", "retaining", "of", "the", "lessons", "taught", "in", "the", "course.", "the", "main", "difference", "between", "two", "is", "simple;", "assignments", "are", "written", "and", "tasks", "are", "practical", "implication.", "having", "said", "that,", "it", "is", "worthwhile", "to", "give", "a", "glimpse", "of", "what", "actually", "tasks", "look", "like:", "tasks:", "teach", "in", "a", "class", "of", "multi-talented", "class.", "teaching", "in", "a", "group", "of", "ten", "with", "same", "interests", "and", "understanding", "level.", "facilitating", "students", "to", "learn", "from", "other", "students.", "assignments:", "how", "to", "assess", "students’", "learning?", "how", "to", "monitor", "academic", "progress", "and", "stability?", "how", "to", "intervene", "if", "someone", "is", "constantly", "unable", "to", "comprehend", "lessons", "taught?", "how", "to", "determine", "the", "placement", "or", "categorization", "of", "multiple", "intelligences?", "how", "to", "know", "the", "difference", "between", "a", "good", "student", "and", "a", "bad", "student?", "is", "it", "even", "applicable", "to", "label", "a", "student", "that", "way?", "granding", "icelt", "certificate:", "icelt", "is", "issued", "by", "cambridge", "university", "from", "the", "department", "of", "cambridge", "english", "language", "assessment.", "after", "passing", "all", "the", "exams,", "assignments", "and", "tasks", "you", "will", "be", "eligible", "to", "get", "the", "certificate", "which", "will", "be", "appreciated", "all", "over", "the", "world.", "it", "is", "known", "for", "a", "bonus", "in", "the", "field", "of", "teaching.", "utilization", "and", "demand:", "demand", "of", "this", "course", "is", "intact", "since", "it", "was", "introduced", "in", "cambridge", "university.", "many", "other", "countries", "have", "taken", "initiative", "in", "familiarizing", "this", "intensive", "course", "for", "english", "teachers.", "these", "countries", "have", "done", "tremendous", "job", "by", "getting", "their", "certificates", "affiliated", "by", "the", "university", "which", "announced", "it", "for", "the", "very", "first", "time.", "all", "in", "all,", "this", "is", "an", "opportunity", "for", "english", "teachers", "who", "are", "passionate", "about", "their", "career", "and", "want", "to", "grow", "in", "it,", "successfully.", "icelt’s", "utilization", "applies", "in", "every", "school", "let", "it", "be", "juniorfree", "reprint", "articles,", "middle", "or", "high.", "universities", "and", "colleges", "cannot", "be", "deprived", "to", "have", "such", "facilitators", "too."
 		};
 
 		int count = 0;
@@ -491,6 +466,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size() + "    Users:" +userList.size()  , 20, 40);
 	}
 }
