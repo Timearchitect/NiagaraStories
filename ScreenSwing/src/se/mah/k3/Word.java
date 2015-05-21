@@ -124,10 +124,17 @@ public class Word {
 	}
 
 	public void display() {
+		
+		
 		if (ownerId != "false") {
-			DrawPanel.g2.setColor(Constants.wordStroke);			
+			//DrawPanel.g2.setColor(Constants.wordStroke);
+			for(User u: DrawPanel.userList){
+				if(u.getId().equals(this.getOwner())){
+					DrawPanel.g2.setColor(u.getColor());
+				}
+			}
 		}else {
-			DrawPanel.g2.setColor(Constants.wordBackground);
+			DrawPanel.g2.setColor(Constants.wordStroke);
 		}
 
 		DrawPanel.g2.fillRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);

@@ -37,7 +37,7 @@ import com.firebase.client.FirebaseError;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
-	private ArrayList<User> userList = new ArrayList<User>();
+	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
 	public static BufferedImage bimage, mist;
@@ -214,11 +214,12 @@ public class DrawPanel extends JPanel implements Runnable {
 
 					for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
-
+						System.out.println("new User");
 						for(User ul:userList){
-							if(u.getId() != null && ul.getId().equals(u.getId())){ // check if it has the same ID
+							if( ul.getId().equals(u.getId())){ // check if it has the same ID
+								System.out.println("USER");
 								String state="";
-								if(dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
+								if( dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
 								//ul.xTar = u.xPos;
 								//ul.yTar = u.yPos;
 								ul.xTar = u.xTar;
@@ -232,7 +233,16 @@ public class DrawPanel extends JPanel implements Runnable {
 									break;
 								}
 								u=null;
+								System.out.println("update");
+
 							}
+		
+						}
+						if ( u!=null){
+							userList.add(u);
+							u.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
+							System.out.println("Add user");
+							System.out.println(dataSnapshot.getKey());
 						}
 					}	
 				}
@@ -491,6 +501,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size(), 20, 40);
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size() + "    Users:" +userList.size()  , 20, 40);
 	}
 }
