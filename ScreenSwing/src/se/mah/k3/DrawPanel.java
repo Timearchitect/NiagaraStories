@@ -229,12 +229,14 @@ public class DrawPanel extends JPanel implements Runnable {
 					User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
 
 					for(User ul:userList){
-							if(ul.getId().equals(u.getId())){ // check if it has the same ID
+							if(u.getId() != null && ul.getId().equals(u.getId())){ // check if it has the same ID
+								String state="";
+								if(dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
 								//ul.xTar = u.xPos;
 								//ul.yTar = u.yPos;
 								ul.xTar = u.xTar;
 								ul.yTar = u.yTar;
-								switch (dataSnapshot.child("state").getValue().toString()){
+								switch (state){
 									case "taping":
 										ul.state=User.State.taping;
 									break;
