@@ -161,7 +161,9 @@ public class DrawPanel extends JPanel implements Runnable {
 
 				if (SwingUtilities.isLeftMouseButton(ev)) {
 					//System.out.println("left");
+					
 					if(selectedWord!=null){
+						
 						selectedWord.xPos=(int) (mouseX+offsetX);
 						selectedWord.yPos=(int) (mouseY+offsetY);
 						selectedWord.txPos=(int) (mouseX+offsetX);
@@ -239,7 +241,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									break;
 									case "taping":
 										ul.state=User.State.taping;
-										System.out.println("taping: "+ul.getId()+"state: "+ state);
+										//System.out.println("taping: "+ul.getId()+"state: "+ state);
 									break;
 									default:
 								}
@@ -636,18 +638,27 @@ public class DrawPanel extends JPanel implements Runnable {
 								words.get(index).appear();
 							break;
 							case "draging":
-								
-								if(words.get(index).state!=Word.State.onTray){
+							//	words.get(index).respond();
+								if(words.get(index).active && words.get(index).state!=Word.State.onTray){
 									words.get(index).setState(Word.State.draging);
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
 									u.xPos=(int)words.get(index).txPos;
 									u.yPos=(int)words.get(index).tyPos;
 									System.out.println("dragging");
+								}else{
+									words.get(index).xPos=(int)words.get(index).txPos;
+									words.get(index).yPos=(int)words.get(index).tyPos;
+									u.xTar=words.get(index).txPos;
+									u.yTar=words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
+									u.yPos=(int)words.get(index).tyPos;
+									words.get(index).respond();
 								}
 	
 							break;
 							case "onTray":
+
 								words.get(index).setState(Word.State.onTray);
 								System.out.println("on tray");
 							break;
@@ -696,6 +707,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+		g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
+	//	g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
 	}
 }
