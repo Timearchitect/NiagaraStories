@@ -216,12 +216,14 @@ public class DrawPanel extends JPanel implements Runnable {
 				//System.out.println(arg0.getKey()+"  vem d�r?");
 				if (arg0.getKey().equals("Users") && arg0.hasChildren()) {
 
-					
+				
+
 					
 					
 					for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
 						boolean match = false;
+					//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
 						for(User ul:userList){
 							
 							if( ul.getId().equals(u.getId())){ // check if it has the same ID
@@ -235,9 +237,12 @@ public class DrawPanel extends JPanel implements Runnable {
 								switch (state){
 									case "offline":
 										ul.state=User.State.offline;
+										System.out.println("offline");
 									break;
 									case "online":
 										ul.state=User.State.online;
+										System.out.println("online");
+
 									break;
 									case "taping":
 										ul.state=User.State.taping;
@@ -346,7 +351,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		while (true) {
 			try {
 				repaint(); // repaint()
-				Thread.sleep(20);
+				Thread.sleep(18);
 				
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
@@ -579,7 +584,6 @@ public class DrawPanel extends JPanel implements Runnable {
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
 			words.add(new Word(themeWords[i], null,x,y,x,y));
-
 			count++;
 		}
 
@@ -625,7 +629,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 				
 				if (snapshot.child("State").getValue() != null) {
-					System.out.println("State stuff");
+					//System.out.println("State stuff");
 					User u = null;
 					if(words.get(index).getUser()!=null){ 
 						u=words.get(index).getUser();
@@ -638,15 +642,15 @@ public class DrawPanel extends JPanel implements Runnable {
 								words.get(index).appear();
 							break;
 							case "draging":
-							//	words.get(index).respond();
-								if(words.get(index).active && words.get(index).state!=Word.State.onTray){
+								//words.get(index).respond();
+								if(words.get(index).state!=Word.State.onTray){
 									words.get(index).setState(Word.State.draging);
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
 									u.xPos=(int)words.get(index).txPos;
 									u.yPos=(int)words.get(index).tyPos;
 									System.out.println("dragging");
-								}else{
+							}else{
 									words.get(index).xPos=(int)words.get(index).txPos;
 									words.get(index).yPos=(int)words.get(index).tyPos;
 									u.xTar=words.get(index).txPos;
@@ -681,11 +685,11 @@ public class DrawPanel extends JPanel implements Runnable {
 					//	}
 
 					//System.out.println("\"" + word + "\" " + words.get(index).getState());
-					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
+					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
 				}else {
 				//	isActive = "false";
 					//words.get(index).disappear();
-					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
+					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 
 				if(snapshot.child("Owner").getValue().toString()!="") {
@@ -708,6 +712,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
 		g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
-	//	g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+		//g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
 	}
 }

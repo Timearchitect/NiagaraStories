@@ -89,7 +89,7 @@ public class User implements Comparable<User>{
 	}
 	public void display(Graphics2D g2){
 		
-		if(state.ordinal()!=0){
+	//	if(state.ordinal()!=0){
 		g2.setColor(color);
 		g2.setStroke(Constants.userStroke);
 		for(int i=0; i<3;i++){
@@ -102,11 +102,11 @@ public class User implements Comparable<User>{
 
 		//g2.drawLine((int)(xPos ), (int)(yPos ),(int)(xPos -Math.cos(Math.toRadians(angle))*50), (int)(yPos-Math.sin(Math.toRadians(angle))*50));
 		g2.drawString(id, (int)(xPos + size*0.7), (int)(yPos + size*0.7));
-		}else{
-			g2.setColor(color);
-			g2.fillOval((int)(xPos - 50*0.5), (int)(yPos - 50*0.5), 50, 50);
+		//}else{
+			//g2.setColor(color);
+			//g2.fillOval((int)(xPos - 50*0.5), (int)(yPos - 50*0.5), 50, 50);
 
-		}
+		//}
 		
 	}
 	public void update(){
