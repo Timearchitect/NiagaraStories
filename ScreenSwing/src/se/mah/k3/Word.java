@@ -19,6 +19,7 @@ public class Word {
 	public String text = "";
 	public int xPos, yPos, width, height, margin = 20;
 	public float pxPos, pyPos,txPos,tyPos;
+	
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
 		this.ownerId = _ownerId;
@@ -95,7 +96,7 @@ public class Word {
 		for(User u: DrawPanel.userList){
 			if(u.getId().equals(this.getOwner())){
 				owner=u;
-			System.out.println("owner setted");
+				System.out.println("owner setted");
 			}
 		}
 	}

@@ -9,8 +9,8 @@ import se.mah.k3.Word;
 public class RippleParticle extends Particle{
 
 	float r,increment,opacity=255;
-	BasicStroke circleStroke;
-	Graphics2D g2;
+	private BasicStroke circleStroke;
+	//Graphics2D g2;
 	public RippleParticle(int _x, int _y,int _increment){
 		super(_x,_y);
 		x=_x;
@@ -37,7 +37,8 @@ public class RippleParticle extends Particle{
 	}
 	
 	public void display(Graphics2D g2) {
-		g2.setColor(new Color(0,100,255,(int)opacity));
+		//g2.setColor(new Color(0,100,255,(int)opacity));
+		g2.setColor(new Color(255,255,255,(int)opacity));
 		g2.setStroke(circleStroke);
 		g2.drawOval((int)(x-r*0.5), (int)(y-r*0.5), (int)r,(int) r);
 	}

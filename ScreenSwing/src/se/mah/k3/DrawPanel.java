@@ -696,6 +696,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "   HeavyOverparticles:"+ overParticles.size() +"  frame :" + myFrame + "      words: "+ words.size() + "    Users:" +userList.size()  , 30, 50);
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
 	}
 }
