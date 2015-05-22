@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -163,6 +164,8 @@ public class DrawPanel extends JPanel implements Runnable {
 					if(selectedWord!=null){
 						selectedWord.xPos=(int) (mouseX+offsetX);
 						selectedWord.yPos=(int) (mouseY+offsetY);
+						selectedWord.txPos=(int) (mouseX+offsetX);
+						selectedWord.tyPos=(int) (mouseY+offsetY);
 					}
 
 					overParticles.add( new RippleParticle((int) mouseX,(int) mouseY,20));
@@ -209,36 +212,43 @@ public class DrawPanel extends JPanel implements Runnable {
 			public void onChildChanged(DataSnapshot arg0, String arg1) {
 				Iterable<DataSnapshot> dsList = arg0.getChildren();
 				//System.out.println(arg0.getKey()+"  vem d�r?");
-
 				if (arg0.getKey().equals("Users") && arg0.hasChildren()) {
 
+					
+					
+					
 					for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
-						System.out.println("new User");
+						boolean match = false;
 						for(User ul:userList){
+							
 							if( ul.getId().equals(u.getId())){ // check if it has the same ID
-								System.out.println("USER");
 								String state="";
 								if( dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
 								//ul.xTar = u.xPos;
 								//ul.yTar = u.yPos;
+								ul.setId(u.getId());
 								ul.xTar = u.xTar;
 								ul.yTar = u.yTar;
 								switch (state){
-								case "taping":
-									ul.state=User.State.taping;
+									case "offline":
+										ul.state=User.State.offline;
 									break;
-								case "online":
-									ul.state=User.State.online;
+									case "online":
+										ul.state=User.State.online;
 									break;
+									case "taping":
+										ul.state=User.State.taping;
+										System.out.println("taping: "+ul.getId()+"state: "+ state);
+									break;
+									default:
 								}
-								u=null;
-								System.out.println("update");
-
+							
+								match=true;
 							}
-		
+							
 						}
-						if ( u!=null){
+						if (!match){
 							userList.add(u);
 							u.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
 							System.out.println("Add user");
@@ -295,7 +305,10 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			if(particles.get(i).dead)particles.remove(i);
 		}
-
+		for (User user : userList) {
+			user.update();
+			user.display(g2);
+		}
 		for (Word word : words) {
 			if (word.active) {
 				word.update();
@@ -314,10 +327,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
 
-		for (User user : userList) {
-			user.update();
-			user.display(g2);
-		}
+
 
 		displayDebugText();
 	}
@@ -340,13 +350,14 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	public void createRegularWords() {
 		Firebase wordList = myFirebaseRef.child("Regular Words");
+		
 		String[] regularWords = { 
 				"When",
 				"you",
 				"use",
-				"Whatsapp",
+				"Taping",
 				"calling",
-				"your",
+				"draging",
 				"mobile",
 				"device",
 				"should",
@@ -358,29 +369,29 @@ public class DrawPanel extends JPanel implements Runnable {
 				"thing",
 				"is",
 				"you",
-				"are",
+				"wrong",
 				"unable",
 				"to",
 				"access",
-				"911",
+				"Droping",
 				"and",
 				"some",
 				"other",
 				"emergency",
-				"numbers",
+				"word",
 				"via",
-				"Whatsapp",
-				"messenger.",
+				"user",
+				"rippeEffect.",
 				"If",
 				"you",
 				"want",
 				"to",
 				"make",
 				"any",
-				"emergency",
-				"calls,",
-				"you",
-				"should",
+				"not working",
+				"login,",
+				"logout",
+				"animation",
 				"make",
 				"other",
 				"communication",
@@ -530,16 +541,13 @@ public class DrawPanel extends JPanel implements Runnable {
 		};
 
 		int count = 0;
-
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
-			wordList.child("word" + i + "/Owner").setValue(false);
-
-			words.add(new Word(regularWords[i], null));
-			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
-			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
-
+			wordList.child("word" + i + "/Owner").setValue("");
+			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
+			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
+			words.add(new Word(regularWords[i], null,x,y,x,y));
 			count++;
 		}
 
@@ -557,11 +565,10 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (int i = 0; i < themeWords.length; i++) {
 			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
 			themedWords.child("word" + i + "/Active").setValue(false);
-			themedWords.child("word" + i + "/Owner").setValue("false");
-
-			words.add(new Word(themeWords[i], null));
-			words.get(words.size() - 1).xPos = r.nextInt(Constants.screenWidth + 1); // skalad x pos
-			words.get(words.size() - 1).yPos = r.nextInt(Constants.screenHeight + 1); // skalad y pos
+			themedWords.child("word" + i + "/Owner").setValue("");
+			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
+			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
+			words.add(new Word(themeWords[i], null,x,y,x,y));
 
 			count++;
 		}
@@ -600,13 +607,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				word = (String) snapshot.child("text").getValue().toString();
 
 				if (snapshot.child("x").getValue() != null) {
-					words.get(index).xPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
-					System.out.println("x is written to "+ index + "  word "+words.get(index).xPos);
+					words.get(index).txPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
 				}
 
 				if (snapshot.child("y").getValue() != null) {
-					words.get(index).yPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
-					System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
+					words.get(index).tyPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
 				}
 				
 				if (snapshot.child("State").getValue() != null) {
@@ -618,16 +623,20 @@ public class DrawPanel extends JPanel implements Runnable {
 							case "placed":
 							//	words.get(index).released();
 								words.get(index).setState(Word.State.placed);
+								u.release();
 								System.out.println("placed");
 								words.get(index).appear();
 							break;
 							case "draging":
-								words.get(index).setState(Word.State.draging);
-								u.xTar=words.get(index).xPos;
-								u.yTar=words.get(index).yPos;
-								u.xPos=words.get(index).xPos;
-								u.yPos=words.get(index).yPos;
-								System.out.println("dragging");
+								
+								if(words.get(index).state!=Word.State.onTray){
+									words.get(index).setState(Word.State.draging);
+									u.xTar=words.get(index).txPos;
+									u.yTar=words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
+									u.yPos=(int)words.get(index).tyPos;
+									System.out.println("dragging");
+								}
 	
 							break;
 							case "onTray":
@@ -637,7 +646,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				
 						}
 					}
-					System.out.println("y is written to "+ index + "  word "+words.get(index).yPos);
+					
 				}
 				
 				if (snapshot.child("Active").getValue().toString() == "true") {
@@ -660,7 +669,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 
-				if(snapshot.child("Owner").getValue().toString() !=null) {
+				if(snapshot.child("Owner").getValue().toString()!="") {
 					words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
 					System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 				}

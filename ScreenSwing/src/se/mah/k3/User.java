@@ -1,6 +1,7 @@
 package se.mah.k3;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 
 import se.mah.k3.particles.RippleParticle;
@@ -20,6 +21,7 @@ public class User implements Comparable<User>{
 	private Color color = new Color(100, 100, 100);
 	private float RotateAngle;
 	private int size=100;
+	int animSize;
 	public User(String id, float _xRel, float _yRel) {
 		this.id = id;
 		this.xRel = _xRel;
@@ -89,17 +91,18 @@ public class User implements Comparable<User>{
 		g2.setColor(color);
 		g2.setStroke(Constants.userStroke);
 		for(int i=0; i<3;i++){
-			g2.drawArc((int)(xPos - size*0.5), (int)(yPos - size*0.5),size,size,(int)RotateAngle+i*120,60);
+			g2.drawArc((int)(xPos - (size+animSize)*0.5), (int)(yPos - (size+animSize)*0.5),size+animSize,size+animSize,(int)RotateAngle+i*120,60);
 		}
 		//g2.drawArc((int)(xPos - size*0.5), (int)(yPos - size*0.5),size,size,(int)RotateAngle+180,90);
 		//g2.fillOval((int)(xPos - size*0.5), (int)(yPos - size*0.5), size, size);
 		g2.setColor(Color.BLACK);
-		g2.setFont(Constants.userFont);
+		g2.setFont(Constants.boldFont);
+
 		//g2.drawLine((int)(xPos ), (int)(yPos ),(int)(xPos -Math.cos(Math.toRadians(angle))*50), (int)(yPos-Math.sin(Math.toRadians(angle))*50));
-		g2.drawString(id, (int)(xPos + size*0.2), (int)(yPos + size*0.2));
+		g2.drawString(id, (int)(xPos + size*0.7), (int)(yPos + size*0.7));
 	}
 	public void update(){
-		float xTdiff=xPos-xTar, yTdiff=yPos-yTar;
+		float xTdiff=xTar-xPos, yTdiff=yTar-yPos;
 
 		//float aDiff=angle-tAngle;
 		//tAngle=(float) Math.toDegrees(Math.atan2(yTdiff, xTdiff));
@@ -107,8 +110,8 @@ public class User implements Comparable<User>{
 		angle=(float) Math.toDegrees(Math.atan2(yTdiff, xTdiff));
 		RotateAngle+=(xTdiff+yTdiff)*0.1;
 		size=(int)(Math.abs(xTdiff+yTdiff)*0.2+DEFAULT_SIZE);
-		xPos-=(float) (xTdiff*0.1);
-		yPos-=(float) (yTdiff*0.1);
+		xPos+=(float) (xTdiff*0.1);
+		yPos+=(float) (yTdiff*0.1);
 		pxPos=xPos;
 		pyPos=yPos;
 		pAngle=angle;
@@ -118,10 +121,10 @@ public class User implements Comparable<User>{
 				
 			break;
 			case 1: // online
-				
+				animSize+=((0-animSize)*0.5);
 			break;
 			case 2: // hold
-				
+		
 			break;
 			 case 3: 
 				 if(xTdiff<100 && yTdiff<100)taping();
@@ -130,8 +133,14 @@ public class User implements Comparable<User>{
 		}
 	}
 	public void taping(){
-		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos));
+		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos,20));
 		state=User.State.online;
 			
+	}
+
+	public void release() {
+		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos));
+		animSize=200;
+		state=User.State.online;
 	}
 }
