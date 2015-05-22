@@ -9,7 +9,8 @@ import java.awt.Stroke;
 	public static final int WaterStrokeWidth = 30;
 	public static Font font,lightFont,boldFont ;
 	public static int screenNbr=145;
-	
+    public static final int PARTICLE_LIMIT=4000;
+    public static final int HEAVY_PARTICLE_LIMIT=500;
 	public static String wordBg = "#009688";
 	public static String wordSt = "#8d0096";
 	public static String waterC = "#90caf9";

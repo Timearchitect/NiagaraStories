@@ -305,6 +305,14 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			if(particles.get(i).dead)particles.remove(i);
 		}
+		
+		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particles
+			particles.remove(0);
+		}
+		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all particles
+			overParticles.remove(0);
+		}
+		
 		for (User user : userList) {
 			user.update();
 			user.display(g2);
@@ -688,6 +696,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "  frame :" + myFrame + "      words: "+ words.size() + "    Users:" +userList.size()  , 20, 40);
+		g2.drawString("ScreenNbr: " + Constants.screenNbr + "   particles:"+ particles.size() + "   HeavyOverparticles:"+ overParticles.size() +"  frame :" + myFrame + "      words: "+ words.size() + "    Users:" +userList.size()  , 30, 50);
 	}
 }
