@@ -665,7 +665,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
 				}else {
 				//	isActive = "false";
-					words.get(index).disappear();
+					//words.get(index).disappear();
 					System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 

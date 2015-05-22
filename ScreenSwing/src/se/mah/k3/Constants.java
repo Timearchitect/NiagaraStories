@@ -19,7 +19,7 @@ import java.awt.Stroke;
 	public static int screenWidth = 1920, screenHeight = 1080;
 	public static BasicStroke squareStroke = new BasicStroke(35, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke userStroke = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
-	public static BasicStroke wordOutline = new BasicStroke(5, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
+	public static BasicStroke wordOutline = new BasicStroke(3, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 
 	public static Font userFont=boldFont;
 
