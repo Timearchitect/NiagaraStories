@@ -48,7 +48,9 @@ public class DrawPanel extends JPanel implements Runnable {
 	boolean hold;
 	Word selectedWord;
 	public static ArrayList<Particle> particles = new ArrayList<Particle>(), overParticles = new ArrayList<Particle>();
+	public static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
+
 	User user;
 	boolean onesRun=true;	
 
@@ -76,6 +78,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
+	//	projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+
 	}
 
 	public DrawPanel() {
@@ -132,6 +136,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						} 
 					}
 				}
+				
 			}
 
 			public void mouseReleased(MouseEvent e) {
@@ -170,7 +175,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						selectedWord.tyPos=(int) (mouseY+offsetY);
 					}
 
-					overParticles.add( new RippleParticle((int) mouseX,(int) mouseY,20));
+					overParticles.add( new RippleParticle((int) mouseX,(int) mouseY,10));
 				}
 
 				if (SwingUtilities.isMiddleMouseButton(ev)) {
@@ -291,10 +296,16 @@ public class DrawPanel extends JPanel implements Runnable {
 		 g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
-		for(int i = 0; i < 8; i++) {
+		for(int i = 0; i < 7; i++) {  // spawn particles
 			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
 		}
-
+		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particlesCap
+			particles.remove(0);
+		}
+		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all OverparticlesCap
+			overParticles.remove(0);
+		}
+		
 		for (int i = particles.size() - 1; 0 < i; i--) {  // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
@@ -313,18 +324,22 @@ public class DrawPanel extends JPanel implements Runnable {
 			if(particles.get(i).dead)particles.remove(i);
 		}
 		
-		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particles
-			particles.remove(0);
-		}
-		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all particles
-			overParticles.remove(0);
-		}
-		
-		for (User user : userList) {
+		for (User user : userList) { // run all users
 			user.update();
 			user.display(g2);
 		}
-		for (Word word : words) {
+		for (Projectile p:	projectiles){ // run all projectiles
+			for (Word w : words) {
+				if (w.active) {
+					p.collision(w);
+				}
+			}
+			p.BoundCollision();
+			p.update();
+			p.display(g2);
+
+		}
+		for (Word word : words) {  // run all words
 			if (word.active) {
 				word.update();
 				word.display();
@@ -692,7 +707,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 
-				if(snapshot.child("Owner").getValue().toString()!="") {
+				if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
 					words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
 					System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 				}

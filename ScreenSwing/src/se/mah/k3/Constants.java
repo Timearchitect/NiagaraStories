@@ -18,7 +18,7 @@ import java.awt.Stroke;
 	public static Color wordStroke = (hexToRgb(wordSt));
 	public static Color waterColor = (hexToRgb(waterC));
 	public static int screenWidth = 1920, screenHeight = 1080;
-	public static BasicStroke squareStroke = new BasicStroke(35, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
+	public static BasicStroke squareStroke = new BasicStroke(20, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke userStroke = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke wordOutline = new BasicStroke(3, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 

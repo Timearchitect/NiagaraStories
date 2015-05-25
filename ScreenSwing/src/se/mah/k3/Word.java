@@ -1,6 +1,9 @@
 package se.mah.k3;
 
 import java.awt.Color;
+
+import com.firebase.client.Firebase;
+
 import se.mah.k3.particles.FrameParticle;
 import se.mah.k3.particles.TextParticle;
 
@@ -8,9 +11,9 @@ import se.mah.k3.particles.TextParticle;
 //the user will have displayed in their mobile app. 
 //It also contains a boolean to check if the word is active or not.
 
-public class Word {
+public class Word implements Health{
 	//DrawPanel drawPanel;
-	private String type="";
+	private String type="",wordId="";
 	public boolean active = true, selected;
 	public String ownerId = "";
 	public User owner;
@@ -18,7 +21,11 @@ public class Word {
 	State state=State.onTray;
 	public String text = "";
 	public int xPos, yPos, width, height, margin = 20;
-	public float pxPos, pyPos,txPos,tyPos;
+	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
+	public float health;
+	
+
+
 	
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
@@ -111,10 +118,13 @@ public class Word {
 
 	public void appear(){
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, 0, text));
-		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (- margin), 0, text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, -margin, 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (margin * 0.5), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (- margin * 0.5), 0, text));
 		active=true;
+		pxPos=xPos;
+		pyPos=yPos;
+		setHealth(text.length());
 	}
 
 	public void disappear(){
@@ -124,7 +134,7 @@ public class Word {
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.5), text));
-		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (- margin), text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
 
 		active=false;
 	}
@@ -165,6 +175,9 @@ public class Word {
 		//tyPos=Math.sin(angle);
 		xPos+=(int)(xDiff*0.2);
 		yPos+=(int)(yDiff*0.2);
+
+		xVel=xPos-pxPos;
+		yVel=yPos-pyPos;
 		pxPos=xPos;
 		pyPos=yPos;
 		
@@ -178,6 +191,28 @@ public class Word {
 		return state.ordinal();
 	}	
 
+
+	public void setHealth(float _amount) {
+		health=_amount;		
+	}
+
+	public void damage(float _amount) {
+		if(state==State.draging)health-=_amount;
+		else health-=_amount;
+		if(health<=0)dead();
+	}
+
+	public void dead() {
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, -margin, margin, text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, -margin, -margin, text));	
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, margin, text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, -margin, text));
+		active=false;		
+		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
+		//fireBaseWords.child(+wordId+"/Active").setValue(false);
+			
+	}
 
 	
 }
