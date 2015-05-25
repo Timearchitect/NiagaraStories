@@ -1,17 +1,9 @@
 package se.mah.k3.particles;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
-import java.awt.image.ImageObserver;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 import se.mah.k3.DrawPanel;
 

@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
@@ -16,17 +17,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import se.mah.k3.Word.State;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
+import se.mah.k3.particles.RustParticle;
 import se.mah.k3.particles.SplashParticle;
 import se.mah.k3.particles.WaterParticle;
 
@@ -41,7 +40,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	public static BufferedImage bimage, mist;
+	public static BufferedImage bimage, mist, rust, cracks;
 	public static int myFrame; 
 	public String changedWord = "word";
 	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
@@ -51,6 +50,15 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
 
+	private BufferedImage cropImage(BufferedImage src, Rectangle rect) {
+		BufferedImage dest = src.getSubimage(0, 0, rect.width, rect.height);
+		return dest;
+	}
+	
+	Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
+
+	BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
+	
 	User user;
 	boolean onesRun=true;	
 
@@ -78,7 +86,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
-	//	projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+		//	projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 
 	}
 
@@ -87,6 +95,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		try {
 			bimage = ImageIO.read(new File("images/background.bmp"));
 			mist = ImageIO.read(new File("images/mist.png"));
+			rust = ImageIO.read(new File("images/rust.png"));
+			cracks = ImageIO.read(new File("images/cracks.png"));
 		} catch (IOException e) {
 			System.out.println("no");
 		}
@@ -122,8 +132,10 @@ public class DrawPanel extends JPanel implements Runnable {
 
 					overParticles.add( new RippleParticle((int)mouseX, (int)mouseY, 200));
 				} else if (e.getButton() == MouseEvent.BUTTON3) {
+
 					//System.out.println(" right button clicked");
-					overParticles.add(new SplashParticle((int)mouseX, (int)mouseY));
+					//overParticles.add(new SplashParticle((int)mouseX, (int)mouseY));
+					//overParticles.add(new RustParticle ((int) mouseX, (int) mouseY, selectedWord.getText().length()));
 
 					for(Word word: words){
 						if(word.xPos + word.margin + (word.width * 0.5) > mouseX && word.xPos - word.margin - (word.width * 0.5) < mouseX && word.yPos + word.margin + (word.height * 0.5) > mouseY && word.yPos - word.margin - (word.height * 0.5) < mouseY) {
@@ -136,18 +148,22 @@ public class DrawPanel extends JPanel implements Runnable {
 						} 
 					}
 				}
-				
-			}
 
+			}
+			
 			public void mouseReleased(MouseEvent e) {
 				mouseX=e.getX();
 				mouseY=e.getY();
-
+				
+				String wordLength;
+				
 				if (e.getButton() == MouseEvent.NOBUTTON) {
 					//System.out.println(" no button Release");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
 					if(selectedWord != null){
-						selectedWord.released();
+						wordLength = String.valueOf(selectedWord.getText().length());
+						selectedWord.released();						
+						overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
 						selectedWord=null;
 					}
 
@@ -166,9 +182,9 @@ public class DrawPanel extends JPanel implements Runnable {
 
 				if (SwingUtilities.isLeftMouseButton(ev)) {
 					//System.out.println("left");
-					
+
 					if(selectedWord!=null){
-						
+
 						selectedWord.xPos=(int) (mouseX+offsetX);
 						selectedWord.yPos=(int) (mouseY+offsetY);
 						selectedWord.txPos=(int) (mouseX+offsetX);
@@ -191,7 +207,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 		themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		myFirebaseRef.removeValue(); // Cleans out everything
+		//myFirebaseRef.removeValue(); // Cleans out everything
 
 		createRegularWords();
 		createThemeWords();
@@ -221,16 +237,16 @@ public class DrawPanel extends JPanel implements Runnable {
 				//System.out.println(arg0.getKey()+"  vem d�r?");
 				if (arg0.getKey().equals("Users") && arg0.hasChildren()) {
 
-				
 
-					
-					
+
+
+
 					for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
 						boolean match = false;
-					//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
+						//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
 						for(User ul:userList){
-							
+
 							if( ul.getId().equals(u.getId())){ // check if it has the same ID
 								String state="";
 								if( dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
@@ -240,25 +256,25 @@ public class DrawPanel extends JPanel implements Runnable {
 								ul.xTar = u.xTar;
 								ul.yTar = u.yTar;
 								switch (state){
-									case "offline":
-										ul.state=User.State.offline;
-										System.out.println("offline");
+								case "offline":
+									ul.state=User.State.offline;
+									System.out.println("offline");
 									break;
-									case "online":
-										ul.state=User.State.online;
-										System.out.println("online");
+								case "online":
+									ul.state=User.State.online;
+									System.out.println("online");
 
 									break;
-									case "taping":
-										ul.state=User.State.taping;
-										//System.out.println("taping: "+ul.getId()+"state: "+ state);
+								case "taping":
+									ul.state=User.State.taping;
+									//System.out.println("taping: "+ul.getId()+"state: "+ state);
 									break;
-									default:
+								default:
 								}
-							
+
 								match=true;
 							}
-							
+
 						}
 						if (!match){
 							userList.add(u);
@@ -293,7 +309,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
-		 g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
 		for(int i = 0; i < 7; i++) {  // spawn particles
@@ -305,7 +321,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all OverparticlesCap
 			overParticles.remove(0);
 		}
-		
+
 		for (int i = particles.size() - 1; 0 < i; i--) {  // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
@@ -323,7 +339,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			if(particles.get(i).dead)particles.remove(i);
 		}
-		
+
 		for (User user : userList) { // run all users
 			user.update();
 			user.display(g2);
@@ -367,7 +383,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			try {
 				repaint(); // repaint()
 				Thread.sleep(18);
-				
+
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
 			}
@@ -380,7 +396,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	public void createRegularWords() {
 		Firebase wordList = myFirebaseRef.child("Regular Words");
-		
+
 		String[] regularWords = { 
 				"When",
 				"you",
@@ -626,9 +642,9 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
 				String word = "word";
-			//	String isActive = "";
+				//	String isActive = "";
 				String s = snapshot.getRef().toString();
-			//	String ownerId = "";
+				//	String ownerId = "";
 
 
 				int index=Integer.parseInt(s.substring(63));
@@ -642,53 +658,53 @@ public class DrawPanel extends JPanel implements Runnable {
 				if (snapshot.child("y").getValue() != null) {
 					words.get(index).tyPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
 				}
-				
+
 				if (snapshot.child("State").getValue() != null) {
 					//System.out.println("State stuff");
 					User u = null;
 					if(words.get(index).getUser()!=null){ 
 						u=words.get(index).getUser();
 						switch(snapshot.child("State").getValue().toString()){
-							case "placed":
+						case "placed":
 							//	words.get(index).released();
-								words.get(index).setState(Word.State.placed);
-								u.release();
-								System.out.println("placed");
-								words.get(index).appear();
+							words.get(index).setState(Word.State.placed);
+							u.release();
+							System.out.println("placed");
+							words.get(index).appear();
 							break;
-							case "draging":
-								//words.get(index).respond();
-								if(words.get(index).state!=Word.State.onTray){
-									words.get(index).setState(Word.State.draging);
-									u.xTar=words.get(index).txPos;
-									u.yTar=words.get(index).tyPos;
-									u.xPos=(int)words.get(index).txPos;
-									u.yPos=(int)words.get(index).tyPos;
-									System.out.println("dragging");
+						case "draging":
+							//words.get(index).respond();
+							if(words.get(index).state!=Word.State.onTray){
+								words.get(index).setState(Word.State.draging);
+								u.xTar=words.get(index).txPos;
+								u.yTar=words.get(index).tyPos;
+								u.xPos=(int)words.get(index).txPos;
+								u.yPos=(int)words.get(index).tyPos;
+								System.out.println("dragging");
 							}else{
-									words.get(index).xPos=(int)words.get(index).txPos;
-									words.get(index).yPos=(int)words.get(index).tyPos;
-									u.xTar=words.get(index).txPos;
-									u.yTar=words.get(index).tyPos;
-									u.xPos=(int)words.get(index).txPos;
-									u.yPos=(int)words.get(index).tyPos;
-									words.get(index).respond();
-								}
-	
-							break;
-							case "onTray":
+								words.get(index).xPos=(int)words.get(index).txPos;
+								words.get(index).yPos=(int)words.get(index).tyPos;
+								u.xTar=words.get(index).txPos;
+								u.yTar=words.get(index).tyPos;
+								u.xPos=(int)words.get(index).txPos;
+								u.yPos=(int)words.get(index).tyPos;
+								words.get(index).respond();
+							}
 
-								words.get(index).setState(Word.State.onTray);
-								System.out.println("on tray");
 							break;
-				
+						case "onTray":
+
+							words.get(index).setState(Word.State.onTray);
+							System.out.println("on tray");
+							break;
+
 						}
 					}
-					
+
 				}
-				
+
 				if (snapshot.child("Active").getValue().toString() == "true") {
-				//	isActive = "true";
+					//	isActive = "true";
 					//words.get(index).appear();
 					//words.get(index).state = words.get(index).state.placed;			
 
@@ -696,21 +712,23 @@ public class DrawPanel extends JPanel implements Runnable {
 					//	case 2:
 					//		System.out.println("\"" + word + "\" placed");
 					//	default:
-						//System.out.println("\"" + word + "\" " + words.get(index).getState());
+					//System.out.println("\"" + word + "\" " + words.get(index).getState());
 					//	}
 
 					//System.out.println("\"" + word + "\" " + words.get(index).getState());
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now active");
 				}else {
-				//	isActive = "false";
+					//	isActive = "false";
 					//words.get(index).disappear();
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}
 
-				if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
-					words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
-					System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
-				}
+				try {
+					if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
+						words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
+						System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
+					}
+				} catch (NullPointerException npe){}
 			}
 
 			@Override

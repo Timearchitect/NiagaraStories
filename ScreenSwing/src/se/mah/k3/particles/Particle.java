@@ -1,6 +1,5 @@
 package se.mah.k3.particles;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;

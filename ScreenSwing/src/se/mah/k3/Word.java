@@ -2,9 +2,8 @@ package se.mah.k3;
 
 import java.awt.Color;
 
-import com.firebase.client.Firebase;
-
 import se.mah.k3.particles.FrameParticle;
+import se.mah.k3.particles.RustParticle;
 import se.mah.k3.particles.TextParticle;
 
 //This is the class for the word object. It contains the words that
@@ -160,6 +159,7 @@ public class Word implements Health{
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));
+		//DrawPanel.overParticles.add(new RustParticle ((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6, Integer.valueOf(text.length())));
 		
 		if(state==State.draging){
 			DrawPanel.g2.setStroke(Constants.wordOutline);
