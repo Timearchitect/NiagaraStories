@@ -33,7 +33,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	private JPanel contentPane;
 	private boolean inFullScreenMode = false;
 	private int PrevX = 100 ,PrevY = 100 ,PrevWidth = 480,PrevHeight = 640; //Dummysize
-
+	
 	/**
 	 * Launch the application.
 	 */
@@ -68,9 +68,9 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	public FullScreen() {
 		
 		try{
-		     Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(48f);
-		     Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(48f);
-		     Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(48f);
+		     Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(Constants.fontSize);
+		     Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(Constants.fontSize);
+		     Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(Constants.fontSize);
 			} catch (IOException e) {
 			    e.printStackTrace();
 			} catch (FontFormatException e) {

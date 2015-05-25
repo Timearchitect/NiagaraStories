@@ -12,7 +12,7 @@ public class Projectile {
 	float x,y,vx,vy,ax=0,ay=0;
 	
 	int size=50;
-	public  BasicStroke roundStroke = new BasicStroke(size, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	public  BasicStroke roundStroke = new BasicStroke(size+30, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	Projectile(float _x,float _y ,float _vx, float _vy){
 		x=_x;
 		y=_y;
@@ -52,7 +52,7 @@ public class Projectile {
 				w.respond();
 				w.damage(1);
 				vy+=w.yVel*0.5;
-				DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.5) ));
+				DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
 			}
 		}  
@@ -67,7 +67,7 @@ public class Projectile {
 				w.respond();
 				w.damage(1);
 				vx+=w.xVel*0.5;
-				DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.5) ));
+				DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
 			}
 		}  
@@ -78,21 +78,21 @@ public class Projectile {
 		if(x<0){
 			x=0;
 			vx*=(-1);
-			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.5) ));
+			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 		}else if( x>Constants.screenWidth  ){
 			x=Constants.screenWidth  ;
 			vx*=(-1);
-			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.5) ));
+			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
 		} else if(y<0 ){
 			y=0;
 			vy*=(-1);
-			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.5) ));
+			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
 		}else if( y>Constants.screenHeight  ){
 			y=Constants.screenHeight ;
 			vy*=(-1);
-			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.5) ));
+			DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
 		}
 	}

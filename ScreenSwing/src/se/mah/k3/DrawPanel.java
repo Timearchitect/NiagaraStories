@@ -58,7 +58,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			GraphicsEnvironment.getLocalGraphicsEnvironment()
 			.getDefaultScreenDevice()
 			.getDefaultConfiguration();
-	// create a hardware accelerated image
+		// create a hardware accelerated image
 	public final BufferedImage create(final int width, final int height,
 			final boolean alpha) {
 		return config.createCompatibleImage(width, height, alpha
@@ -73,12 +73,12 @@ public class DrawPanel extends JPanel implements Runnable {
 			word.width = metrics.stringWidth(word.text);
 			word.height = metrics.getHeight();
 		}
-		//smooth font
+
 		g2.setRenderingHint(
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
-	//	projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+		projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 
 	}
 
@@ -106,6 +106,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							if(word.xPos + word.margin + (word.width * 0.5) > mouseX && word.xPos - word.margin - (word.width * 0.5) < mouseX && word.yPos + word.margin + (word.height * 0.5) > mouseY && word.yPos - word.margin - (word.height * 0.5) < mouseY) {
 								selectedWord = word;
 								selectedWord.selected();
+								selectedWord.state=Word.State.draging;
 								offsetX = word.xPos - mouseX;
 								offsetY = word.yPos - mouseY;
 							} 
@@ -148,6 +149,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
 					if(selectedWord != null){
 						selectedWord.released();
+						selectedWord.state=Word.State.placed;
 						selectedWord=null;
 					}
 
@@ -195,7 +197,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		createRegularWords();
 		createThemeWords();
-
+		 createUsedWords() ;
 		// Run method that listens for change in word list (active words for example).
 		wordListener();
 
@@ -225,7 +227,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 					
 					
-					for (DataSnapshot dataSnapshot : dsList) {
+				/*	for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
 						boolean match = false;
 					//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
@@ -263,6 +265,49 @@ public class DrawPanel extends JPanel implements Runnable {
 						if (!match){
 							userList.add(u);
 							u.setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
+							System.out.println("Add user");
+							System.out.println(dataSnapshot.getKey());
+						}
+					}	*/
+					
+					for (DataSnapshot dataSnapshot : dsList) {
+						//User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
+						boolean match = false;
+					//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
+						for(User ul:userList){
+							
+							if( ul.getId().equals(dataSnapshot.getKey())){ // check if it has the same ID
+								String state="";
+								if( dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
+								//ul.xTar = u.xPos;
+								//ul.yTar = u.yPos;
+								ul.setId(dataSnapshot.getKey());
+								ul.xTar = Float.parseFloat(dataSnapshot.child("xRel").getValue().toString())*Constants.screenWidth;
+								ul.yTar = Float.parseFloat( dataSnapshot.child("yRel").getValue().toString())*Constants.screenHeight;
+								switch (state){
+									case "offline":
+										ul.state=User.State.offline;
+										System.out.println("offline");
+									break;
+									case "online":
+										ul.state=User.State.online;
+										System.out.println("online");
+
+									break;
+									case "taping":
+										ul.state=User.State.taping;
+										//System.out.println("taping: "+ul.getId()+"state: "+ state);
+									break;
+									default:
+								}
+							
+								match=true;
+							}
+							
+						}
+						if (!match){
+							userList.add(new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString())));
+							userList.get(userList.size()-1).setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
 							System.out.println("Add user");
 							System.out.println(dataSnapshot.getKey());
 						}
@@ -310,12 +355,12 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.get(i).update();
 			particles.get(i).display(g2);
 
-			for (Word word : words) {
+		/*	for (Word word : words) { // collision
 				if (word.active){
 					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
 					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
-			}
+			}*/
 
 			if (particles.get(i).y > Constants.screenHeight ) {
 				particles.get(i).kill();
@@ -596,6 +641,30 @@ public class DrawPanel extends JPanel implements Runnable {
 			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
 			themedWords.child("word" + i + "/Active").setValue(false);
 			themedWords.child("word" + i + "/Owner").setValue("");
+			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
+			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
+			words.add(new Word(themeWords[i], null,x,y,x,y));
+			count++;
+		}
+
+		myFirebaseRef.child("Themed Words Size").setValue(count);
+	}
+	
+	
+	public void createUsedWords() {
+		Firebase themedWords = myFirebaseRef.child("Used Words");
+		String[] themeWords = { 
+			//	"helloWorld","hejsan","yo","niHao"
+		};
+
+		int count = 0;
+
+		for (int i = 0; i < themeWords.length; i++) {
+			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
+			themedWords.child("word" + i + "/Active").setValue(false);
+			themedWords.child("word" + i + "/Owner").setValue("");
+			themedWords.child("word" + i + "/xRel").setValue(0.5);
+			themedWords.child("word" + i + "/yRel").setValue(0.5);
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
 			words.add(new Word(themeWords[i], null,x,y,x,y));
