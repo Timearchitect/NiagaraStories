@@ -57,9 +57,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		return dest;
 	}
 
-	Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
+	//Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
 
-	BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
+	//BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
 
 	User user;
 	boolean onesRun=true;	
