@@ -28,8 +28,7 @@ public class Word implements Health{
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
 	float forceFactor = (float) 0.04;
-	private double txVel;
-	private double tyVel;
+	private double txVel, tyVel;
 	WordSkin skin = new WordSkin(this);
 
 	public Word(String _text, String _ownerId) {
@@ -37,7 +36,7 @@ public class Word implements Health{
 		this.ownerId = _ownerId;
 		this.active = false;
 	}
-	
+
 	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
 		xPos=_x;
 		yPos=_y;
@@ -182,16 +181,16 @@ public class Word implements Health{
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));
 		//DrawPanel.overParticles.add(new RustParticle ((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6, Integer.valueOf(text.length())));
-		
+
 		if(state==State.draging){
 			DrawPanel.g2.setStroke(Constants.wordOutline);
 			DrawPanel.g2.drawRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		}
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
 
-		
+
 		skin.display(DrawPanel.g2);
-	
+
 	}
 
 	public void collisionVSWord (Word w){
@@ -208,19 +207,19 @@ public class Word implements Health{
 			}
 		}
 	}
-	
+
 	public void BoundCollision(){
 		if(xPos < margin + width * 0.5){											//LEFT
-			txPos += 1;
-			
+			txPos += 5;
+
 		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
-			txPos-=1;
+			txPos -= 5;
 
 		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
-			tyPos += 1;
+			tyPos += 5;
 
 		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
-			tyPos -= 1;
+			tyPos -= 5;
 		}
 	}
 
@@ -240,7 +239,7 @@ public class Word implements Health{
 		tyPos+=tyVel;
 		pxPos=xPos;
 		pyPos=yPos;		
-		
+
 		skin.update();
 	}
 
