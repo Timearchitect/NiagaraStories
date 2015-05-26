@@ -135,9 +135,16 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
        if (e.getID() == KeyEvent.KEY_TYPED) {
-       	 if(e.getKeyChar()=='f'){     		 
+       	 if(e.getKeyChar()=='f' || e.getKeyChar()=='F'){     		 
              	setFullscreen(!inFullScreenMode);	
      		}
+	       	 if(e.getKeyChar()=='#' ){     		 
+	       		if(Constants.debug){
+	       			Constants.debug=false;
+	       		}else{
+	       			Constants.debug=true;
+	       		}
+	  		}
         }
         return false;
 	}

@@ -57,9 +57,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		return dest;
 	}
 
-	Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
-
-	BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
+	//Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
+	//BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
 
 	User user;
 	boolean onesRun=true;	
@@ -683,7 +682,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createUsedWords() {
 		Firebase themedWords = myFirebaseRef.child("Used Words");
 		String[] themeWords = { 
-				//	"helloWorld","hejsan","yo","niHao"
+					"helloWorld","hejsan","yo","niHao"
 		};
 
 		int count = 0;
@@ -825,7 +824,10 @@ public class DrawPanel extends JPanel implements Runnable {
 			public void displayDebugText(){
 				g2.setColor(Color.BLACK); // svart system color
 				g2.setFont(Constants.boldFont); // init typsnitt
-				//g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
-				g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+				if(Constants.debug){
+					g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+				}else{
+					g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
+				}
 			}
 		}

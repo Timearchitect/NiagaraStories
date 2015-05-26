@@ -15,7 +15,7 @@ public class Projectile {
 	float x,y,vx,vy,ax=0,ay=0;
 	
 	int size=50;
-	public  BasicStroke roundStroke = new BasicStroke(size+30, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	public  BasicStroke roundStroke = new BasicStroke(size+20, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 	
 	public Projectile(float _x,float _y ,float _vx, float _vy){
 		x=_x;
