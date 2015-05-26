@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
@@ -24,11 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import se.mah.k3.Projectiles.Projectile;
-import se.mah.k3.Word.State;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
-import se.mah.k3.particles.RustParticle;
-import se.mah.k3.particles.SplashParticle;
 import se.mah.k3.particles.WaterParticle;
 
 import com.firebase.client.ChildEventListener;
@@ -42,7 +38,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	public static BufferedImage bimage, mist, rust, cracks;
+	public static BufferedImage bimage, mist, rust, cracks, moss;
 	public static int myFrame; 
 	public String changedWord = "word";
 	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
@@ -52,14 +48,14 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
 
-	private BufferedImage cropImage(BufferedImage src, Rectangle rect) {
+	/*private BufferedImage cropImage(BufferedImage src, Rectangle rect) {
 		BufferedImage dest = src.getSubimage(0, 0, rect.width, rect.height);
 		return dest;
-	}
+	}*/
 
-	Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
+	//Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
 
-	BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
+	//BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
 
 	User user;
 	boolean onesRun=true;	
@@ -98,6 +94,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			bimage = ImageIO.read(new File("images/background.bmp"));
 			mist = ImageIO.read(new File("images/mist.png"));
 			rust = ImageIO.read(new File("images/rust.png"));
+			moss = ImageIO.read(new File("images/moss.png"));
 			cracks = ImageIO.read(new File("images/cracks.png"));
 		} catch (IOException e) {
 			System.out.println("no");
@@ -165,7 +162,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					if(selectedWord != null){
 						wordLength = String.valueOf(selectedWord.getText().length());
 						selectedWord.released();						
-						overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
+						//overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
 						selectedWord.state=Word.State.placed;
 						selectedWord=null;
 					}
@@ -420,7 +417,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 			}
 		}
-
+		
 		for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
 			overParticles.get(i).update();
 			overParticles.get(i).display(g2);

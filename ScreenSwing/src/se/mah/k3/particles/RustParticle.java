@@ -13,21 +13,23 @@ import se.mah.k3.Word;
 
 public class RustParticle extends Particle implements Health{
 	private float opacity, health;
-	private int width, height;
+	private int width, height, xPos, yPos;
 	private AffineTransform tx = new AffineTransform(), oldTransform;
 	Word selectedWord;
 
 	public RustParticle(int _x, int _y, int _width, int _height, int _health) {
 		super(_x, _y);
-		this.width = _width; //Replace with word width
-		this.height = _height; //Replace with word height
+		this.width = _width;
+		this.height = _height;
+		this.xPos = _x;
+		this.yPos = _y;
 		setHealth(_health);
 	}
 
 	public void update() {
 		damage(1);
 
-		if (opacity > 0.99)
+		if (opacity > 0.99 || x != xPos || y != yPos)
 			dead();
 	}
 
