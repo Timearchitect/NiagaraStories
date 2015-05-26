@@ -1,9 +1,12 @@
-package se.mah.k3;
+package se.mah.k3.Projectiles;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import se.mah.k3.Constants;
+import se.mah.k3.DrawPanel;
+import se.mah.k3.Word;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.SplashParticle;
 
@@ -13,14 +16,15 @@ public class Projectile {
 	
 	int size=50;
 	public  BasicStroke roundStroke = new BasicStroke(size+30, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	Projectile(float _x,float _y ,float _vx, float _vy){
+	
+	public Projectile(float _x,float _y ,float _vx, float _vy){
 		x=_x;
 		y=_y;
 		vx=_vx;
 		vy=_vy;
 	}
 
-	void update(){
+	public void update(){
 		x+=vx;
 		y+=vy;
 		vx+=ax;
@@ -33,7 +37,7 @@ public class Projectile {
 		//	ay*=0.95;
 		
 	}
-	void display(Graphics2D g2){
+	public void display(Graphics2D g2){
 		g2.setColor(Color.white);
 		g2.setStroke(roundStroke);
 		g2.drawLine((int)(x), (int)(y), (int)(x-vx),(int)( y-vy));
@@ -41,7 +45,7 @@ public class Projectile {
 		g2.fillOval((int)(x-size*0.5),(int)( y-size*0.5), size, size);
 		
 	}
-	void collision(Word w){
+	public void collision(Word w){
 		
 		if(w.yPos-w.height*0.5 < y+size*0.5 && w.yPos+w.height*0.5 > y-size*0.5  ){
 			if(w.xPos-w.width*0.5-Math.abs(w.xVel) < x+size*0.5+Math.abs(vx) && w.xPos+w.width*0.5+Math.abs(w.xVel) > x-size*0.5-Math.abs(vx) ){
@@ -74,7 +78,7 @@ public class Projectile {
 		
 		
 	}
-	void BoundCollision(){
+	public void BoundCollision(){
 		if(x<0){
 			x=0;
 			vx*=(-1);

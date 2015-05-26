@@ -192,7 +192,7 @@ public class Word implements Health{
 				if((yPos + height*0.5) > (w.yPos - w.height*0.5)){
 					if((yPos - height*0.5) < (w.yPos + w.height*0.5)){
 						//System.out.println("collision");
-						w.respond();	
+					//	w.respond();	
 						w.txVel=(w.xPos-xPos)*forceFactor;
 						w.tyVel=(w.yPos-yPos)*forceFactor;
 						txVel=(xPos-w.xPos)*forceFactor;

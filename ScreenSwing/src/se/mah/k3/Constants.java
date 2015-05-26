@@ -6,7 +6,7 @@ import java.awt.Font;
 import java.awt.Stroke;
 
  public class Constants {
-	public static final int WaterStrokeWidth = 30;
+	public static final int WaterStrokeWidth = 20;
 	public static float fontSize=50;
 	public static Font font,lightFont,boldFont ;
 	public static int screenNbr=145;

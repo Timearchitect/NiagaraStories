@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import se.mah.k3.Projectiles.Projectile;
 import se.mah.k3.Word.State;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
@@ -382,11 +383,13 @@ public class DrawPanel extends JPanel implements Runnable {
 			user.display(g2);
 		}
 		for (Projectile p:	projectiles){ // run all projectiles
+			
 			for (Word w : words) {
-				if (w.active) {
+				if (w.active ) {
 					p.collision(w);
 				}
 			}
+			
 			p.BoundCollision();
 			p.update();
 			p.display(g2);
@@ -398,7 +401,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				word.update();
 				word.display();
 				for(Word word2 : words){ //word collision
-					if (word2.active) {
+					if (word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
 						if(word!=word2){ //skips checking self for collision
 							word.collisionVSWord(word2);
 						}

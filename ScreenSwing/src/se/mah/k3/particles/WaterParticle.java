@@ -11,7 +11,7 @@ public class WaterParticle extends Particle {
 	private Random r =  new Random();
   Color waterColor = new Color(100, 200, 255, 50);
 	public WaterParticle(int x2, int y2){
-		super(x2,y2);
+		super(x2,y2);as
 		x=x2;
 		y=y2;
 		vy=5;
