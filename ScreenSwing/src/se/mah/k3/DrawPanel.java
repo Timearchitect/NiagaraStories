@@ -23,6 +23,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import se.mah.k3.Projectiles.Projectile;
+import se.mah.k3.Word.State;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.RustParticle;
@@ -54,11 +56,11 @@ public class DrawPanel extends JPanel implements Runnable {
 		BufferedImage dest = src.getSubimage(0, 0, rect.width, rect.height);
 		return dest;
 	}
-	
+
 	Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
 
 	BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
-	
+
 	User user;
 	boolean onesRun=true;	
 
@@ -66,7 +68,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			GraphicsEnvironment.getLocalGraphicsEnvironment()
 			.getDefaultScreenDevice()
 			.getDefaultConfiguration();
-		// create a hardware accelerated image
+	// create a hardware accelerated image
 	public final BufferedImage create(final int width, final int height,
 			final boolean alpha) {
 		return config.createCompatibleImage(width, height, alpha
@@ -149,15 +151,14 @@ public class DrawPanel extends JPanel implements Runnable {
 						} 
 					}
 				}
-
 			}
-			
+
 			public void mouseReleased(MouseEvent e) {
 				mouseX=e.getX();
 				mouseY=e.getY();
-				
+
 				String wordLength;
-				
+
 				if (e.getButton() == MouseEvent.NOBUTTON) {
 					//System.out.println(" no button Release");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
@@ -213,7 +214,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		createRegularWords();
 		createThemeWords();
-		 createUsedWords() ;
+		createUsedWords() ;
 		// Run method that listens for change in word list (active words for example).
 		wordListener();
 
@@ -239,7 +240,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				//System.out.println(arg0.getKey()+"  vem d�r?");
 				if (arg0.getKey().equals("Users") && arg0.hasChildren()) {
 
-				/*	for (DataSnapshot dataSnapshot : dsList) {
+					/*	for (DataSnapshot dataSnapshot : dsList) {
 						User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
 						boolean match = false;
 						//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
@@ -281,13 +282,13 @@ public class DrawPanel extends JPanel implements Runnable {
 							System.out.println(dataSnapshot.getKey());
 						}
 					}	*/
-					
+
 					for (DataSnapshot dataSnapshot : dsList) {
 						//User u =new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString()));
 						boolean match = false;
-					//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
+						//	System.out.println("!!!!!!!!!!!!!!!!!!!!USER");
 						for(User ul:userList){
-							
+
 							if( ul.getId().equals(dataSnapshot.getKey())){ // check if it has the same ID
 								String state="";
 								if( dataSnapshot.child("state").getValue()!=null) state=dataSnapshot.child("state").getValue().toString();
@@ -297,25 +298,25 @@ public class DrawPanel extends JPanel implements Runnable {
 								ul.xTar = Float.parseFloat(dataSnapshot.child("xRel").getValue().toString())*Constants.screenWidth;
 								ul.yTar = Float.parseFloat( dataSnapshot.child("yRel").getValue().toString())*Constants.screenHeight;
 								switch (state){
-									case "offline":
-										ul.state=User.State.offline;
-										System.out.println("offline");
+								case "offline":
+									ul.state=User.State.offline;
+									System.out.println("offline");
 									break;
-									case "online":
-										ul.state=User.State.online;
-										System.out.println("online");
+								case "online":
+									ul.state=User.State.online;
+									System.out.println("online");
 
 									break;
-									case "taping":
-										ul.state=User.State.taping;
-										//System.out.println("taping: "+ul.getId()+"state: "+ state);
+								case "taping":
+									ul.state=User.State.taping;
+									//System.out.println("taping: "+ul.getId()+"state: "+ state);
 									break;
-									default:
+								default:
 								}
-							
+
 								match=true;
 							}
-							
+
 						}
 						if (!match){
 							userList.add(new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString())));
@@ -362,17 +363,24 @@ public class DrawPanel extends JPanel implements Runnable {
 		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all OverparticlesCap
 			overParticles.remove(0);
 		}
+		while(projectiles.size()>Constants.PROJECTILE_LIMIT) {  // run all OverparticlesCap
+			projectiles.remove(0);
+		}
 
 		for (int i = particles.size() - 1; 0 < i; i--) {  // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
 
-		/*	for (Word word : words) { // collision
+
+
+
+			for (Word word : words) { // collision
+
 				if (word.active){
 					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
 					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
-			}*/
+			}
 
 			if (particles.get(i).y > Constants.screenHeight ) {
 				particles.get(i).kill();
@@ -386,20 +394,30 @@ public class DrawPanel extends JPanel implements Runnable {
 			user.display(g2);
 		}
 		for (Projectile p:	projectiles){ // run all projectiles
+
 			for (Word w : words) {
-				if (w.active) {
+				if (w.active ) {
 					p.collision(w);
 				}
 			}
+
 			p.BoundCollision();
 			p.update();
 			p.display(g2);
 
 		}
+
 		for (Word word : words) {  // run all words
 			if (word.active) {
 				word.update();
 				word.display();
+				for(Word word2 : words){ //word collision
+					if (word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
+						if(word!=word2){ //skips checking self for collision
+							word.collisionVSWord(word2);
+						}
+					}
+				}
 			}
 		}
 
@@ -413,8 +431,6 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
-
-
 
 		displayDebugText();
 	}
@@ -436,6 +452,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	public void createRegularWords() {
+
 		Firebase wordList = myFirebaseRef.child("Regular Words");
 
 		String[] regularWords = { 
@@ -661,12 +678,12 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		myFirebaseRef.child("Themed Words Size").setValue(count);
 	}
-	
-	
+
+
 	public void createUsedWords() {
 		Firebase themedWords = myFirebaseRef.child("Used Words");
 		String[] themeWords = { 
-			//	"helloWorld","hejsan","yo","niHao"
+				//	"helloWorld","hejsan","yo","niHao"
 		};
 
 		int count = 0;
@@ -706,15 +723,12 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
-				String word = "word";
-				//	String isActive = "";
-				String s = snapshot.getRef().toString();
-				//	String ownerId = "";
 
+				String s = snapshot.getRef().toString();
 
 				int index=Integer.parseInt(s.substring(63));
 
-				word = (String) snapshot.child("text").getValue().toString();
+				//word = (String) snapshot.child("text").getValue().toString();
 
 				if (snapshot.child("x").getValue() != null) {
 					words.get(index).txPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
@@ -737,39 +751,41 @@ public class DrawPanel extends JPanel implements Runnable {
 							System.out.println("placed");
 							words.get(index).appear();
 							break;
-						case "draging":
-							//words.get(index).respond();
-							if(words.get(index).state!=Word.State.onTray){
-								words.get(index).setState(Word.State.draging);
-								u.xTar=words.get(index).txPos;
-								u.yTar=words.get(index).tyPos;
-								u.xPos=(int)words.get(index).txPos;
-								u.yPos=(int)words.get(index).tyPos;
-								System.out.println("dragging");
-							}else{
-								words.get(index).xPos=(int)words.get(index).txPos;
-								words.get(index).yPos=(int)words.get(index).tyPos;
-								u.xTar=words.get(index).txPos;
-								u.yTar=words.get(index).tyPos;
-								u.xPos=(int)words.get(index).txPos;
-								u.yPos=(int)words.get(index).tyPos;
-								words.get(index).respond();
+
+							case "draging":
+								//words.get(index).respond();
+								if(words.get(index).state!=Word.State.onTray){
+									words.get(index).setState(Word.State.draging);
+									u.xTar=words.get(index).txPos;
+									u.yTar=words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
+									u.yPos=(int)words.get(index).tyPos;
+									//System.out.println("dragging");
+								}else{
+									words.get(index).xPos=(int)words.get(index).txPos;
+									words.get(index).yPos=(int)words.get(index).tyPos;
+									u.xTar=words.get(index).txPos;
+									u.yTar=words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
+									u.yPos=(int)words.get(index).tyPos;
+									words.get(index).respond();
+								}
+
+								break;
+							case "onTray":
+
+								words.get(index).setState(Word.State.onTray);
+								System.out.println("on tray");
+								break;
+
 							}
-
-							break;
-						case "onTray":
-
-							words.get(index).setState(Word.State.onTray);
-							System.out.println("on tray");
-							break;
-
 						}
+
 					}
 
-				}
+								/*if (snapshot.child("Active").getValue().toString() == "true") {
+				//	isActive = "true";
 
-				if (snapshot.child("Active").getValue().toString() == "true") {
-					//	isActive = "true";
 					//words.get(index).appear();
 					//words.get(index).state = words.get(index).state.placed;			
 
@@ -786,30 +802,30 @@ public class DrawPanel extends JPanel implements Runnable {
 					//	isActive = "false";
 					//words.get(index).disappear();
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
-				}
+				}*/
 
-				try {
-					if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
-						words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
-						System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
+								try {
+									if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
+										words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
+										System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
+									}
+								} catch (NullPointerException npe){}
 					}
-				} catch (NullPointerException npe){}
+
+					@Override
+					public void onChildAdded(DataSnapshot arg0, String arg1) {
+					}
+
+					@Override
+					public void onCancelled(FirebaseError arg0) {
+					}
+				});
 			}
 
-			@Override
-			public void onChildAdded(DataSnapshot arg0, String arg1) {
+			public void displayDebugText(){
+				g2.setColor(Color.BLACK); // svart system color
+				g2.setFont(Constants.boldFont); // init typsnitt
+				//g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
+				g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
 			}
-
-			@Override
-			public void onCancelled(FirebaseError arg0) {
-			}
-		});
-	}
-
-	public void displayDebugText(){
-		g2.setColor(Color.BLACK); // svart system color
-		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
-		//g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
-	}
-}
+		}
