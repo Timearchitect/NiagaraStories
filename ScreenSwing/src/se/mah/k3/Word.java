@@ -30,7 +30,10 @@ public class Word implements Health{
 	public int xPos, yPos, width, height, margin = 20;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-	
+	float forceFactor = (float) 0.1;
+	private double txVel;
+	private double tyVel;
+
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
 		this.ownerId = _ownerId;
@@ -45,17 +48,17 @@ public class Word implements Health{
 		this.ownerId = _ownerId;
 		this.active = false;
 	}
-	
+
 	public void setUser(User _u){ 
 		if(!owner.equals(_u)){
 			owner=_u;
 			ownerId=_u.getId();
 		}
 	}
-	
+
 	public User getUser(){
 		return owner;
-		
+
 	}
 
 	public String getText(){
@@ -101,7 +104,7 @@ public class Word implements Health{
 	public boolean isActive(){
 		return active;
 	}
-	
+
 	public void setOwner(String _ownerId){
 		this.ownerId = _ownerId;
 		for(User u: DrawPanel.userList){
@@ -159,28 +162,45 @@ public class Word implements Health{
 		}else {
 			DrawPanel.g2.setColor(Constants.wordStroke);
 		}
-		
-		
+
+
 		AffineTransform oldTransform = DrawPanel.g2.getTransform();
 		DrawPanel.g2.translate((int) (xPos ),(int) (yPos ));
 		DrawPanel.g2.rotate(Math.toRadians(angle));
 		//angle++;
-			DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
-			DrawPanel.g2.setColor(Color.white);
-			DrawPanel.g2.setFont(Constants.lightFont);
-			DrawPanel.g2.drawString(text,(int)(0 -width*0.5),(int) (0 + height* 0.25) );
-			if(state==State.draging){
-				DrawPanel.g2.setStroke(Constants.wordOutline);
-				DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
-			}
-			
+		DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
+		DrawPanel.g2.setColor(Color.white);
+		DrawPanel.g2.setFont(Constants.lightFont);
+		DrawPanel.g2.drawString(text,(int)(0 -width*0.5),(int) (0 + height* 0.25) );
+		if(state==State.draging){
+			DrawPanel.g2.setStroke(Constants.wordOutline);
+			DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
+		}
+
 		DrawPanel.g2.setTransform(oldTransform);
-        
+
 		/*DrawPanel.g2.fillRect((int) (xPos  - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
-		
+
+	}
+
+	public void collisionVSWord (Word w){
+		if((xPos + width * 0.5) > (w.xPos - w.width*0.5)){
+			if((xPos - width*0.5) < (w.xPos + w.width*0.5)){
+				if((yPos + height*0.5) > (w.yPos - w.height*0.5)){
+					if((yPos - height*0.5) < (w.yPos + w.height*0.5)){
+						//System.out.println("collision");
+						w.respond();	
+						w.txVel=(w.xPos-xPos)*forceFactor;
+						w.tyVel=(w.yPos-yPos)*forceFactor;
+						txVel=(xPos-w.xPos)*forceFactor;
+						tyVel=(yPos-w.yPos)*forceFactor;
+					}
+				}	
+			}
+		}
 	}
 
 	public void update() {
@@ -193,36 +213,39 @@ public class Word implements Health{
 
 		xVel=xPos-pxPos;
 		yVel=yPos-pyPos;
+		txVel*=0.5;
+		tyVel*=0.5;
+		txPos+=txVel;
+		tyPos+=tyVel;
 		pxPos=xPos;
-		pyPos=yPos;
-		
+		pyPos=yPos;		
 	}
-	
+
 	public void link(Word w){
-		
-		
+
+
 	}
-	
+
 	public void displayLinked(){
-	float xDiff,yDiff,dist,angle;
-	
+		float xDiff,yDiff,dist,angle;
+
 		for(Word w : DrawPanel.words){
-			
+
 			xDiff= w.xPos-xPos;
 			yDiff= w.yPos-yPos;
 			angle=(float) Math.atan2(xDiff, yDiff);
 			dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
-			
+
 			if(dist<500){
 				DrawPanel.g2.setColor(Color.white);			
 				DrawPanel.g2.drawLine((int)(xPos-width*0.5),(int)(yPos-height*0.5),(int)(w.xPos-w.width*0.5),(int)(w.yPos-w.height*0.5));
 			}
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	public void setState(State _state){
 		this.state = _state;
 	}
@@ -251,8 +274,6 @@ public class Word implements Health{
 		active=false;		
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
 		//fireBaseWords.child(+wordId+"/Active").setValue(false);
-			
-	}
 
-	
+	}	
 }
