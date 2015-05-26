@@ -375,7 +375,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (Word word : words) { // collision
 
 				if (word.active){
-					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
+				//	particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
 					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
 			}

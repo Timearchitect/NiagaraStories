@@ -54,6 +54,8 @@ public class Projectile {
 		
 				w.respond();
 				w.damage(1);
+				w.xPos+=vx;
+				w.yPos-=vy;
 				vy+=w.yVel*0.5;
 				DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
@@ -69,6 +71,8 @@ public class Projectile {
 				
 				w.respond();
 				w.damage(1);
+				w.xPos+=vx;
+				w.yPos-=vy;
 				vx+=w.xVel*0.5;
 				DrawPanel.overParticles.add(new RippleParticle((int)x, (int)y,(int)((Math.abs(vx)+Math.abs(vy))*0.1)+20 ));
 
