@@ -84,7 +84,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
-		projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+		//projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 
 	}
 
@@ -408,6 +408,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			if (word.active) {
 				word.update();
 				word.display();
+				word.BoundCollision();
 				for(Word word2 : words){ //word collision
 					if (word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
 						if(word!=word2){ //skips checking self for collision

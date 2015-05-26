@@ -27,7 +27,7 @@ public class Word implements Health{
 	public int xPos, yPos, width, height, margin = 20;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-	float forceFactor = (float) 0.1;
+	float forceFactor = (float) 0.04;
 	private double txVel;
 	private double tyVel;
 	WordSkin skin = new WordSkin(this);
@@ -195,12 +195,10 @@ public class Word implements Health{
 	}
 
 	public void collisionVSWord (Word w){
-		if((xPos + width * 0.5) > (w.xPos - w.width*0.5)){
-			if((xPos - width*0.5) < (w.xPos + w.width*0.5)){
-				if((yPos + height*0.5) > (w.yPos - w.height*0.5)){
-					if((yPos - height*0.5) < (w.yPos + w.height*0.5)){
-						//System.out.println("collision");
-					//	w.respond();	
+		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)){
+			if((xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)){
+				if((yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)){
+					if((yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
 						w.txVel=(w.xPos-xPos)*forceFactor;
 						w.tyVel=(w.yPos-yPos)*forceFactor;
 						txVel=(xPos-w.xPos)*forceFactor;
@@ -208,6 +206,21 @@ public class Word implements Health{
 					}
 				}	
 			}
+		}
+	}
+	
+	public void BoundCollision(){
+		if(xPos < margin + width * 0.5){											//LEFT
+			txPos += 1;
+			
+		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
+			txPos-=1;
+
+		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
+			tyPos += 1;
+
+		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
+			tyPos -= 1;
 		}
 	}
 
