@@ -35,7 +35,7 @@ public class RustParticle extends Particle implements Health{
 		oldTransform = g2.getTransform();
 		g2.translate(x, y); //Replace with word coordinates
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity));
-		g2.drawImage(DrawPanel.rustImage, (int)-(width * 0.5), (int)-(height * 0.5), width, height, null);
+		g2.drawImage(DrawPanel.rust, (int)-(width * 0.5), (int)-(height * 0.5), width, height, null);
 		g2.setTransform(oldTransform);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 	}

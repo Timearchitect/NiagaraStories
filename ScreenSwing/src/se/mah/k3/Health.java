@@ -5,5 +5,4 @@ public interface Health {
 	void damage(float _amount);
 	void dead();
 
-
 }

@@ -90,9 +90,6 @@ public class RippleParticle extends Particle{
 			maxDist = r* r;
 		 
 			//return distXSq + distYSq <= maxDist;
-		
-		
-		
 	}*/
 
 }
