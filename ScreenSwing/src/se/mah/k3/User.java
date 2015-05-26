@@ -1,7 +1,6 @@
 package se.mah.k3;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 import se.mah.k3.particles.RippleParticle;
@@ -89,7 +88,6 @@ public class User implements Comparable<User>{
 	}
 	public void display(Graphics2D g2){
 		
-
 		g2.setColor(color);
 		g2.setStroke(Constants.userStroke);
 		for(int i=0; i<3;i++){

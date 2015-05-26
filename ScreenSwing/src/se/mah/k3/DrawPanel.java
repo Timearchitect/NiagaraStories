@@ -83,7 +83,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			word.width = metrics.stringWidth(word.text);
 			word.height = metrics.getHeight();
 		}
-
+			
 		g2.setRenderingHint(
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -158,13 +158,13 @@ public class DrawPanel extends JPanel implements Runnable {
 				mouseX=e.getX();
 				mouseY=e.getY();
 
-				String wordLength;
+				//String wordLength;
 
 				if (e.getButton() == MouseEvent.NOBUTTON) {
 					//System.out.println(" no button Release");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
 					if(selectedWord != null){
-						wordLength = String.valueOf(selectedWord.getText().length());
+						//wordLength = String.valueOf(selectedWord.getText().length());
 						selectedWord.released();						
 						//overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
 						selectedWord.state=Word.State.placed;
@@ -211,7 +211,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 		themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		//myFirebaseRef.removeValue(); // Cleans out everything
+		myFirebaseRef.removeValue(); // Cleans out everything
 
 		createRegularWords();
 		createThemeWords();
@@ -350,12 +350,12 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.4f));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
-		for(int i = 0; i < 7; i++) {  // spawn particles
+		for(int i = 0; i < 10; i++) {  // spawn particles
 			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
 		}
 		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particlesCap
@@ -372,9 +372,6 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.get(i).update();
 			particles.get(i).display(g2);
 
-
-
-
 			for (Word word : words) { // collision
 
 				if (word.active){
@@ -382,11 +379,6 @@ public class DrawPanel extends JPanel implements Runnable {
 					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
 			}
-
-			if (particles.get(i).y > Constants.screenHeight ) {
-				particles.get(i).kill();
-			}
-
 			if(particles.get(i).dead)particles.remove(i);
 		}
 
@@ -397,7 +389,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (Projectile p:	projectiles){ // run all projectiles
 
 			for (Word w : words) {
-				if (w.active ) {
+				if (w.active) {
 					p.collision(w);
 				}
 			}
@@ -405,19 +397,16 @@ public class DrawPanel extends JPanel implements Runnable {
 			p.BoundCollision();
 			p.update();
 			p.display(g2);
-
 		}
 
 		for (Word word : words) {  // run all words
 			if (word.active) {
 				word.update();
 				word.display();
-				word.BoundCollision();
+				if(word.state!=Word.State.draging)word.BoundCollision();
 				for(Word word2 : words){ //word collision
-					if (word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
-						if(word!=word2){ //skips checking self for collision
-							word.collisionVSWord(word2);
-						}
+					if (word!=word2 && word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
+						word.collisionVSWord(word2);
 					}
 				}
 			}
@@ -435,6 +424,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		displayDebugText();
+		//g2.dispose();
 	}
 
 	public void run() { // threading
@@ -685,7 +675,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createUsedWords() {
 		Firebase themedWords = myFirebaseRef.child("Used Words");
 		String[] themeWords = { 
-					"helloWorld","hejsan","yo","niHao"
+			"helloWorld","hejsan","yo","niHao"
 		};
 
 		int count = 0;
@@ -807,7 +797,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}*/
 
 								try {
-									if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
+									if(snapshot.child("Owner").getValue().toString()!="") {
 										words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
 										System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 									}

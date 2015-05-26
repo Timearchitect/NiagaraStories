@@ -17,18 +17,17 @@ public class Word implements Health{
 	//DrawPanel drawPanel;
 	ArrayList<Word> linkedWords = new ArrayList<Word>();
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
+	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
 	public boolean active = true, selected;
-	public String ownerId = "";
+	public String ownerId = "",text = "";
 	public User owner;
 	public enum State {onTray, draging, placed,locked};
-	State state=State.onTray;
-	public String text = "";
+	public State state=State.onTray;
 	public int xPos, yPos, width, height, margin = 20;
-	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
+	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-	float forceFactor = (float) 0.04;
-	private double txVel, tyVel;
+	
 	WordSkin skin = new WordSkin(this);
 
 	public Word(String _text, String _ownerId) {
@@ -154,11 +153,10 @@ public class Word implements Health{
 
 	public void display() {
 
-		if ( owner!=null) {
-			//DrawPanel.g2.setColor(Constants.wordStroke);
-			DrawPanel.g2.setColor(owner.getColor());
-		}else {
+		if ( owner==null) {
 			DrawPanel.g2.setColor(Constants.wordStroke);
+		}else {
+			DrawPanel.g2.setColor(owner.getColor());
 		}
 
 
@@ -198,10 +196,10 @@ public class Word implements Health{
 			if((xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)){
 				if((yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)){
 					if((yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
-						w.txVel=(w.xPos-xPos)*forceFactor;
-						w.tyVel=(w.yPos-yPos)*forceFactor;
-						txVel=(xPos-w.xPos)*forceFactor;
-						tyVel=(yPos-w.yPos)*forceFactor;
+						w.txVel=(w.xPos-xPos)*FORCEFACTOR;
+						w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
+						txVel=(xPos-w.xPos)*FORCEFACTOR;
+						tyVel=(yPos-w.yPos)*FORCEFACTOR;
 					}
 				}	
 			}

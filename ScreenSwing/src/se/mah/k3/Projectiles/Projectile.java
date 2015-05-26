@@ -8,7 +8,6 @@ import se.mah.k3.Constants;
 import se.mah.k3.DrawPanel;
 import se.mah.k3.Word;
 import se.mah.k3.particles.RippleParticle;
-import se.mah.k3.particles.SplashParticle;
 
 public class Projectile {
 	float MAX_VELOCITY=200,MIN_VELOCITY=20; 
