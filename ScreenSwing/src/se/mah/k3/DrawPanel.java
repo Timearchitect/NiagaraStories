@@ -42,7 +42,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	public static BufferedImage bimage, mist, rust, cracks;
+	public static BufferedImage bimage, mist, rust, cracks,moss;
 	public static int myFrame; 
 	public String changedWord = "word";
 	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
@@ -57,8 +57,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		return dest;
 	}
 
-	//Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
-	//BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
+	Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
+
+	BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
 
 	User user;
 	boolean onesRun=true;	
@@ -97,6 +98,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			bimage = ImageIO.read(new File("images/background.bmp"));
 			mist = ImageIO.read(new File("images/mist.png"));
 			rust = ImageIO.read(new File("images/rust.png"));
+			moss = ImageIO.read(new File("images/moss.png"));
 			cracks = ImageIO.read(new File("images/cracks.png"));
 		} catch (IOException e) {
 			System.out.println("no");
@@ -164,7 +166,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					if(selectedWord != null){
 						wordLength = String.valueOf(selectedWord.getText().length());
 						selectedWord.released();						
-						overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
+						//overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
 						selectedWord.state=Word.State.placed;
 						selectedWord=null;
 					}
@@ -410,6 +412,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			if (word.active) {
 				word.update();
 				word.display();
+				word.BoundCollision();
 				for(Word word2 : words){ //word collision
 					if (word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
 						if(word!=word2){ //skips checking self for collision
@@ -419,7 +422,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 			}
 		}
-
+		
 		for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
 			overParticles.get(i).update();
 			overParticles.get(i).display(g2);

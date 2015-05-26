@@ -1,13 +1,11 @@
 package se.mah.k3;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Random;
 
 import se.mah.k3.particles.FrameParticle;
-import se.mah.k3.particles.RustParticle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.TextParticle;
 
@@ -29,15 +27,17 @@ public class Word implements Health{
 	public int xPos, yPos, width, height, margin = 20;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-	float forceFactor = (float) 0.1;
+	float forceFactor = (float) 0.04;
 	private double txVel;
 	private double tyVel;
+	WordSkin skin = new WordSkin(this);
 
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
 		this.ownerId = _ownerId;
 		this.active = false;
 	}
+	
 	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
 		xPos=_x;
 		yPos=_y;
@@ -175,7 +175,6 @@ public class Word implements Health{
 			DrawPanel.g2.setStroke(Constants.wordOutline);
 			DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 		}
-
 		DrawPanel.g2.setTransform(oldTransform);
 
 		/*DrawPanel.g2.fillRect((int) (xPos  - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
@@ -190,15 +189,16 @@ public class Word implements Health{
 		}
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
 
+		
+		skin.display(DrawPanel.g2);
+	
 	}
 
 	public void collisionVSWord (Word w){
-		if((xPos + width * 0.5) > (w.xPos - w.width*0.5)){
-			if((xPos - width*0.5) < (w.xPos + w.width*0.5)){
-				if((yPos + height*0.5) > (w.yPos - w.height*0.5)){
-					if((yPos - height*0.5) < (w.yPos + w.height*0.5)){
-						//System.out.println("collision");
-					//	w.respond();	
+		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)){
+			if((xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)){
+				if((yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)){
+					if((yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
 						w.txVel=(w.xPos-xPos)*forceFactor;
 						w.tyVel=(w.yPos-yPos)*forceFactor;
 						txVel=(xPos-w.xPos)*forceFactor;
@@ -206,6 +206,21 @@ public class Word implements Health{
 					}
 				}	
 			}
+		}
+	}
+	
+	public void BoundCollision(){
+		if(xPos < margin + width * 0.5){											//LEFT
+			txPos += 1;
+			
+		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
+			txPos-=1;
+
+		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
+			tyPos += 1;
+
+		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
+			tyPos -= 1;
 		}
 	}
 
@@ -225,6 +240,8 @@ public class Word implements Health{
 		tyPos+=tyVel;
 		pxPos=xPos;
 		pyPos=yPos;		
+		
+		skin.update();
 	}
 
 	public void link(Word w){
