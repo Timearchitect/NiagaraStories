@@ -1,5 +1,6 @@
 package se.mah.k3.particles;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Random;
 
@@ -8,7 +9,7 @@ import se.mah.k3.DrawPanel;
 
 public class WaterParticle extends Particle {
 	private Random r =  new Random();
-
+  Color waterColor = new Color(100, 200, 255, 50);
 	public WaterParticle(int x2, int y2){
 		super(x2,y2);
 		x=x2;
@@ -26,7 +27,7 @@ public class WaterParticle extends Particle {
 	}
 
 	public void display(Graphics2D g2) {
-		g2.setColor(particleColor);
+		g2.setColor(waterColor);
 		g2.setStroke(Constants.squareStroke);
 		g2.drawLine((int)x,(int) y, (int)(x-vx*2), (int)(y-vy*2));
 		
@@ -46,16 +47,14 @@ public class WaterParticle extends Particle {
 	}
 	public void collisionRect(int _x,int _y, int _w,int _h){
 
-		if(_x+_w*0.5 > x &&  _x-_w*0.5 < x){
-			if(_y+_h*0.5 > y &&  _y-_h*0.5 < y){
+		if(_x+_w*0.5 > x &&  _x-_w*0.5 < x && _y+_h*0.5 > y &&  _y-_h*0.5 < y){
 				vy*=(-1)*0.5;
 				vx=r.nextInt(10)-5;
-			}
 		}
 	}
+	
 	public void kill(){
 		if((int)r.nextInt(15)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,(int)y)); //splash
 		dead=true;
-		
 	}
 }

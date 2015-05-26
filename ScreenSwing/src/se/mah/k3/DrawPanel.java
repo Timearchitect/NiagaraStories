@@ -350,17 +350,19 @@ public class DrawPanel extends JPanel implements Runnable {
 		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all OverparticlesCap
 			overParticles.remove(0);
 		}
-		
+		while(projectiles.size()>Constants.PROJECTILE_LIMIT) {  // run all OverparticlesCap
+			projectiles.remove(0);
+		}
 		for (int i = particles.size() - 1; 0 < i; i--) {  // run all particles
 			particles.get(i).update();
 			particles.get(i).display(g2);
 
-		/*	for (Word word : words) { // collision
+			for (Word word : words) { // collision
 				if (word.active){
 					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
 					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
-			}*/
+			}
 
 			if (particles.get(i).y > Constants.screenHeight ) {
 				particles.get(i).kill();
@@ -424,6 +426,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	public void createRegularWords() {
+		
 		Firebase wordList = myFirebaseRef.child("Regular Words");
 		
 		String[] regularWords = { 
@@ -694,15 +697,13 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
-				String word = "word";
-			//	String isActive = "";
+				//String word = "word";
 				String s = snapshot.getRef().toString();
-			//	String ownerId = "";
 
 
 				int index=Integer.parseInt(s.substring(63));
 
-				word = (String) snapshot.child("text").getValue().toString();
+				//word = (String) snapshot.child("text").getValue().toString();
 
 				if (snapshot.child("x").getValue() != null) {
 					words.get(index).txPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
@@ -733,7 +734,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									u.yTar=words.get(index).tyPos;
 									u.xPos=(int)words.get(index).txPos;
 									u.yPos=(int)words.get(index).tyPos;
-									System.out.println("dragging");
+									//System.out.println("dragging");
 							}else{
 									words.get(index).xPos=(int)words.get(index).txPos;
 									words.get(index).yPos=(int)words.get(index).tyPos;
@@ -756,7 +757,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					
 				}
 				
-				if (snapshot.child("Active").getValue().toString() == "true") {
+				/*if (snapshot.child("Active").getValue().toString() == "true") {
 				//	isActive = "true";
 					//words.get(index).appear();
 					//words.get(index).state = words.get(index).state.placed;			
@@ -774,7 +775,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				//	isActive = "false";
 					//words.get(index).disappear();
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
-				}
+				}*/
 
 				if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
 					words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
@@ -795,7 +796,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
-		//g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+		//g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
+		g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
 	}
 }
