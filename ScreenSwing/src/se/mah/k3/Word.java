@@ -7,11 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import se.mah.k3.particles.FrameParticle;
-<<<<<<< HEAD
 import se.mah.k3.particles.RustParticle;
-=======
 import se.mah.k3.particles.RippleParticle;
->>>>>>> 7ee83e999f4a16ba251e10d31cbc75b3de6e2718
 import se.mah.k3.particles.TextParticle;
 
 //This is the class for the word object. It contains the words that
@@ -184,7 +181,6 @@ public class Word implements Health{
 		/*DrawPanel.g2.fillRect((int) (xPos  - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
-<<<<<<< HEAD
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));
 		//DrawPanel.overParticles.add(new RustParticle ((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6, Integer.valueOf(text.length())));
 		
@@ -192,12 +188,7 @@ public class Word implements Health{
 			DrawPanel.g2.setStroke(Constants.wordOutline);
 			DrawPanel.g2.drawRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		}
-=======
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
-<<<<<<< HEAD
->>>>>>> 7ee83e999f4a16ba251e10d31cbc75b3de6e2718
-		
-=======
 
 	}
 
@@ -216,7 +207,6 @@ public class Word implements Health{
 				}	
 			}
 		}
->>>>>>> branch 'master' of https://github.com/Timearchitect/NiagaraStories.git
 	}
 
 	public void update() {
