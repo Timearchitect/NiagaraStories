@@ -38,6 +38,7 @@ import com.firebase.client.FirebaseError;
 
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
+	private int FPS,frames;
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
@@ -355,7 +356,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
-		for(int i = 0; i < 10; i++) {  // spawn particles
+		for(int i = 0; i < 8; i++) {  // spawn particles
 			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
 		}
 		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particlesCap
@@ -424,17 +425,24 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		displayDebugText();
-		//g2.dispose();
+		g2.dispose();
 	}
 
 	public void run() { // threading
+		long lastTime = System.nanoTime();
 		while (true) {
+			
+			repaint(); 
 			try {
-				repaint(); // repaint()
-				Thread.sleep(18);
-
+				Thread.sleep(0);
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
+			}
+			frames++;
+			if( System.nanoTime() - lastTime>=100000L){
+				FPS=(int) (frames*0.3);
+				frames=0;
+				lastTime=System.nanoTime();
 			}
 		}
 	}
@@ -681,11 +689,11 @@ public class DrawPanel extends JPanel implements Runnable {
 		int count = 0;
 
 		for (int i = 0; i < themeWords.length; i++) {
-			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
-			themedWords.child("word" + i + "/Active").setValue(false);
-			themedWords.child("word" + i + "/Owner").setValue("");
-			themedWords.child("word" + i + "/xRel").setValue(0.5);
-			themedWords.child("word" + i + "/yRel").setValue(0.5);
+			themedWords.child("word" + i + "/attributes/text").setValue(themeWords[i]);
+			themedWords.child("word" + i + "/attributes/Active").setValue(false);
+			themedWords.child("word" + i + "/attributes/Owner").setValue("");
+			themedWords.child("word" + i + "/attributes/xRel").setValue(0.5);
+			themedWords.child("word" + i + "/attributes/yRel").setValue(0.5);
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
 			words.add(new Word(themeWords[i], null,x,y,x,y));
@@ -818,7 +826,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				g2.setColor(Color.BLACK); // svart system color
 				g2.setFont(Constants.boldFont); // init typsnitt
 				if(Constants.debug){
-					g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+					g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size() +"  FPS: "+FPS  , 30, 50);
 				}else{
 					g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
 				}
