@@ -4,11 +4,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import se.mah.k3.Word;
-
 public class RippleParticle extends Particle{
 
-	float r,increment,opacity=255;
+	private float r,increment=50,opacity=255;
 	private BasicStroke circleStroke;
 	//Graphics2D g2;
 	public RippleParticle(int _x, int _y,int _increment){
@@ -22,7 +20,6 @@ public class RippleParticle extends Particle{
 		super(_x,_y);
 		x=_x;
 		y=_y;
-		increment=50;
 		}
 	
 
@@ -43,10 +40,8 @@ public class RippleParticle extends Particle{
 		g2.drawOval((int)(x-r*0.5), (int)(y-r*0.5), (int)r,(int) r);
 	}
 	public void collisionVSParticle(Particle p){
-		float xDiff,yDiff,dist,angle;
+		float xDiff=p.x-x,yDiff= p.y-y,dist,angle;
 		
-		xDiff= p.x-x;
-		yDiff= p.y-y;
 		angle=(float) Math.atan2(xDiff, yDiff);
 		dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
 		//dist=(float) Math.sqrt(Math.pow(xDiff,2)+Math.pow(yDiff,2));
@@ -56,7 +51,14 @@ public class RippleParticle extends Particle{
 				p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 				p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
 			}
-		
+			
+			if(dist<r*0.6){
+				//p.vx=0;
+				//p.vy=0;
+				p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
+				p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
+				p.kill();
+			}
 		
 		
 	}

@@ -27,7 +27,8 @@ public class FrameParticle extends Particle {
 		w=_w.width;
 		h=_w.height;
 		increment=5;
-		}
+	}
+	
 	public void update(){
 		x+=Math.round(vx);
 		y+=Math.round(vy);

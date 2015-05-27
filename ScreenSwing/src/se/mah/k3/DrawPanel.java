@@ -7,12 +7,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,11 +37,12 @@ import com.firebase.client.FirebaseError;
 
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
+	private int FPS,frames;
 	private Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	public static BufferedImage bimage, mist, rust, cracks, moss;
+	public static BufferedImage bimage, mist, rust, cracks,moss;
 	public static int myFrame; 
 	public String changedWord = "word";
 	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
@@ -48,15 +51,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<Particle> particles = new ArrayList<Particle>(), overParticles = new ArrayList<Particle>();
 	public static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
-
-	/*private BufferedImage cropImage(BufferedImage src, Rectangle rect) {
-		BufferedImage dest = src.getSubimage(0, 0, rect.width, rect.height);
-		return dest;
-	}*/
-
-	//Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
-
-	//BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
 
 	User user;
 	boolean onesRun=true;	
@@ -90,6 +84,14 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	public DrawPanel() {
+
+		// image creation
+		VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
+
+
+		// rendering to the image
+
+
 		//     bimage = null;
 		try {
 			bimage = ImageIO.read(new File("images/background.bmp"));
@@ -100,6 +102,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		} catch (IOException e) {
 			System.out.println("no");
 		}
+
 		this.addMouseListener(new MouseAdapter() {
 
 			public void mousePressed(MouseEvent e) {
@@ -123,7 +126,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						}
 					}
 
-					overParticles.add( new EqualizerParticle((int)mouseX, (int)mouseY, 40));
+					overParticles.add( new RippleParticle((int)mouseX, (int)mouseY, 40));
 
 					//overParticles.add( new RippleParticle((int)mouseX, (int)mouseY, 40));
 				} else if (e.getButton() == MouseEvent.BUTTON2) {
@@ -157,14 +160,16 @@ public class DrawPanel extends JPanel implements Runnable {
 				mouseX=e.getX();
 				mouseY=e.getY();
 
-				String wordLength;
+				//String wordLength;
 
 				if (e.getButton() == MouseEvent.NOBUTTON) {
 					//System.out.println(" no button Release");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
 					if(selectedWord != null){
-						wordLength = String.valueOf(selectedWord.getText().length());
-						selectedWord.released();	
+
+						//wordLength = String.valueOf(selectedWord.getText().length());
+						selectedWord.released();						
+						//overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
 						selectedWord.state=Word.State.placed;
 						selectedWord=null;
 					}
@@ -206,7 +211,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 		themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		//myFirebaseRef.removeValue(); // Cleans out everything
+		myFirebaseRef.removeValue(); // Cleans out everything
 
 		createRegularWords();
 		createThemeWords();
@@ -345,7 +350,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.4f));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
@@ -367,21 +372,13 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.get(i).update();
 			particles.get(i).display(g2);
 
-
-
-
 			for (Word word : words) { // collision
 
 				if (word.active){
-					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
+					//	particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
 					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
 			}
-
-			if (particles.get(i).y > Constants.screenHeight ) {
-				particles.get(i).kill();
-			}
-
 			if(particles.get(i).dead)particles.remove(i);
 		}
 
@@ -392,7 +389,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		for (Projectile p:	projectiles){ // run all projectiles
 
 			for (Word w : words) {
-				if (w.active ) {
+				if (w.active) {
 					p.collision(w);
 				}
 			}
@@ -400,18 +397,16 @@ public class DrawPanel extends JPanel implements Runnable {
 			p.BoundCollision();
 			p.update();
 			p.display(g2);
-
 		}
 
 		for (Word word : words) {  // run all words
 			if (word.active) {
 				word.update();
 				word.display();
+				if(word.state!=Word.State.draging)word.BoundCollision();
 				for(Word word2 : words){ //word collision
-					if (word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
-						if(word!=word2){ //skips checking self for collision
-							word.collisionVSWord(word2);
-						}
+					if (word!=word2 && word2.active && word.state!=Word.State.draging && word2.state!=Word.State.draging) {
+						word.collisionVSWord(word2);
 					}
 				}
 			}
@@ -425,20 +420,32 @@ public class DrawPanel extends JPanel implements Runnable {
 				overParticles.get(i).collisionVSParticle(p);
 			}
 
+			for(Word w: words){
+				if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
+			}
+
 			if(overParticles.get(i).dead)overParticles.remove(i);
 		}
 
 		displayDebugText();
+		g2.dispose();
 	}
 
 	public void run() { // threading
+		long lastTime = System.nanoTime();
 		while (true) {
-			try {
-				repaint(); // repaint()
-				Thread.sleep(18);
 
+			repaint(); 
+			try {
+				Thread.sleep(0);
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
+			}
+			frames++;
+			if( System.nanoTime() - lastTime>=100000L){
+				FPS=(int) (frames*0.3);
+				frames=0;
+				lastTime=System.nanoTime();
 			}
 		}
 	}
@@ -679,17 +686,17 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createUsedWords() {
 		Firebase themedWords = myFirebaseRef.child("Used Words");
 		String[] themeWords = { 
-				//	"helloWorld","hejsan","yo","niHao"
+				"helloWorld","hejsan","yo","niHao"
 		};
 
 		int count = 0;
 
 		for (int i = 0; i < themeWords.length; i++) {
-			themedWords.child("word" + i + "/text").setValue(themeWords[i]);
-			themedWords.child("word" + i + "/Active").setValue(false);
-			themedWords.child("word" + i + "/Owner").setValue("");
-			themedWords.child("word" + i + "/xRel").setValue(0.5);
-			themedWords.child("word" + i + "/yRel").setValue(0.5);
+			themedWords.child("word" + i + "/attributes/text").setValue(themeWords[i]);
+			themedWords.child("word" + i + "/attributes/Active").setValue(false);
+			themedWords.child("word" + i + "/attributes/Owner").setValue("");
+			themedWords.child("word" + i + "/attributes/xRel").setValue(0.5);
+			themedWords.child("word" + i + "/attributes/yRel").setValue(0.5);
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
 			words.add(new Word(themeWords[i], null,x,y,x,y));
@@ -799,14 +806,14 @@ public class DrawPanel extends JPanel implements Runnable {
 					//words.get(index).disappear();
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}*/
-
 				try {
-					if(snapshot.child("Owner").getValue().toString()!=null && snapshot.child("Owner").getValue().toString()!="") {
+					if(snapshot.child("Owner").getValue().toString()!="") {
 						words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
 						System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 					}
-				} catch (NullPointerException npe){}
+				} catch (NullPointerException npe){}					
 			}
+
 
 			@Override
 			public void onChildAdded(DataSnapshot arg0, String arg1) {
@@ -821,56 +828,15 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText(){
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		//g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
-		g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size()  , 30, 50);
+		if(Constants.debug){
+			g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size() +"  FPS: "+FPS  , 30, 50);
+		}else{
+			g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
+		}
 	}
 
-	public void clearScreen(Graphics g){
-		myFirebaseRef.removeValue();
-
-		g2 = (Graphics2D) g;
-		
-		if(onesRun)
-			setup();
-
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)0.4));
-		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
-
-		for(int i = 0; i < 20; i++) {  // spawn particles
-			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
-		}
-		
-		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particlesCap
-			particles.remove(0);
-		}
-		
-		while(overParticles.size()>Constants.HEAVY_PARTICLE_LIMIT) {  // run all OverparticlesCap
-			overParticles.remove(0);
-		}
-		
-		while(projectiles.size()>Constants.PROJECTILE_LIMIT) {  // run all OverparticlesCap
-			projectiles.remove(0);
-		}
-
-		for (int i = particles.size() - 1; 0 < i; i--) {  // run all particles
-			particles.get(i).update();
-			particles.get(i).display(g2);
-
-			for (Word word : words) { // collision
-
-				if (word.active){
-					particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
-					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
-				}
-			}
-
-			if (particles.get(i).y > Constants.screenHeight ) {
-				particles.get(i).kill();
-			}
-
-			if(particles.get(i).dead)particles.remove(i);
-		}
-
+	public static void clearScreen(){
+		//words.clear();
+		overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
 	}
 }

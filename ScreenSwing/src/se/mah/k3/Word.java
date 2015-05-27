@@ -17,19 +17,17 @@ public class Word implements Health{
 	//DrawPanel drawPanel;
 	ArrayList<Word> linkedWords = new ArrayList<Word>();
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
+	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
 	public boolean active = true, selected;
-	public String ownerId = "";
+	public String ownerId = "",text = "";
 	public User owner;
 	public enum State {onTray, draging, placed,locked};
-	State state=State.onTray;
-	public String text = "";
+	public State state=State.onTray;
 	public int xPos, yPos, width, height, margin = 20;
-	public float pxPos, pyPos,txPos,tyPos, xVel,yVel;
+	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-	float forceFactor = (float) 0.1;
-	private double txVel;
-	private double tyVel;
+	
 	WordSkin skin = new WordSkin(this);
 
 	public Word(String _text, String _ownerId) {
@@ -37,7 +35,7 @@ public class Word implements Health{
 		this.ownerId = _ownerId;
 		this.active = false;
 	}
-	
+
 	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
 		xPos=_x;
 		yPos=_y;
@@ -155,11 +153,10 @@ public class Word implements Health{
 
 	public void display() {
 
-		if ( owner!=null) {
-			//DrawPanel.g2.setColor(Constants.wordStroke);
-			DrawPanel.g2.setColor(owner.getColor());
-		}else {
+		if ( owner==null) {
 			DrawPanel.g2.setColor(Constants.wordStroke);
+		}else {
+			DrawPanel.g2.setColor(owner.getColor());
 		}
 
 
@@ -182,32 +179,45 @@ public class Word implements Health{
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));
 		//DrawPanel.overParticles.add(new RustParticle ((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6, Integer.valueOf(text.length())));
-		
+
 		if(state==State.draging){
 			DrawPanel.g2.setStroke(Constants.wordOutline);
 			DrawPanel.g2.drawRect((int) (xPos + 3 - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
 		}
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
 
-		
+
 		skin.display(DrawPanel.g2);
-	
+
 	}
 
 	public void collisionVSWord (Word w){
-		if((xPos + width * 0.5) > (w.xPos - w.width*0.5)){
-			if((xPos - width*0.5) < (w.xPos + w.width*0.5)){
-				if((yPos + height*0.5) > (w.yPos - w.height*0.5)){
-					if((yPos - height*0.5) < (w.yPos + w.height*0.5)){
-						//System.out.println("collision");
-					//	w.respond();	
-						w.txVel=(w.xPos-xPos)*forceFactor;
-						w.tyVel=(w.yPos-yPos)*forceFactor;
-						txVel=(xPos-w.xPos)*forceFactor;
-						tyVel=(yPos-w.yPos)*forceFactor;
+		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)){
+			if((xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)){
+				if((yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)){
+					if((yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
+						w.txVel=(w.xPos-xPos)*FORCEFACTOR;
+						w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
+						txVel=(xPos-w.xPos)*FORCEFACTOR;
+						tyVel=(yPos-w.yPos)*FORCEFACTOR;
 					}
 				}	
 			}
+		}
+	}
+
+	public void BoundCollision(){
+		if(xPos < margin + width * 0.5){											//LEFT
+			txPos += 5;
+
+		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
+			txPos -= 5;
+
+		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
+			tyPos += 5;
+
+		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
+			tyPos -= 5;
 		}
 	}
 
@@ -227,7 +237,7 @@ public class Word implements Health{
 		tyPos+=tyVel;
 		pxPos=xPos;
 		pyPos=yPos;		
-		
+
 		skin.update();
 	}
 

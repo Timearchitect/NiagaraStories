@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import se.mah.k3.Constants;
-import se.mah.k3.DrawPanel;
 
 public class TextParticle extends Particle {
 	private String text;
