@@ -3,16 +3,20 @@ package se.mah.k3;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Stroke;
+import java.util.Calendar;
 
  public class Constants {
-	public static boolean debug;
+	public static Calendar cal= Calendar.getInstance();
+	public static boolean debug, noCollision,noTimer,noUser,simple;
 	public static final int WaterStrokeWidth = 10;
 	public static float fontSize=50;
 	public static Font font,lightFont,boldFont ;
 	public static int screenNbr=145;
-    public static final int PARTICLE_LIMIT=4000;
-    public static final int HEAVY_PARTICLE_LIMIT=500;
+    public static final int PARTICLE_LIMIT=3000;
+    public static final int HEAVY_PARTICLE_LIMIT=400;
     public static final int PROJECTILE_LIMIT=100;
+	public static final int clearInterval = 5*60; // time for next clearWave
 	public static String wordBg = "#009688";
 	public static String wordSt = "#8d0096";
 	public static String waterC = "#90caf9";
@@ -30,6 +34,8 @@ import java.awt.Font;
 
 
 	public static Font userFont=boldFont;
+	public static long timeLeft;
+	public static long startTime;
 
 	public static Color hexToRgb(String colorString) {
 		return new Color(Integer.valueOf(colorString.substring(1, 3), 16),

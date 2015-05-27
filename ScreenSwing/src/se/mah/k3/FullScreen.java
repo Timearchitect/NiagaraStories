@@ -24,6 +24,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener, MouseListener, MouseMotionListener {
 
@@ -66,7 +67,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 * Create the frame.
 	 */
 	public FullScreen() {
-
+		Constants.startTime= Constants.cal.getTimeInMillis();
 		try{
 			Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(Constants.fontSize);
 			Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(Constants.fontSize);
@@ -138,18 +139,25 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			if(e.getKeyChar()=='f' || e.getKeyChar()=='F'){     		 
 				setFullscreen(!inFullScreenMode);	
 			}
-			if(e.getKeyChar()=='#' ){     		 
-				if(Constants.debug){
-					Constants.debug=false;
-				}else{
-					Constants.debug=true;
-				}
+			if(e.getKeyChar()=='c' || e.getKeyChar()=='C'){     		 
+				Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
 			}
-
+			if(e.getKeyChar()=='t' || e.getKeyChar()=='T'){     		 
+				Constants.noTimer=(Constants.noTimer==true)?(Constants.noTimer=false) :(Constants.noTimer=true);
+			}
+			if(e.getKeyChar()=='u' || e.getKeyChar()=='U'){     		 
+				Constants.noUser=(Constants.noUser==true)?(Constants.noUser=false) :(Constants.noUser=true);
+			}
+			if(e.getKeyChar()=='s' || e.getKeyChar()=='S'){     		 
+				Constants.simple=(Constants.simple==true)?(Constants.simple=false) :(Constants.simple=true);
+			}
+			if(e.getKeyChar()=='#' ){     		 
+				Constants.debug=(Constants.debug==true)?(Constants.debug=false) :(Constants.debug=true);
+			}
 			if(e.getKeyChar() == ' ')DrawPanel.clearScreen();
+
 		}
-		return false;
-	}
+		return false;	}
 
 
 
