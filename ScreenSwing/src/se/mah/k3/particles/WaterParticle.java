@@ -9,7 +9,7 @@ import se.mah.k3.DrawPanel;
 
 public class WaterParticle extends Particle {
 	private Random r =  new Random();
-  Color waterColor = new Color(100, 200, 255, 50);
+  Color waterColor = particleColor;
 	public WaterParticle(int x2, int y2){
 		super(x2,y2);
 		x=x2;
@@ -19,6 +19,7 @@ public class WaterParticle extends Particle {
 	}
 	
 	public void update(){
+		waterColor = particleColor;
 		x+=Math.round(vx);
 		y+=(int)vy;
 		vx*=0.93;

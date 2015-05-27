@@ -9,7 +9,7 @@ import se.mah.k3.Constants;
 public abstract class Particle {
 		public float x,y,vx,vy,ax,ay;
 		public boolean dead;
-		protected Color particleColor= Constants.waterColor;
+		protected Color particleColor = Constants.waterColor;
 		protected Random r= new Random();
 	public Particle(int x2, int y2){
 		x=x2;
