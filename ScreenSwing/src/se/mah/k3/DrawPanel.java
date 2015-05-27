@@ -26,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import se.mah.k3.Projectiles.Projectile;
+import se.mah.k3.particles.EqualizerParticle;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.WaterParticle;
@@ -52,15 +53,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
 	public static ArrayList<Word> words = new ArrayList<Word>();
 
-	private BufferedImage cropImage(BufferedImage src, Rectangle rect) {
-		BufferedImage dest = src.getSubimage(0, 0, rect.width, rect.height);
-		return dest;
-	}
-
-	//Rectangle wordRect = new Rectangle(selectedWord.getXPos(), selectedWord.getYPos(), selectedWord.getWidth(), selectedWord.getHeight());
-
-	//BufferedImage rustImage = cropImage(DrawPanel.rust, wordRect);
-
 	User user;
 	boolean onesRun=true;	
 
@@ -83,7 +75,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			word.width = metrics.stringWidth(word.text);
 			word.height = metrics.getHeight();
 		}
-			
+
 		g2.setRenderingHint(
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -93,14 +85,14 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	public DrawPanel() {
-		
-		 // image creation
-		 VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
+
+		// image creation
+		VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
 
 
-		 // rendering to the image
+		// rendering to the image
 
-		
+
 		//     bimage = null;
 		try {
 			bimage = ImageIO.read(new File("images/background.bmp"));
@@ -111,6 +103,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		} catch (IOException e) {
 			System.out.println("no");
 		}
+
 		this.addMouseListener(new MouseAdapter() {
 
 			public void mousePressed(MouseEvent e) {
@@ -135,6 +128,8 @@ public class DrawPanel extends JPanel implements Runnable {
 					}
 
 					overParticles.add( new RippleParticle((int)mouseX, (int)mouseY, 40));
+
+					//overParticles.add( new RippleParticle((int)mouseX, (int)mouseY, 40));
 				} else if (e.getButton() == MouseEvent.BUTTON2) {
 					//System.out.println(" middle button clicked");
 
@@ -172,6 +167,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					//System.out.println(" no button Release");
 				} else if (e.getButton() == MouseEvent.BUTTON1) {
 					if(selectedWord != null){
+
 						//wordLength = String.valueOf(selectedWord.getText().length());
 						selectedWord.released();						
 						//overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
@@ -180,8 +176,6 @@ public class DrawPanel extends JPanel implements Runnable {
 					}
 
 					overParticles.add( new RippleParticle((int)mouseX,(int)mouseY));
-
-
 				} else if (e.getButton() == MouseEvent.BUTTON2) {
 				}
 			}
@@ -196,7 +190,6 @@ public class DrawPanel extends JPanel implements Runnable {
 					//System.out.println("left");
 
 					if(selectedWord!=null){
-
 						selectedWord.xPos=(int) (mouseX+offsetX);
 						selectedWord.yPos=(int) (mouseY+offsetY);
 						selectedWord.txPos=(int) (mouseX+offsetX);
@@ -334,7 +327,7 @@ public class DrawPanel extends JPanel implements Runnable {
 								System.out.println("Add user");
 								System.out.println(dataSnapshot.getKey());
 							}catch(Exception e){
-								
+
 							}
 						}
 					}	
@@ -387,7 +380,8 @@ public class DrawPanel extends JPanel implements Runnable {
 			for (Word word : words) { // collision
 
 				if (word.active){
-				//	particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
+					//	particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
+					//	particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
 					if(!Constants.noCollision) particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
 			}
@@ -425,6 +419,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 			}
 		}
+
 		
 		if(!Constants.simple){
 				for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
@@ -436,18 +431,24 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 	
 				if(overParticles.get(i).dead)overParticles.remove(i);
+
 			}
+
+			for(Word w: words){
+				if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
+			}
+
 		}
 
 		displayDebugText();
-	
+
 		g2.dispose();
 	}
 
 	public void run() { // threading
 		long lastTime = System.nanoTime();
 		while (true) {
-			
+
 			repaint(); 
 			try {
 				Thread.sleep(0);
@@ -460,7 +461,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				FPS=(int) (frames*0.3);
 				frames=0;
 				lastTime=System.nanoTime();
-				
+
 				if(!Constants.noTimer){
 					Constants.cal=Calendar.getInstance();
 					Constants.timeLeft=(long) (Constants.clearInterval-((Constants.cal.getTimeInMillis()-Constants.startTime)*0.001));
@@ -708,7 +709,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void createUsedWords() {
 		Firebase themedWords = myFirebaseRef.child("Used Words");
 		String[] themeWords = { 
-			"helloWorld","hejsan","yo","niHao"
+				"helloWorld","hejsan","yo","niHao"
 		};
 
 		int count = 0;
@@ -749,34 +750,34 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
 				try{
-					
-				String s = snapshot.getRef().toString();
-				
-				int index=Integer.parseInt(s.substring(63));
-			
-				//word = (String) snapshot.child("text").getValue().toString();
 
-				if (snapshot.child("x").getValue() != null) {
-					words.get(index).txPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
-				}
+					String s = snapshot.getRef().toString();
 
-				if (snapshot.child("y").getValue() != null) {
-					words.get(index).tyPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
-				}
+					int index=Integer.parseInt(s.substring(63));
 
-				if (snapshot.child("State").getValue() != null) {
-					//System.out.println("State stuff");
-					User u = null;
-					if(words.get(index).getUser()!=null){ 
-						u=words.get(index).getUser();
-						switch(snapshot.child("State").getValue().toString()){
-						case "placed":
-							//	words.get(index).released();
-							words.get(index).setState(Word.State.placed);
-							u.release();
-							System.out.println("placed");
-							words.get(index).appear();
-							break;
+					//word = (String) snapshot.child("text").getValue().toString();
+
+					if (snapshot.child("x").getValue() != null) {
+						words.get(index).txPos=(int) (Float.parseFloat(snapshot.child("x").getValue().toString()) * Constants.screenWidth);
+					}
+
+					if (snapshot.child("y").getValue() != null) {
+						words.get(index).tyPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
+					}
+
+					if (snapshot.child("State").getValue() != null) {
+						//System.out.println("State stuff");
+						User u = null;
+						if(words.get(index).getUser()!=null){ 
+							u=words.get(index).getUser();
+							switch(snapshot.child("State").getValue().toString()){
+							case "placed":
+								//	words.get(index).released();
+								words.get(index).setState(Word.State.placed);
+								u.release();
+								System.out.println("placed");
+								words.get(index).appear();
+								break;
 
 							case "draging":
 								//words.get(index).respond();
@@ -809,7 +810,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 					}
 
-								/*if (snapshot.child("Active").getValue().toString() == "true") {
+					/*if (snapshot.child("Active").getValue().toString() == "true") {
 				//	isActive = "true";
 
 					//words.get(index).appear();
@@ -830,37 +831,43 @@ public class DrawPanel extends JPanel implements Runnable {
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}*/
 
-								
-									if(snapshot.child("Owner").getValue().toString()!="") {
-										words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
-										System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
-									}
-	
-								} catch (NullPointerException npe){}
+
+					if(snapshot.child("Owner").getValue().toString()!="") {
+						words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
+						System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 					}
 
-					@Override
-					public void onChildAdded(DataSnapshot arg0, String arg1) {
-					}
-
-					@Override
-					public void onCancelled(FirebaseError arg0) {
-					}
-					
-				});
+				} catch (NullPointerException npe){}
 			}
 
-			public void displayDebugText(){
-				g2.setColor(Color.BLACK); // svart system color
-				g2.setFont(Constants.boldFont); // init typsnitt
-				if(Constants.debug){
-					g2.drawString("ID: " + Constants.screenNbr + " part:"+ particles.size() + " Overpart:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size() +"  FPS: "+FPS +"  Time:"+Constants.timeLeft, 30, 50);
-					if(Constants.noCollision)g2.drawString("No water collision" , 30, 100);
-					if(Constants.noTimer)g2.drawString("No time" , 30, 150);
-					if(Constants.noUser)g2.drawString("No user" , 30, 200);
-					if(Constants.simple)g2.drawString("simple Mode" , 30, 250);
-				}else{
-					g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
-				}
+			@Override
+			public void onChildAdded(DataSnapshot arg0, String arg1) {
 			}
+
+			@Override
+			public void onCancelled(FirebaseError arg0) {
+			}
+
+		});
+	}
+
+	public void displayDebugText(){
+		g2.setColor(Color.BLACK); // svart system color
+		g2.setFont(Constants.boldFont); // init typsnitt
+		if(Constants.debug){
+			g2.drawString("ID: " + Constants.screenNbr + " part:"+ particles.size() + " Overpart:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size() +"  FPS: "+FPS +"  Time:"+Constants.timeLeft, 30, 50);
+			if(Constants.noCollision)g2.drawString("No water collision" , 30, 100);
+			if(Constants.noTimer)g2.drawString("No time" , 30, 150);
+			if(Constants.noUser)g2.drawString("No user" , 30, 200);
+			if(Constants.simple)g2.drawString("simple Mode" , 30, 250);
+		}else{
+			g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
 		}
+	}
+
+
+public static void clearScreen(){
+	//words.clear();
+	overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
+}
+}
