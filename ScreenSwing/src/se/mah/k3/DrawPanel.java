@@ -464,7 +464,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				if(!Constants.noTimer){
 					Constants.cal=Calendar.getInstance();
 					Constants.timeLeft=(long) (Constants.clearInterval-((Constants.cal.getTimeInMillis()-Constants.startTime)*0.001));
-					if(Constants.timeLeft <0){
+					if(Constants.timeLeft <0){ // reset timer
+						clearScreen();
 						Constants.startTime=Constants.cal.getTimeInMillis();
 					}
 				}

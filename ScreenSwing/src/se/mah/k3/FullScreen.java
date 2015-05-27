@@ -154,7 +154,9 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			if(e.getKeyChar()=='#' ){     		 
 				Constants.debug=(Constants.debug==true)?(Constants.debug=false) :(Constants.debug=true);
 			}
-			if(e.getKeyChar() == ' ')DrawPanel.clearScreen();
+			if(e.getKeyChar() == ' '){
+						clearScreen();
+			}
 
 		}
 		return false;	}
@@ -215,5 +217,13 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		System.out.println(" action");
 	}
 
+	public void clearScreen(){ 
+	if(Constants.simple){
+		for(Word w:DrawPanel.words){
+		w.active=false;	
+		}
+	}
+	DrawPanel.clearScreen();
+	}
 
 }

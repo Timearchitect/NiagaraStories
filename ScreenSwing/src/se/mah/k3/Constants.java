@@ -16,7 +16,7 @@ import java.util.Calendar;
     public static final int PARTICLE_LIMIT=3000;
     public static final int HEAVY_PARTICLE_LIMIT=400;
     public static final int PROJECTILE_LIMIT=100;
-	public static final int clearInterval = 5*60; // time for next clearWave
+	public static final int clearInterval = 4*60; // time for next clearWave
 	public static String wordBg = "#009688";
 	public static String wordSt = "#8d0096";
 	public static String waterC = "#90caf9";
