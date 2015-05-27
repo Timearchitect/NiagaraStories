@@ -18,6 +18,7 @@ import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -327,10 +328,14 @@ public class DrawPanel extends JPanel implements Runnable {
 
 						}
 						if (!match){
-							userList.add(new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString())));
-							userList.get(userList.size()-1).setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
-							System.out.println("Add user");
-							System.out.println(dataSnapshot.getKey());
+							try{
+								userList.add(new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString()), Float.parseFloat( dataSnapshot.child("yRel").getValue().toString())));
+								userList.get(userList.size()-1).setColor(new Color(r.nextInt(255), r.nextInt(255),r.nextInt(255)));
+								System.out.println("Add user");
+								System.out.println(dataSnapshot.getKey());
+							}catch(Exception e){
+								
+							}
 						}
 					}	
 				}
@@ -383,15 +388,17 @@ public class DrawPanel extends JPanel implements Runnable {
 
 				if (word.active){
 				//	particles.get(i).collisionCircle(word.xPos, word.yPos, word.margin);
-					particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
+					if(!Constants.noCollision) particles.get(i).collisionRect(word.xPos, word.yPos, word.width,word.height);
 				}
 			}
 			if(particles.get(i).dead)particles.remove(i);
 		}
 
-		for (User user : userList) { // run all users
-			user.update();
-			user.display(g2);
+		if(!Constants.noUser){
+			for (User user : userList) { // run all users
+				user.update();
+				user.display(g2);
+			}
 		}
 		for (Projectile p:	projectiles){ // run all projectiles
 
@@ -431,6 +438,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		displayDebugText();
+	
 		g2.dispose();
 	}
 
@@ -444,11 +452,20 @@ public class DrawPanel extends JPanel implements Runnable {
 			} catch (InterruptedException iex) {
 				//System.out.println("Exception in thread: " + iex.getMessage());
 			}
+
 			frames++;
 			if( System.nanoTime() - lastTime>=100000L){
 				FPS=(int) (frames*0.3);
 				frames=0;
 				lastTime=System.nanoTime();
+				
+				if(!Constants.noTimer){
+					Constants.cal=Calendar.getInstance();
+					Constants.timeLeft=(long) (Constants.clearInterval-((Constants.cal.getTimeInMillis()-Constants.startTime)*0.001));
+					if(Constants.timeLeft <0){
+						Constants.startTime=Constants.cal.getTimeInMillis();
+					}
+				}
 			}
 		}
 	}
@@ -729,11 +746,12 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			@Override
 			public void onChildChanged(DataSnapshot snapshot, String arg1) {
-
+				try{
+					
 				String s = snapshot.getRef().toString();
-
+				
 				int index=Integer.parseInt(s.substring(63));
-
+			
 				//word = (String) snapshot.child("text").getValue().toString();
 
 				if (snapshot.child("x").getValue() != null) {
@@ -810,11 +828,12 @@ public class DrawPanel extends JPanel implements Runnable {
 					//System.out.println("Word number " + index + ", " + "\""+ word + "\"" + " is now inactive");
 				}*/
 
-								try {
+								
 									if(snapshot.child("Owner").getValue().toString()!="") {
 										words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
 										System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 									}
+	
 								} catch (NullPointerException npe){}
 					}
 
@@ -825,6 +844,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					@Override
 					public void onCancelled(FirebaseError arg0) {
 					}
+					
 				});
 			}
 
@@ -832,7 +852,11 @@ public class DrawPanel extends JPanel implements Runnable {
 				g2.setColor(Color.BLACK); // svart system color
 				g2.setFont(Constants.boldFont); // init typsnitt
 				if(Constants.debug){
-					g2.drawString("Screen ID: " + Constants.screenNbr + " particles:"+ particles.size() + " Overparticles:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size() +"  FPS: "+FPS  , 30, 50);
+					g2.drawString("ID: " + Constants.screenNbr + " part:"+ particles.size() + " Overpart:"+ overParticles.size() + "  words: "+ words.size() + "  Users:" +userList.size() +"  FPS: "+FPS +"  Time:"+Constants.timeLeft, 30, 50);
+					if(Constants.noCollision)g2.drawString("No water collision" , 30, 100);
+					if(Constants.noTimer)g2.drawString("No time" , 30, 150);
+					if(Constants.noUser)g2.drawString("No user" , 30, 200);
+					if(Constants.simple)g2.drawString("simple Mode" , 30, 250);
 				}else{
 					g2.drawString("Screen ID: " + Constants.screenNbr , 30, 50);
 				}
