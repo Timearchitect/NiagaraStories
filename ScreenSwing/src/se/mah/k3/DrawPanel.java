@@ -425,18 +425,17 @@ public class DrawPanel extends JPanel implements Runnable {
 				for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
 				overParticles.get(i).update();
 				overParticles.get(i).display(g2);
-	
+				for(Word w: words){
+					if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
+				}
 				for(Particle p:particles){
 					overParticles.get(i).collisionVSParticle(p);
 				}
 	
 				if(overParticles.get(i).dead)overParticles.remove(i);
+		}
 
-			}
 
-			for(Word w: words){
-				if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
-			}
 
 		}
 

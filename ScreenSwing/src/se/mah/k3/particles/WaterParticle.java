@@ -37,9 +37,10 @@ public class WaterParticle extends Particle {
 		g2.setStroke(Constants.waterStroke);
 		g2.drawLine((int)x,(int) y, (int)(x-vx*2), (int)(y-vy*2));
 		
-		DrawPanel.g2.setColor(Constants.waterEffect);
+		if(!Constants.simple){DrawPanel.g2.setColor(Constants.waterEffect);
 		DrawPanel.g2.setStroke(Constants.wordEffectLine);
 		DrawPanel.g2.drawLine((int)x-2,(int) y, (int)(x-vx-2), (int)(y-vy*2));
+		}
 	}
 	
 	public void collisionCircle(int _x,int _y, int _radius){
