@@ -15,7 +15,7 @@ public class WaterParticle extends Particle {
 		x=x2;
 		y=y2;
 		vy=5;
-		ay=0.5f;
+		ay=0.4f;
 	}
 	
 	public void update(){
@@ -29,7 +29,7 @@ public class WaterParticle extends Particle {
 
 	public void display(Graphics2D g2) {
 		g2.setColor(waterColor);
-		g2.setStroke(Constants.squareStroke);
+		g2.setStroke(Constants.waterStroke);
 		g2.drawLine((int)x,(int) y, (int)(x-vx*2), (int)(y-vy*2));
 		
 	}
@@ -53,7 +53,7 @@ public class WaterParticle extends Particle {
 	}
 	
 	public void kill(){
-		if((int)r.nextInt(15)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,(int)y)); //splash
+		if((int)r.nextInt(12)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,(int)y,(int)vy*7)); //splash
 		dead=true;
 	}
 }

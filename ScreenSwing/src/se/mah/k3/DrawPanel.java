@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,11 +25,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import se.mah.k3.Projectiles.Projectile;
-import se.mah.k3.Word.State;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
-import se.mah.k3.particles.RustParticle;
-import se.mah.k3.particles.SplashParticle;
 import se.mah.k3.particles.WaterParticle;
 
 import com.firebase.client.ChildEventListener;
@@ -89,11 +87,19 @@ public class DrawPanel extends JPanel implements Runnable {
 				RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
-		projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+		//projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 
 	}
 
 	public DrawPanel() {
+		
+		 // image creation
+		 VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
+
+
+		 // rendering to the image
+
+		
 		//     bimage = null;
 		try {
 			bimage = ImageIO.read(new File("images/background.bmp"));
@@ -356,7 +362,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
-		for(int i = 0; i < 8; i++) {  // spawn particles
+		for(int i = 0; i < 7; i++) {  // spawn particles
 			particles.add(new WaterParticle((int)r.nextInt(Constants.screenWidth), 0)); 
 		}
 		while(particles.size()>Constants.PARTICLE_LIMIT) {  // run all particlesCap
