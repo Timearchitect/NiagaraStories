@@ -19,7 +19,7 @@ public class Word implements Health{
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
 	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
-	public boolean active = true, occupied;
+	public boolean active = true, occupied,colliding;
 	public String ownerId = "",text = "";
 	public User owner;
 	public enum State {onTray, draging, placed,locked};
@@ -197,33 +197,36 @@ public class Word implements Health{
 
 	}
 
+	
 	public void collisionVSWord (Word w){
-		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)){
-			if((xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)){
-				if((yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)){
-					if((yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
-						w.txVel=(w.xPos-xPos)*FORCEFACTOR;
-						w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
-						txVel=(xPos-w.xPos)*FORCEFACTOR;
-						tyVel=(yPos-w.yPos)*FORCEFACTOR;
-					}
-				}	
-			}
+		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)&&(xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)&&(yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)&&(yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
+			w.txVel=(w.xPos-xPos)*FORCEFACTOR;
+			w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
+			txVel=(xPos-w.xPos)*FORCEFACTOR;
+			tyVel=(yPos-w.yPos)*FORCEFACTOR;
+			colliding=true;
 		}
 	}
 
 	public void BoundCollision(){
 		if(xPos < margin + width * 0.5){											//LEFT
 			txPos += 5;
+			colliding=true;
+
 
 		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
 			txPos -= 5;
+			colliding=true;
 
 		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
 			tyPos += 5;
+			colliding=true;
+
 
 		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
 			tyPos -= 5;
+			colliding=true;
+
 		}
 	}
 

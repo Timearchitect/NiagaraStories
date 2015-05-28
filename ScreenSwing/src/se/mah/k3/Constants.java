@@ -15,7 +15,7 @@ import java.util.Calendar;
     public static final int PARTICLE_LIMIT=3000;
     public static final int HEAVY_PARTICLE_LIMIT=400;
     public static final int PROJECTILE_LIMIT=100;
-    public static final int clearInterval = 4*60; // time for next clearWave
+    public static final int clearInterval = 10*60; // time for next clearWave
 	public static String wordBg = "#009688";
 	public static String wordSt = "#8d0096";
 	public static String waterC = "#90caf9";
@@ -24,7 +24,7 @@ import java.util.Calendar;
 	public static Color wordBackground = (hexToRgb(wordBg));
 	public static Color waterColor = (hexToRgb(waterC));
 	public static Color wordStroke = (hexToRgb(wordSt));
-	public static float fontSize=50;
+	public static float fontSize=58;
 	public static Font font,lightFont,boldFont ;
 	public static final int WaterStrokeWidth = 10;
 	public static BasicStroke waterStroke = new BasicStroke(WaterStrokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
