@@ -19,7 +19,7 @@ public class Word implements Health{
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
 	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
-	public boolean active = true, occupied,colliding;
+	public boolean active = true, occupied,colliding, selected, plural;
 	public String ownerId = "",text = "";
 	public User owner;
 	public enum State {onTray, draging, placed,locked};
@@ -205,6 +205,7 @@ public class Word implements Health{
 			txVel=(xPos-w.xPos)*FORCEFACTOR;
 			tyVel=(yPos-w.yPos)*FORCEFACTOR;
 			colliding=true;
+			DrawPanel.collisionSent=false;
 		}
 	}
 
@@ -212,20 +213,23 @@ public class Word implements Health{
 		if(xPos < margin + width * 0.5){											//LEFT
 			txPos += 5;
 			colliding=true;
-
+			DrawPanel.collisionSent=false;
 
 		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
 			txPos -= 5;
 			colliding=true;
+			DrawPanel.collisionSent=false;
 
 		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
 			tyPos += 5;
 			colliding=true;
+			DrawPanel.collisionSent=false;
 
 
 		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
 			tyPos -= 5;
 			colliding=true;
+			DrawPanel.collisionSent=false;
 
 		}
 	}

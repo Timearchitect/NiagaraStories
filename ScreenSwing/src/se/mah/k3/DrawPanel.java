@@ -43,7 +43,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	public static BufferedImage bimage, mist, rust, cracks,moss;
+	public static BufferedImage bimage, mist, rust, cracks,moss, app;
 	public static int myFrame; 
 	public String changedWord = "word";
 	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
@@ -101,6 +101,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			rust = ImageIO.read(new File("images/rust.png"));
 			moss = ImageIO.read(new File("images/moss.png"));
 			cracks = ImageIO.read(new File("images/cracks.png"));
+			app = ImageIO.read(new File("images/app.png"));
 		} catch (IOException e) {
 			System.out.println("no");
 		}
@@ -251,7 +252,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 		themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		myFirebaseRef.removeValue(); // Cleans out everything
+		//myFirebaseRef.removeValue(); // Cleans out everything
 
 		createRegularWords();
 		createThemeWords();
@@ -261,7 +262,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		// use method getText from the word class to set text to "word1" in the
 		// firebase db.
-		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("screenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.child("ScreenWidth").setValue(1000); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.child("ScreenHeight").setValue(800); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
@@ -402,6 +403,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.4f));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		//		g2.drawImage(app, Constants.screenWidth - 450, Constants.screenHeight - 200, this);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
 		for(int i = 0; i < 7; i++) {  // spawn particles
@@ -451,6 +453,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			p.display(g2);
 		}
 
+
 		for (Word word : words) {  // run all words
 			if (word.active) {
 				word.update();
@@ -467,9 +470,9 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 		}
 
-		
+
 		if(!Constants.simple){
-				for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
+			for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
 				overParticles.get(i).update();
 				overParticles.get(i).display(g2);
 				for(Word w: words){
@@ -478,13 +481,15 @@ public class DrawPanel extends JPanel implements Runnable {
 				for(Particle p:particles){
 					overParticles.get(i).collisionVSParticle(p);
 				}
-	
+
 				if(overParticles.get(i).dead)overParticles.remove(i);
-		}
+			}
 
 
 
 		}
+
+		g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight - 150, this); // GooglePlay icon
 
 		displayDebugText();
 		g2.dispose();
@@ -716,7 +721,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				"rapid",
 				"message"
 		};
-
+		
 		int count = 0;
 		for (int i = 0; i < regularWords.length; i++) {
 			String wordId="word" + i ;
@@ -724,6 +729,15 @@ public class DrawPanel extends JPanel implements Runnable {
 			wordList.child(wordId + "/text").setValue(regularWords[i]);
 			wordList.child(wordId + "/active").setValue(false);
 			wordList.child(wordId + "/owner").setValue("");
+
+			
+			if ("you".equals(regularWords[i])) {
+				wordList.child("word" + i + "/Plural").setValue("yes");
+				System.out.println(wordList.child("word" + i + "/text").child("word"+i).getKey());
+			} else{
+				wordList.child("word" + i + "/Plural").setValue("");
+			}
+			
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
 			words.add(new Word(regularWords[i], null,x,y,x,y));
@@ -849,8 +863,8 @@ public class DrawPanel extends JPanel implements Runnable {
 									words.get(index).yPos=(int)words.get(index).tyPos;
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
-									u.xPos=(int)words.get(index).txPos;
 									u.yPos=(int)words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
 									words.get(index).respond();
 								}
 
@@ -918,7 +932,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
 	}
 	public static void sendAfterCollision(){
+		
 		if(!collisionSent){
+			System.out.println("checking collision");
 			Boolean allWordsNotColliding=true;
 			for(Word w:DrawPanel.words){
 				if(w.active && w.colliding ){
@@ -943,4 +959,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 	}
 	
+
+
 }
