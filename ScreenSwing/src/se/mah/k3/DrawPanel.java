@@ -215,7 +215,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		createRegularWords();
 		createThemeWords();
-		createUsedWords() ;
+		createNewWords() ;
 		// Run method that listens for change in word list (active words for example).
 		wordListener();
 
@@ -717,10 +717,10 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 
-	public void createUsedWords() {
-		Firebase themedWords = myFirebaseRef.child("Used Words");
+	public void createNewWords() {
+		Firebase themedWords = myFirebaseRef.child("New");
 		String[] themeWords = { 
-				"helloWorld","hejsan","yo","niHao"
+				"10","11","12","13","14","15","16","17","18","19","20","25","30","35","40","45","50","2000","2001","2002","&","?","a","a","about","above","airplane","all","alphabet","am","and","and","and","animal","anime","answer","anyone","anything","apple","applesauce","are","are","asparagus","astronomy","at","aunt","autumn","baby","bad","ball","ballerina","balloon","barn","base","basket","bathroom","because","begin","believe","best","big","bike","bird","birthday","bite","bite","black","blue","body","book","bored","born","bottom","box","box","boy","breakfast","bring","Britney","Spears","Bronx","brother","brown","bubblegum","bug","but","butterfly","by","candy","can't","car","castle","cat","cat","chair","child","chocolate","close","cloud","color","Connecticut","cool","corn","could","couldn't","cow","cried","d","Dad","dance","dark","day","day","did","different","dinner","dinosaur","do","do","does","dog","don't","door","down","draw","dream","dug","dull","each","ear","easy","eat","ed","eight","elementary","elephant","er","er","exercise","fall","family","far","fast","fat","favorite","favorite","fed","feet","fight","fish","fish","five","flower","fly","fly","for","four","France","french","fries","friend","from","ful","funny","gentle","geometry","gerbil","get","girl","give","glow","good","graffiti","Grandma","Grandpa","green","grow","hamburger","hamster","hand","Harry","Potter","has","hate","have","he","her","here","hid","hide","high","him","hit","hold","home","homework","hot","hug","hungry","I","I","I","ice","cream","if","imagine","important","in","ing","ing","inside","is","is","Japan","JK","Rowling","jump","junior","kind","king","laptop","laugh","leave","Lemony","Snicket","light","like","like","little","live","live","look","looking","loud","lovelunch","ly","astronaut","mad","magic","man","many","me","midnight","miss","Mom","monkey","monkey","monster","more","morning","mountain","movie","mud","music","my","name","napkin","near","nest","never","New","York","newspaper","next","next","night","nine","no","noon","nose","not","notebook","of","once","once","one","one","or","or","over","over","paint","peace","peanut","butter","photograph","pink","pizza","poke","Pokemon","pool","pool","pretend","pretty","prince","princes","pumpkin","purple","queen","Queens","quiet","r","rain","rainbow","ran","read","real","remember","ride","ring","room","round","round","rude","s","s","sad","said","sail","saw","say","school","see","seven","share","she","should","show","silly","sister","six","skateboard","skin","skinny","smart","snake","sneakers","so","soccer","something","song","speak","special","spring","square","start","stop","storm","story","strawberry","stupid","summer","swim","take","teacher","telephone","television","tell","that","that","their","them","there","think","three","iger","time","to","to","told","too","tool","top","town","truth","two","TV","U.S.","uncle","under","used","vacation","vanilla","very","video","game","want","warm","was","what","whatever","when","where","who","why","whisper","white","wild","will","will","wind","window","wing","winter","wish","with","with","woman","won't","world","y","yell","yellow","yes","yesterday","you","you","young","your","zebra"
 		};
 
 		int count = 0;
