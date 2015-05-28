@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
@@ -212,7 +211,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 		themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		myFirebaseRef.removeValue(); // Cleans out everything
+		//myFirebaseRef.removeValue(); // Cleans out everything
 
 		createRegularWords();
 		createThemeWords();
@@ -222,7 +221,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		// use method getText from the word class to set text to "word1" in the
 		// firebase db.
-		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("screenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.child("ScreenWidth").setValue(1000); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.child("ScreenHeight").setValue(800); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
@@ -664,12 +663,20 @@ public class DrawPanel extends JPanel implements Runnable {
 				"rapid",
 				"message."
 		};
-
+		
 		int count = 0;
 		for (int i = 0; i < regularWords.length; i++) {
 			wordList.child("word" + i + "/text").setValue(regularWords[i]);
 			wordList.child("word" + i + "/Active").setValue(false);
 			wordList.child("word" + i + "/Owner").setValue("");
+			
+			if ("you".equals(regularWords[i])) {
+				wordList.child("word" + i + "/Plural").setValue("yes");
+				System.out.println(wordList.child("word" + i + "/text").child("word"+i).getKey());
+			} else{
+				wordList.child("word" + i + "/Plural").setValue("");
+			}
+			
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y=r.nextInt(Constants.screenHeight + 1); // skalad y pos
 			words.add(new Word(regularWords[i], null,x,y,x,y));
@@ -861,8 +868,8 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 
-public static void clearScreen(){
-	//words.clear();
-	overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
-}
+	public static void clearScreen(){
+		//.active = false;
+		overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
+	}
 }

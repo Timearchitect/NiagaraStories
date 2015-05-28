@@ -19,7 +19,7 @@ public class Word implements Health{
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
 	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
-	public boolean active = true, selected;
+	public boolean active = true, selected, plural;
 	public String ownerId = "",text = "";
 	public User owner;
 	public enum State {onTray, draging, placed,locked};
