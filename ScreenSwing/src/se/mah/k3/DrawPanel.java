@@ -195,7 +195,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						selectedWord.released();						
 						//overParticles.add(new RustParticle (selectedWord.getXPos() + 3, selectedWord.getYPos() - 4,  200, 100, Integer.valueOf(wordLength)));
 						selectedWord.state=Word.State.placed;
-						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+"/occupied").setValue(false);
+						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+"/occupied").setValue(false); // false in regular temp
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+"/active").setValue(true);
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+"/xRel").setValue(((float)selectedWord.xPos/Constants.screenWidth));
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+"/yRel").setValue(((float)selectedWord.yPos/Constants.screenHeight));
@@ -255,7 +255,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		//myFirebaseRef.removeValue(); // Cleans out everything
 
 		createRegularWords();
-		createThemeWords();
+		//createThemeWords();
 		//createUsedWords() ;
 		// Run method that listens for change in word list (active words for example).
 		wordListener();
@@ -471,10 +471,10 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 
-		if(!Constants.simple){
+		
 			for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
-				overParticles.get(i).update();
-				overParticles.get(i).display(g2);
+					overParticles.get(i).update();
+					if(!Constants.simple)overParticles.get(i).display(g2);
 				for(Word w: words){
 					if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
 				}
@@ -483,14 +483,13 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 
 				if(overParticles.get(i).dead)overParticles.remove(i);
-			}
+			
 
 
 
 		}
 
-		g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight - 150, this); // GooglePlay icon
-
+		//g2.drawImage(app,(int)(Constants.screenWidth - app.getWidth()*0.5), (int)(Constants.screenHeight -  app.getHeight()*0.5), this); // GooglePlay icon
 		displayDebugText();
 		g2.dispose();
 	}
@@ -824,7 +823,6 @@ public class DrawPanel extends JPanel implements Runnable {
 
 					int index=Integer.parseInt(s.substring(63));// regular
 					//int index=Integer.parseInt(s.substring(60)); // used words
-					
 					//word = (String) snapshot.child("text").getValue().toString();
 
 					if (snapshot.child("x").getValue() != null) {
