@@ -21,6 +21,7 @@ public class User implements Comparable<User>{
 	private float RotateAngle;
 	private int size=100;
 	int animSize;
+	public int moves = 4;
 	public User(String id, float _xRel, float _yRel) {
 		this.id = id;
 		this.xRel = _xRel;
@@ -90,8 +91,8 @@ public class User implements Comparable<User>{
 		
 		g2.setColor(color);
 		g2.setStroke(Constants.userStroke);
-		for(int i=0; i<3;i++){
-			g2.drawArc((int)(xPos - (size+animSize)*0.5), (int)(yPos - (size+animSize)*0.5),size+animSize,size+animSize,(int)RotateAngle+i*120,60);
+		for(int i=0; i<moves;i++){
+			g2.drawArc((int)(xPos - (size+animSize)*0.5), (int)(yPos - (size+animSize)*0.5),size+animSize,size+animSize,(int)RotateAngle+i*(360/moves),(360/(moves*2)));
 		}
 		//g2.drawArc((int)(xPos - size*0.5), (int)(yPos - size*0.5),size,size,(int)RotateAngle+180,90);
 		//g2.fillOval((int)(xPos - size*0.5), (int)(yPos - size*0.5), size, size);

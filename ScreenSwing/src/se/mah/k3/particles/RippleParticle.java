@@ -52,13 +52,13 @@ public class RippleParticle extends Particle{
 				p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
 			}
 			
-			if(dist<r*0.6){
+			/*if(dist<r*0.6){
 				//p.vx=0;
 				//p.vy=0;
 				p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 				p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
-				p.kill();
-			}
+				//p.kill();
+			}*/
 		
 		
 	}

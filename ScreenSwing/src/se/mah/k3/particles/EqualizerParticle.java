@@ -49,12 +49,14 @@ public class EqualizerParticle extends Particle {
 			//p.vy=-5;
 			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
-			p.particleColor = (new Color(199, 21, 133));
+			p.particleColor = (new Color(199, 21, 133,50));
 		}
 		
 		if(dist<r*0.3){
 			//p.vx=-5;
-			//p.vy=5;
+			p.vy=-1;
+			p.ay=5;
+			
 			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
 			p.particleColor = Constants.waterColor;

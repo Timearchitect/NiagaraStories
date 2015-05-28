@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import se.mah.k3.Projectiles.Projectile;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -86,10 +88,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		//DrawPanel panel = new DrawPanel();
 		panel = new DrawPanel();
 
-		//panel.addMouseMotionListener(this);
 
-		//panel.setOpaque(false);
-		//panel.setBackground( new Color(255, 0, 0, 20) );
 		contentPane.add(panel, BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); //Listen to keyboard
 		manager.addKeyEventDispatcher(this);
@@ -135,7 +134,13 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	//Toggle fullscreen with f
 	@Override
 	public boolean dispatchKeyEvent(KeyEvent e) {
+		if (e.getID() == KeyEvent.KEY_RELEASED) {
+			if(e.getKeyCode() == KeyEvent.VK_ENTER){
+				DrawPanel.sendAfterCollision();
+			}
+		}
 		if (e.getID() == KeyEvent.KEY_TYPED) {
+
 			if(e.getKeyChar()=='f' || e.getKeyChar()=='F'){     		 
 				setFullscreen(!inFullScreenMode);	
 			}
@@ -156,6 +161,10 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			}
 			if(e.getKeyChar() == ' '){
 						clearScreen();
+			}
+
+			if(e.getKeyChar() == 'p' || e.getKeyChar() == 'P'){
+				DrawPanel.projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 			}
 
 		}
@@ -215,6 +224,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		System.out.println(" action");
+		
 	}
 
 	public void clearScreen(){ 
@@ -223,7 +233,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		w.active=false;	
 		}
 	}
-	DrawPanel.clearScreen();
+		DrawPanel.clearScreen();
 	}
 
 }
