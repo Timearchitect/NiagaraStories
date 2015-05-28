@@ -42,7 +42,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
-	public static BufferedImage bimage, mist, rust, cracks,moss;
+	public static BufferedImage bimage, mist, rust, cracks,moss, app;
 	public static int myFrame; 
 	public String changedWord = "word";
 	private float offsetX, offsetY, mouseX, mouseY, pMouseX, pMouseY; // mouse variable
@@ -80,7 +80,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
 		//projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
-
 	}
 
 	public DrawPanel() {
@@ -99,6 +98,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			rust = ImageIO.read(new File("images/rust.png"));
 			moss = ImageIO.read(new File("images/moss.png"));
 			cracks = ImageIO.read(new File("images/cracks.png"));
+			app = ImageIO.read(new File("images/app.png"));
 		} catch (IOException e) {
 			System.out.println("no");
 		}
@@ -357,6 +357,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.4f));
 		//Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT, Transparency.TRANSLUCENT);
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth , Constants.screenHeight , this); 
+		//		g2.drawImage(app, Constants.screenWidth - 450, Constants.screenHeight - 200, this);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 
 		for(int i = 0; i < 7; i++) {  // spawn particles
@@ -406,6 +407,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			p.display(g2);
 		}
 
+
 		for (Word word : words) {  // run all words
 			if (word.active) {
 				word.update();
@@ -419,20 +421,26 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 		}
 
-		for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
-			overParticles.get(i).update();
-			overParticles.get(i).display(g2);
 
-			for(Particle p:particles){
-				overParticles.get(i).collisionVSParticle(p);
+		if(!Constants.simple){
+			for (int i = overParticles.size() - 1; 0 < i; i--) { // run all overparticles
+				overParticles.get(i).update();
+				overParticles.get(i).display(g2);
+				for(Word w: words){
+					if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
+				}
+				for(Particle p:particles){
+					overParticles.get(i).collisionVSParticle(p);
+				}
+
+				if(overParticles.get(i).dead)overParticles.remove(i);
 			}
 
-			for(Word w: words){
-				if(w.active)overParticles.get(i).collisionCircle(w.xPos, w.yPos, w.width,w);
-			}
 
-			if(overParticles.get(i).dead)overParticles.remove(i);
+
 		}
+
+		g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight - 150, this); // GooglePlay icon
 
 		displayDebugText();
 
@@ -459,7 +467,8 @@ public class DrawPanel extends JPanel implements Runnable {
 				if(!Constants.noTimer){
 					Constants.cal=Calendar.getInstance();
 					Constants.timeLeft=(long) (Constants.clearInterval-((Constants.cal.getTimeInMillis()-Constants.startTime)*0.001));
-					if(Constants.timeLeft <0){
+					if(Constants.timeLeft <0){ // reset timer
+						clearScreen();
 						Constants.startTime=Constants.cal.getTimeInMillis();
 					}
 				}
@@ -795,8 +804,8 @@ public class DrawPanel extends JPanel implements Runnable {
 									words.get(index).yPos=(int)words.get(index).tyPos;
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
-									u.xPos=(int)words.get(index).txPos;
 									u.yPos=(int)words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
 									words.get(index).respond();
 								}
 
@@ -869,7 +878,6 @@ public class DrawPanel extends JPanel implements Runnable {
 
 
 	public static void clearScreen(){
-		//.active = false;
 		overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
 	}
 }

@@ -162,7 +162,7 @@ public class Word implements Health{
 
 		AffineTransform oldTransform = DrawPanel.g2.getTransform();
 		DrawPanel.g2.translate((int) (xPos ),(int) (yPos ));
-		DrawPanel.g2.rotate(Math.toRadians(angle));
+		if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
 		//angle++;
 		DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 		DrawPanel.g2.setColor(Color.white);
@@ -187,7 +187,7 @@ public class Word implements Health{
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
 
 
-		skin.display(DrawPanel.g2);
+		if(!Constants.simple)skin.display(DrawPanel.g2);
 
 	}
 
@@ -248,9 +248,8 @@ public class Word implements Health{
 
 	public void displayLinked(){
 		float xDiff,yDiff,dist,angle;
-
+		
 		for(Word w : DrawPanel.words){
-
 			xDiff= w.xPos-xPos;
 			yDiff= w.yPos-yPos;
 			angle=(float) Math.atan2(xDiff, yDiff);
