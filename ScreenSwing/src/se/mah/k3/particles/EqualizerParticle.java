@@ -31,7 +31,7 @@ public class EqualizerParticle extends Particle {
 	}
 
 	public void display(Graphics2D g2) {
-		g2.setColor(new Color(199,21,133,(int)opacity));
+		g2.setColor(new Color(100,100,255,(int)opacity));
 		g2.setStroke(circleStroke);
 		g2.drawOval((int)(x-r*0.5), (int)(y-r*0.5), (int)r,(int) r);
 	}
@@ -49,7 +49,7 @@ public class EqualizerParticle extends Particle {
 			//p.vy=-5;
 			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
-			p.particleColor = (new Color(199, 21, 133,50));
+			p.particleColor = (new Color(100,100,255,(int)opacity));
 		}
 		
 		if(dist<r*0.3){
@@ -59,7 +59,7 @@ public class EqualizerParticle extends Particle {
 			
 			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
-			p.particleColor = Constants.waterColor;
+			p.particleColor =  (new Color(100,200,250,30));
 		}
 	}
 

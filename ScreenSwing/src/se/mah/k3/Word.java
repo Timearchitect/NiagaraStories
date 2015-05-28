@@ -5,6 +5,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.firebase.client.Firebase;
+
 import se.mah.k3.particles.FrameParticle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.TextParticle;
@@ -22,6 +24,7 @@ public class Word implements Health{
 	public boolean active = true, occupied,colliding, selected, plural;
 	public String ownerId = "",text = "";
 	public User owner;
+	public Firebase firebase;
 	public enum State {onTray, draging, placed,locked};
 	public State state=State.onTray;
 	public int xPos, yPos, width, height, margin = 20;

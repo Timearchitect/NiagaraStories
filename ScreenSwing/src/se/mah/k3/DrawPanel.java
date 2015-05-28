@@ -82,7 +82,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun=false;
 		//projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
-
 	}
 
 	public DrawPanel() {
@@ -257,13 +256,13 @@ public class DrawPanel extends JPanel implements Runnable {
 		createRegularWords();
 		//createThemeWords();
 		//createUsedWords() ;
-		createNewWords() ;
+		//createNewWords() ;
 		// Run method that listens for change in word list (active words for example).
 		wordListener();
 
 		// use method getText from the word class to set text to "word1" in the
 		// firebase db.
-		myFirebaseRef.child("screenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
+		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.child("ScreenWidth").setValue(1000); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.child("ScreenHeight").setValue(800); // Has to be same as on the app. So place specific can't you see the screen you don't know the number
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
@@ -349,11 +348,11 @@ public class DrawPanel extends JPanel implements Runnable {
 								switch (state){
 								case "offline":
 									ul.state=User.State.offline;
-									System.out.println("offline");
+									//System.out.println("offline");
 									break;
 								case "online":
 									ul.state=User.State.online;
-									System.out.println("online");
+									//System.out.println("online");
 
 									break;
 								case "taping":
@@ -732,10 +731,10 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			
 			if ("you".equals(regularWords[i])) {
-				wordList.child("word" + i + "/Plural").setValue("yes");
+				wordList.child("word" + i + "/plural").setValue("yes");
 				System.out.println(wordList.child("word" + i + "/text").child("word"+i).getKey());
 			} else{
-				wordList.child("word" + i + "/Plural").setValue("");
+				wordList.child("word" + i + "/plural").setValue("");
 			}
 			
 			int x=r.nextInt(Constants.screenWidth + 1); // skalad x pos
@@ -906,7 +905,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					}
 
 					if(snapshot.child("owner").getValue().toString()!="") {
-						words.get(index).setOwner(snapshot.child("Owner").getValue().toString());
+						words.get(index).setOwner(snapshot.child("owner").getValue().toString());
 						System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
 					}
 
@@ -921,7 +920,109 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onCancelled(FirebaseError arg0) {
 			}
+		});
+		
+		
+		Firebase fireBaseUsedWords = myFirebaseRef.child("Used Words");
+		//Firebase fireBaseWords = myFirebaseRef.child("Used Words");
 
+		// Adding a child event listener to the firebasewords ref, to check for
+		// active words
+		fireBaseUsedWords.addChildEventListener(new ChildEventListener() {
+
+			@Override
+			public void onChildRemoved(DataSnapshot arg0) {
+			}
+
+			@Override
+			public void onChildMoved(DataSnapshot arg0, String arg1) {
+			}
+
+			@Override
+			public void onChildChanged(DataSnapshot snapshot, String arg1) {
+				try{
+
+					String s = snapshot.getRef().toString();
+						
+
+					//int index=Integer.parseInt(s.substring(63));// regular
+					int index=Integer.parseInt(s.substring(60)); // used words
+					//word = (String) snapshot.child("text").getValue().toString();
+
+					if (snapshot.child("attributes/x").getValue() != null) {
+						words.get(index).txPos=(int) (Float.parseFloat(snapshot.child("attributes/x").getValue().toString()) * Constants.screenWidth);
+					}
+
+					if (snapshot.child("attributes/y").getValue() != null) {
+						words.get(index).tyPos=(int)  (Float.parseFloat(snapshot.child("attributes/y").getValue().toString()) * Constants.screenHeight);
+					}
+
+					if (snapshot.child("attributes/state").getValue() != null) {
+						//System.out.println("State stuff");
+						User u = null;
+						if(words.get(index).getUser()!=null){ 
+							u=words.get(index).getUser();
+							switch(snapshot.child("attributes/State").getValue().toString()){
+							case "placed":
+								//	words.get(index).released();
+								words.get(index).setState(Word.State.placed);
+								u.release();
+								System.out.println("placed");
+								words.get(index).appear();
+								break;
+
+							case "draging":
+								//words.get(index).respond();
+								if(words.get(index).state!=Word.State.onTray){
+									words.get(index).setState(Word.State.draging);
+									u.xTar=words.get(index).txPos;
+									u.yTar=words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
+									u.yPos=(int)words.get(index).tyPos;
+									//System.out.println("dragging");
+								}else{
+									words.get(index).xPos=(int)words.get(index).txPos;
+									words.get(index).yPos=(int)words.get(index).tyPos;
+									u.xTar=words.get(index).txPos;
+									u.yTar=words.get(index).tyPos;
+									u.yPos=(int)words.get(index).tyPos;
+									u.xPos=(int)words.get(index).txPos;
+									words.get(index).respond();
+								}
+
+								break;
+							case "onTray":
+
+								words.get(index).setState(Word.State.onTray);
+								System.out.println("on tray");
+								break;
+
+							}
+						}
+						try{
+							if (snapshot.child("attributes/plural").getValue() != null) {
+								words.get(index).setType(snapshot.child("attributes/plural").getValue().toString());
+							}
+						} catch(Exception e){}
+
+					}
+
+					if(snapshot.child("attributes/owner").getValue().toString()!="") {
+						words.get(index).setOwner(snapshot.child("attributes/owner").getValue().toString());
+						System.out.println(words.get(index).getOwner() + " owns the word " + words.get(index).getText());
+					}
+
+				} catch (NullPointerException npe){}
+				 catch (NumberFormatException npe){}
+			}
+
+			@Override
+			public void onChildAdded(DataSnapshot arg0, String arg1) {
+			}
+
+			@Override
+			public void onCancelled(FirebaseError arg0) {
+			}
 		});
 	}
 
@@ -951,10 +1052,10 @@ public class DrawPanel extends JPanel implements Runnable {
 		//words.clear();
 		overParticles.add(new EqualizerParticle((int)(Constants.screenWidth * 0.5), (int)(Constants.screenHeight * 0.5), 50));
 	}
+	
 	public static void sendAfterCollision(){
 		
 		if(!collisionSent){
-			System.out.println("checking collision");
 			Boolean allWordsNotColliding=true;
 			for(Word w:DrawPanel.words){
 				if(w.active && w.colliding ){

@@ -3,6 +3,8 @@ package se.mah.k3;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import com.firebase.client.Firebase;
+
 import se.mah.k3.particles.RippleParticle;
 
 public class User implements Comparable<User>{
@@ -10,6 +12,7 @@ public class User implements Comparable<User>{
     public State state=State.online;
 	final int DEFAULT_SIZE=100 ;
 	private String id;
+	public Firebase firebase;
 	int xPos, pyPos;
 	int yPos, pxPos;
 	float xTar;
