@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import se.mah.k3.Projectiles.Projectile;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -157,6 +159,9 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			if(e.getKeyChar() == ' '){
 						clearScreen();
 			}
+			if(e.getKeyChar() == 'p' || e.getKeyChar() == 'P'){
+				DrawPanel.projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+			}
 
 		}
 		return false;	}
@@ -223,7 +228,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		w.active=false;	
 		}
 	}
-	DrawPanel.clearScreen();
+		DrawPanel.clearScreen();
 	}
 
 }

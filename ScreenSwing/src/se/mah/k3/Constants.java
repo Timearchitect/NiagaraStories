@@ -9,29 +9,29 @@ import java.util.Calendar;
  public class Constants {
 	public static Calendar cal= Calendar.getInstance();
 	public static boolean debug, noCollision,noTimer,noUser,simple;
-	public static final int WaterStrokeWidth = 10;
-	public static float fontSize=50;
-	public static Font font,lightFont,boldFont ;
+	public static int spaceOnScreen=500;
 	public static int screenNbr=145;
+	public static int screenWidth = 1920, screenHeight = 1080;
     public static final int PARTICLE_LIMIT=3000;
     public static final int HEAVY_PARTICLE_LIMIT=400;
     public static final int PROJECTILE_LIMIT=100;
-	public static final int clearInterval = 4*60; // time for next clearWave
+    public static final int clearInterval = 4*60; // time for next clearWave
 	public static String wordBg = "#009688";
 	public static String wordSt = "#8d0096";
 	public static String waterC = "#90caf9";
 	public static Color waterColorTrans = (new Color(144, 202, 249, 50));
 	public static Color waterEffect = (new Color(255, 255, 255, 50));
 	public static Color wordBackground = (hexToRgb(wordBg));
-	public static Color wordStroke = (hexToRgb(wordSt));
 	public static Color waterColor = (hexToRgb(waterC));
-	public static int screenWidth = 1920, screenHeight = 1080;
+	public static Color wordStroke = (hexToRgb(wordSt));
+	public static float fontSize=50;
+	public static Font font,lightFont,boldFont ;
+	public static final int WaterStrokeWidth = 10;
 	public static BasicStroke waterStroke = new BasicStroke(WaterStrokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
 	public static BasicStroke squareStroke = new BasicStroke(20, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke userStroke = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke wordOutline = new BasicStroke(3, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 	public static BasicStroke wordEffectLine = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
-
 
 	public static Font userFont=boldFont;
 	public static long timeLeft;

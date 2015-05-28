@@ -19,7 +19,7 @@ public class Word implements Health{
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
 	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
-	public boolean active = true, selected;
+	public boolean active = true, occupied;
 	public String ownerId = "",text = "";
 	public User owner;
 	public enum State {onTray, draging, placed,locked};
@@ -97,7 +97,13 @@ public class Word implements Health{
 	public void setText(String _text){
 		this.text = _text;
 	}
+	public String getType() {
+		return type;
+	}
 
+	public void setType(String type) {
+		this.type = type;
+	}
 	public boolean isActive(){
 		return active;
 	}
@@ -294,5 +300,12 @@ public class Word implements Health{
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
 		//fireBaseWords.child(+wordId+"/Active").setValue(false);
 
+	}
+
+	public String getWordId() {
+		return wordId;
+	}	
+	public void setWordId(String _s) {
+		wordId=_s;
 	}	
 }
