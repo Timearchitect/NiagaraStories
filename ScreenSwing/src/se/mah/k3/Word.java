@@ -25,7 +25,7 @@ public class Word implements Health{
 	public boolean active = true, occupied,colliding, selected, plural;
 	public String ownerId = "",text = "";
 	public User owner;
-	public Firebase firebase;
+	public Firebase 	firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
 	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
 	public State state=State.onTray;
@@ -149,6 +149,8 @@ public class Word implements Health{
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (margin * 0.5), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (- margin * 0.5), 0, text));
 		active=true;
+		//firebase.child(wordId+"/attributes/active").setValue(true);
+
 		pxPos=xPos;
 		pyPos=yPos;
 		setHealth(text.length());
@@ -164,6 +166,8 @@ public class Word implements Health{
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
 
 		active=false;
+		//firebase.child(wordId+"/attributes/active").setValue(false);
+
 	}
 
 	public void selected(){
@@ -321,6 +325,7 @@ public class Word implements Health{
 		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, margin, text));
 		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, -margin, text));
 		active=false;		
+		//firebase.child(wordId+"/attributes/active").setValue(false);
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
 		//fireBaseWords.child(+wordId+"/Active").setValue(false);
 

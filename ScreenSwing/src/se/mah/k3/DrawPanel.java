@@ -971,8 +971,27 @@ public class DrawPanel extends JPanel implements Runnable {
 						(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight))));
 						words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
 						words.get(words.size()-1).height = metrics.getHeight();
+						
+						words.get(words.size()-1).active=Boolean.parseBoolean(DSS.child("/attributes/active").getValue().toString());
+						System.out.println("assigning states");
 
-						words.get(words.size()-1).active=true;
+						switch(DSS.child("/attributes/state").getValue().toString()){
+							case "onTray": 
+							words.get(words.size()-1).setState(Word.State.onTray);
+							System.out.println("its done ,onTray assigned");
+							break;
+							case "draging": 
+							words.get(words.size()-1).setState(Word.State.draging);
+							System.out.println("its done ,onTray draging");
+							break;
+							case "placed": 
+							words.get(words.size()-1).setState(Word.State.placed);
+							break;
+							case "locked": 
+							words.get(words.size()-1).setState(Word.State.locked);
+							break;
+						}
+
 						System.out.println(" created some words:" +words.get(words.size()-1).getWordId()); 
 				}
 				System.out.println("arraylist of words is now:"+words.size());
@@ -1016,17 +1035,20 @@ public class DrawPanel extends JPanel implements Runnable {
 					//	System.out.println(" x:"+(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth));
 					
 					
+					try{
+						if (matchingWord != null) {
+							matchingWord.txPos=(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth);
+							System.out.println("xRel assigned");
+						}
+					}catch( NullPointerException ne){}
+					try{
+						if (matchingWord != null) {
+							matchingWord.tyPos=(int)Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight);
+							System.out.println("xRel assigned");
+						}	
+					}catch( NullPointerException ne){}
 					
-					if (matchingWord != null) {
-						matchingWord.txPos=(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth);
-						System.out.println("xRel assigned");
-					}
-
-					if (matchingWord != null) {
-						matchingWord.tyPos=(int)Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight);
-						System.out.println("xRel assigned");
-					}				
-				
+					try{
 					if (snapshot.child("attributes/state").getValue() != null) {
 						//System.out.println("State stuff");
 						User u = null;
@@ -1069,14 +1091,16 @@ public class DrawPanel extends JPanel implements Runnable {
 
 							}
 						}
-						try{
-							if (snapshot.child("attributes/plural").getValue() != null) {
-								matchingWord.setType(snapshot.child("attributes/plural").getValue().toString());
-							}
-						} catch(Exception e){}
+						}	
+					}catch( NullPointerException ne){}
+					
+					try{
+						if (snapshot.child("attributes/plural").getValue() != null) {
+							matchingWord.setType(snapshot.child("attributes/plural").getValue().toString());
+						}
+					} catch(Exception e){}
 
-					}
-
+					
 					if(snapshot.child("attributes/owner").getValue().toString()!="") {
 						matchingWord.setOwner(snapshot.child("attributes/owner").getValue().toString());
 						System.out.println(matchingWord.getOwner() + " owns the word " + matchingWord.getText());
@@ -1099,21 +1123,13 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void displayDebugText() {
 		g2.setColor(Color.BLACK); // svart system color
 		g2.setFont(Constants.boldFont); // init typsnitt
-		if (Constants.debug) {
-			g2.drawString(
-					"ID: " + Constants.screenNbr + " part:" + particles.size()
-							+ " Overpart:" + overParticles.size() + "  words: "
+		if (Constants.debug) {g2.drawString("ID: " + Constants.screenNbr + " part:" + particles.size()+ " Overpart:" + overParticles.size() + "  words: "
 							+ words.size() + "  Users:" + userList.size()
-							+ "  FPS: " + FPS + "  Time:" + Constants.timeLeft,
-					30, 50);
-			if (Constants.noCollision)
-				g2.drawString("No water collision", 30, 100);
-			if (Constants.noTimer)
-				g2.drawString("No time", 30, 150);
-			if (Constants.noUser)
-				g2.drawString("No user", 30, 200);
-			if (Constants.simple)
-				g2.drawString("simple Mode", 30, 250);
+							+ "  FPS: " + FPS + "  Time:" + Constants.timeLeft,30, 50);
+			if (Constants.noCollision)g2.drawString("No water collision", 30, 100);
+			if (Constants.noTimer)g2.drawString("No time", 30, 150);
+			if (Constants.noUser)g2.drawString("No user", 30, 200);
+			if (Constants.simple)g2.drawString("simple Mode", 30, 250);
 		} else {
 			g2.drawString("Screen ID: " + Constants.screenNbr, 30, 50);
 		}
