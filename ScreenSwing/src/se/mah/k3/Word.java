@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 
 import se.mah.k3.particles.FrameParticle;
@@ -25,6 +26,7 @@ public class Word implements Health{
 	public String ownerId = "",text = "";
 	public User owner;
 	public Firebase firebase;
+	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
 	public State state=State.onTray;
 	public int xPos, yPos, width, height, margin = 20;
@@ -40,6 +42,18 @@ public class Word implements Health{
 	}
 
 	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
+		xPos=_x;
+		yPos=_y;
+		txPos=_tx;
+		tyPos=_ty;
+		this.text = _text;
+		this.ownerId = _ownerId;
+		this.active = false;
+	}
+	
+	public Word(DataSnapshot _dataSnapshot,String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
+		dataSnapshot=_dataSnapshot;
+		wordId=_dataSnapshot.getKey();
 		xPos=_x;
 		yPos=_y;
 		txPos=_tx;
