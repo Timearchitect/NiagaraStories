@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 
 public class WordSkin{
 	private float opacity = 1;
-	private AffineTransform tx = new AffineTransform(), oldTransform;
+	//private AffineTransform tx = new AffineTransform(), oldTransform;
 	Word owner;
 
 	public WordSkin(Word _owner) {
@@ -14,7 +14,7 @@ public class WordSkin{
 	}
 
 	public void display (Graphics2D g2) {
-		oldTransform = g2.getTransform();
+		/*oldTransform = g2.getTransform();
 		g2.translate(owner.xPos, owner.yPos);
 		g2.rotate(Math.toRadians(owner.angle));
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity));
@@ -23,6 +23,18 @@ public class WordSkin{
 		g2.drawImage(DrawPanel.moss, (int) (0 - owner.width * 0.5 - owner.margin), (int) (0 - owner.height * 0.5 - 7), (int) (owner.width + owner.margin * 1.5 + 10), owner.height, null);
 		
 		g2.setTransform(oldTransform);
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		*/
+		
+		//oldTransform = g2.getTransform();
+		//g2.translate(owner.xPos, owner.yPos);
+		//g2.rotate(Math.toRadians(owner.angle));
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity));
+		
+		//Change image file to use as skin
+		g2.drawImage(DrawPanel.moss, (int) (0 - owner.width * 0.5 - owner.margin), (int) (0 - owner.height * 0.5 - 7), (int) (owner.width + owner.margin * 1.5 + 10), owner.height, null);
+		
+		//g2.setTransform(oldTransform);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 	}
 

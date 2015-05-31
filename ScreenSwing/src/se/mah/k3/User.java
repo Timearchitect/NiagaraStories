@@ -12,7 +12,7 @@ public class User implements Comparable<User>{
     public State state=State.online;
 	final int DEFAULT_SIZE=100 ;
 	private String id;
-	public Firebase firebase;
+	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Users/"); // Root;
 	int xPos, pyPos;
 	int yPos, pxPos;
 	float xTar;

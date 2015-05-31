@@ -9,12 +9,8 @@ import java.util.Calendar;
  public class Constants {
 	public static Calendar cal= Calendar.getInstance();
 	public static boolean debug, noCollision,noTimer,noUser,simple;
-	public static int spaceOnScreen=500;
-	public static int screenNbr=145;
-	public static int screenWidth = 1920, screenHeight = 1080;
-    public static final int PARTICLE_LIMIT=3000;
-    public static final int HEAVY_PARTICLE_LIMIT=400;
-    public static final int PROJECTILE_LIMIT=100;
+	public static int spaceOnScreen=500, screenNbr=145,screenWidth = 1920, screenHeight = 1080;
+    public static final int PARTICLE_LIMIT=3000,HEAVY_PARTICLE_LIMIT=400,PROJECTILE_LIMIT=100;
     public static final int clearInterval = 10*60; // time for next clearWave
 	public static String wordBg = "#009688";
 	public static String wordSt = "#8d0096";

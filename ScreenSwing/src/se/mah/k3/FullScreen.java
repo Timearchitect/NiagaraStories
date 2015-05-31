@@ -16,7 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import se.mah.k3.Projectiles.Projectile;
+import se.mah.k3.Word.WordBuilder;
+import se.mah.k3.Projectiles.PingBall;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -159,12 +160,20 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			if(e.getKeyChar()=='#' ){     		 
 				Constants.debug=(Constants.debug==true)?(Constants.debug=false) :(Constants.debug=true);
 			}
+			if(e.getKeyChar()=='d' ||e.getKeyChar()=='D' ){     		 
+				DrawPanel.projectiles.clear();		
+			}
+			if(e.getKeyChar()=='w' ||e.getKeyChar()=='W' ){     		 
+				DrawPanel.words.add(new Word(new WordBuilder("TEST WORD" ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY)));	
+		//		DrawPanel.words.add(new Word(new WordBuilder("TEST WQRD" ,Drwa,500)));	
+
+			}
 			if(e.getKeyChar() == ' '){
 						clearScreen();
 			}
 
 			if(e.getKeyChar() == 'p' || e.getKeyChar() == 'P'){
-				DrawPanel.projectiles.add(new Projectile((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
+				DrawPanel.projectiles.add(new PingBall((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 			}
 
 		}

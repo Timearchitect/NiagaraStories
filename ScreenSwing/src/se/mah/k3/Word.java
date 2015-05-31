@@ -17,15 +17,15 @@ import se.mah.k3.particles.TextParticle;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word implements Health{
-	//DrawPanel drawPanel;
 	ArrayList<Word> linkedWords = new ArrayList<Word>();
 	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
 	private final float FORCEFACTOR = 0.04f;
 	private String type="",wordId="";
 	public boolean active = true, occupied,colliding, selected, plural;
+	public String bending[];
 	public String ownerId = "",text = "";
 	public User owner;
-	public Firebase 	firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
+	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
 	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
 	public State state=State.onTray;
@@ -61,6 +61,31 @@ public class Word implements Health{
 		this.text = _text;
 		this.ownerId = _ownerId;
 		this.active = false;
+	}
+
+	public Word(WordBuilder wordBuilder) {
+		
+		this.linkedWords =wordBuilder.linkedWords;
+		this.type=wordBuilder.type;
+		this.wordId=wordBuilder.wordId;
+		this.ownerId=wordBuilder.ownerId;
+		this.text=wordBuilder.text;
+		this.active =wordBuilder.active;
+		this.occupied =wordBuilder.occupied;
+		this.plural=wordBuilder.plural;
+		this.bending=wordBuilder.bending;
+		this.owner=wordBuilder.owner;
+		this.dataSnapshot =wordBuilder.dataSnapshot;
+		this.state=wordBuilder.state;
+		this.xPos =wordBuilder.xPos;
+		this.yPos=wordBuilder.yPos;
+		this.width =wordBuilder.width;
+		this.height =wordBuilder.height;
+		this.margin=wordBuilder.margin;
+		this.txPos =wordBuilder.txPos;
+		this.tyPos=wordBuilder.tyPos;
+		this.health =wordBuilder.health;
+		this.angle=wordBuilder.angle;
 	}
 
 	public void setUser(User _u){ 
@@ -195,10 +220,24 @@ public class Word implements Health{
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text,(int)(0 -width*0.5),(int) (0 + height* 0.25) );
-		if(state==State.draging){
-			DrawPanel.g2.setStroke(Constants.wordOutline);
-			DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
+		
+		switch(state.ordinal()){
+			case 0 ://onTray
+				DrawPanel.g2.setStroke(Constants.wordOutline);
+				DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
+			break;
+			case 1 : // draging
+				
+			break;
+			case 2 : // placed
+				
+			break;
+			case 3 : // locked
+				
+			break;
+			default :
 		}
+		
 		DrawPanel.g2.setTransform(oldTransform);
 
 		/*DrawPanel.g2.fillRect((int) (xPos  - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
@@ -337,4 +376,109 @@ public class Word implements Health{
 	public void setWordId(String _s) {
 		wordId=_s;
 	}	
+	
+	 public static class WordBuilder
+	    {
+			ArrayList<Word> linkedWords = new ArrayList<Word>();
+			private String type,wordId,ownerId,text;
+			public boolean active = true, occupied, plural;
+			public String bending[];
+			public User owner;
+			public DataSnapshot dataSnapshot;
+			private State state=Word.State.placed;
+			public int xPos, yPos, width=100, height=50, margin=20;
+			public float txPos,tyPos;
+			public float health,angle;
+			
+			
+	
+			public WordBuilder(String text, int  x,int y) {
+				this.text = text;
+		        this.xPos = x;
+		        this.yPos = y;
+		        this.txPos = x;
+		        this.tyPos = y;
+		        
+			}
+			  
+			public WordBuilder plural(boolean plural) {
+				this.plural = plural;
+				return this;
+			}
+			public WordBuilder active(boolean active) {
+				this.active = active;
+				return this;
+			}
+			public WordBuilder occupied(boolean occupied) {
+				this.occupied = occupied;
+				return this;
+			}
+			public WordBuilder linkedWords(ArrayList<Word> linkedWords ) {
+				this.linkedWords = linkedWords;
+				return this;
+			}
+			
+			public WordBuilder type(String type) {
+				this.type = type;
+				return this;
+			}
+			public WordBuilder wordId(String wordId) {
+				this.wordId = wordId;
+				return this;
+			}
+			public WordBuilder ownerId(String ownerId) {
+				this.ownerId = ownerId;
+				return this;
+			}
+			public WordBuilder bending(String[] bending) {
+				this.bending = bending;
+				return this;
+			}
+			public WordBuilder dataSnapshot(DataSnapshot dataSnapshot) {
+				this.dataSnapshot = dataSnapshot;
+				return this;
+			}
+			public WordBuilder state(State _state) {
+				this.state = _state;
+				return this;
+			}
+			
+			public WordBuilder owner(User owner) {
+				this.owner = owner;
+				return this;
+			}
+			
+			public WordBuilder xPos(int xPos) {
+				this.xPos = xPos;
+				return this;
+			}
+
+			public WordBuilder yPos(int yPos) {
+				this.yPos = yPos;
+				return this;
+			}
+			public WordBuilder txPos(int txPos) {
+				this.txPos = txPos;
+				return this;
+			}
+
+			public WordBuilder ytPos(int tyPos) {
+				this.tyPos = tyPos;
+				return this;
+			}
+
+			public WordBuilder health(float health) {
+				this.health = health;
+				return this;
+			}
+			public WordBuilder angle(float angle) {
+				this.angle = angle;
+				return this;
+			}
+	        public Word build() {
+	            Word word =  new Word(this);
+	            //validateUserObject(user);
+	            return word;
+	        }
+	    }
 }
