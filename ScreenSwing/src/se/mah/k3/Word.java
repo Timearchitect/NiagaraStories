@@ -223,11 +223,10 @@ public class Word implements Health{
 		
 		switch(state.ordinal()){
 			case 0 ://onTray
-				DrawPanel.g2.setStroke(Constants.wordOutline);
-				DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 			break;
 			case 1 : // draging
-				
+				DrawPanel.g2.setStroke(Constants.wordOutline);
+				DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 			break;
 			case 2 : // placed
 				
@@ -237,7 +236,7 @@ public class Word implements Health{
 			break;
 			default :
 		}
-		
+		if(!Constants.simple)skin.display(DrawPanel.g2);
 		DrawPanel.g2.setTransform(oldTransform);
 
 		/*DrawPanel.g2.fillRect((int) (xPos  - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
@@ -253,7 +252,7 @@ public class Word implements Health{
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
 
 
-		if(!Constants.simple)skin.display(DrawPanel.g2);
+		
 
 	}
 
@@ -274,23 +273,18 @@ public class Word implements Health{
 			txPos += 5;
 			colliding=true;
 			DrawPanel.collisionSent=false;
-
 		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
 			txPos -= 5;
 			colliding=true;
 			DrawPanel.collisionSent=false;
-
 		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
 			tyPos += 5;
 			colliding=true;
 			DrawPanel.collisionSent=false;
-
-
 		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
 			tyPos -= 5;
 			colliding=true;
 			DrawPanel.collisionSent=false;
-
 		}
 	}
 
@@ -357,12 +351,8 @@ public class Word implements Health{
 	}
 
 	public void dead() {
-		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, -margin, margin, text));
-		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, -margin, -margin, text));	
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
 		DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));
-		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, margin, text));
-		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, margin, -margin, text));
 		active=false;		
 		//firebase.child(wordId+"/attributes/active").setValue(false);
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
@@ -381,14 +371,15 @@ public class Word implements Health{
 	    {
 			ArrayList<Word> linkedWords = new ArrayList<Word>();
 			private String type,wordId,ownerId,text;
-			public boolean active = true, occupied, plural;
-			public String bending[];
-			public User owner;
-			public DataSnapshot dataSnapshot;
+			private boolean active = true, occupied, plural;
+			private String bending[];
+			private User owner;
+			private Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
+			private DataSnapshot dataSnapshot;
 			private State state=Word.State.placed;
-			public int xPos, yPos, width=100, height=50, margin=20;
-			public float txPos,tyPos;
-			public float health,angle;
+			private int xPos, yPos, width, height, margin=20;
+			private float txPos,tyPos;
+			private float health,angle;
 			
 			
 	
@@ -398,7 +389,10 @@ public class Word implements Health{
 		        this.yPos = y;
 		        this.txPos = x;
 		        this.tyPos = y;
-		        
+		        //	DrawPanel.metrics = DrawPanel.g2.getFontMetrics(Constants.font);
+				width = DrawPanel.metrics.stringWidth(text);
+				height = DrawPanel.metrics.getHeight();
+		
 			}
 			  
 			public WordBuilder plural(boolean plural) {
@@ -436,6 +430,7 @@ public class Word implements Health{
 			}
 			public WordBuilder dataSnapshot(DataSnapshot dataSnapshot) {
 				this.dataSnapshot = dataSnapshot;
+				
 				return this;
 			}
 			public WordBuilder state(State _state) {
@@ -474,6 +469,11 @@ public class Word implements Health{
 			public WordBuilder angle(float angle) {
 				this.angle = angle;
 				return this;
+			}
+			public void addToFirebase(){
+				
+				
+				
 			}
 	        public Word build() {
 	            Word word =  new Word(this);
