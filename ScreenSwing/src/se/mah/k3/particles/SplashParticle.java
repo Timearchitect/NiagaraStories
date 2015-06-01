@@ -22,13 +22,7 @@ public class SplashParticle extends Particle {
 		 angle= r.nextInt(360);
 	}
 	public void update(){
-		//x+=Math.round(vx);
-		//y+=(int)vy;
-		//vx*=0.93;
-		//vx+=ax;
-		//vy+=ay;
 		size+=2;
-
 		angle+=0.5;
 		opacity-=0.04;
 		if(opacity<0.1){kill();}
