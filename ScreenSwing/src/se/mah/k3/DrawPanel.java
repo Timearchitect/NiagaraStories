@@ -425,10 +425,10 @@ public class DrawPanel extends JPanel implements Runnable {
 		// - 200, this);
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 
-		for (int i = 0; i < 7; i++) { // spawn particles
+		/*for (int i = 0; i < 7; i++) { // spawn particles
 			particles.add(new WaterParticle((int) r
 					.nextInt(Constants.screenWidth), 0));
-		}
+		}*/
 		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all
 																// particlesCap
 			particles.remove(0);
@@ -927,9 +927,13 @@ public class DrawPanel extends JPanel implements Runnable {
 					Word matchingWord=null;
 					for(Word w:words){
 					//	System.out.println("datasnap:"+w.dataSnapshot.getKey() +"compareto:"+snapshot);
+						try{
 						if(w.dataSnapshot.getKey().equals(snapshot.getKey())){
 							match=true;
 							matchingWord=w;
+						}
+						}catch (NullPointerException npe){
+							System.err.println("Word not found on Firebase");
 						}
 					}
 					if(!match){ // create word

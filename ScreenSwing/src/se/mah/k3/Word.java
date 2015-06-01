@@ -29,11 +29,12 @@ public class Word implements Health{
 	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
 	public State state=State.onTray;
-	public int xPos, yPos, width, height, margin = 20;
+	public int xPos, yPos, width, height, margin = 20, offsetX = margin + 10, offsetY = margin - 20;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
 	
-	WordSkin skin = new WordSkin(this);
+	//WordSkin skin = new WordSkin(this);
+	Shadow shadow = new Shadow(this);
 
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
@@ -205,16 +206,19 @@ public class Word implements Health{
 
 	public void display() {
 
+
+		AffineTransform oldTransform = DrawPanel.g2.getTransform();
+		DrawPanel.g2.translate((int) (xPos ),(int) (yPos ));
+		if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
+		shadow.display();
+		
 		if ( owner==null) {
 			DrawPanel.g2.setColor(Constants.wordStroke);
 		}else {
 			DrawPanel.g2.setColor(owner.getColor());
 		}
-
-
-		AffineTransform oldTransform = DrawPanel.g2.getTransform();
-		DrawPanel.g2.translate((int) (xPos ),(int) (yPos ));
-		if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
+		
+		//if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
 		//angle++;
 		DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 		DrawPanel.g2.setColor(Color.white);
@@ -236,7 +240,7 @@ public class Word implements Health{
 			break;
 			default :
 		}
-		if(!Constants.simple)skin.display(DrawPanel.g2);
+		//if(!Constants.simple)skin.display(DrawPanel.g2);
 		DrawPanel.g2.setTransform(oldTransform);
 
 		/*DrawPanel.g2.fillRect((int) (xPos  - (width * 0.5)) - margin, (int) (yPos + 3 - (height * 0.5) - margin * 0.5), width + margin * 2, height + 6);
@@ -305,7 +309,7 @@ public class Word implements Health{
 		pxPos=xPos;
 		pyPos=yPos;		
 
-		skin.update();
+		//skin.update();
 	}
 
 	public void link(Word w){
