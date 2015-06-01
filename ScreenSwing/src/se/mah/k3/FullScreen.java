@@ -13,6 +13,7 @@ import java.awt.Toolkit;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -29,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 
-public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener, MouseListener, MouseMotionListener {
+public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener {
 
 
 	public static DrawPanel panel;
@@ -42,9 +43,9 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 * Launch the application.
 	 */
 	static {
-		System.setProperty("sun.java2d.transaccel", "True");
+	System.setProperty("sun.java2d.transaccel", "True");
 		// System.setProperty("sun.java2d.trace", "timestamp,log,count");
-		System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
+		//System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
 		System.setProperty("sun.java2d.d3d", "True");
 		System.setProperty("sun.java2d.ddforcevram", "True");
 	}
@@ -88,8 +89,8 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		contentPane.setLayout(new BorderLayout(0, 0));
 		//DrawPanel panel = new DrawPanel();
 		panel = new DrawPanel();
-
-
+		panel.setFocusable(true);
+	
 		contentPane.add(panel, BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); //Listen to keyboard
 		manager.addKeyEventDispatcher(this);
@@ -163,9 +164,13 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			if(e.getKeyChar()=='d' ||e.getKeyChar()=='D' ){     		 
 				DrawPanel.projectiles.clear();		
 			}
-			if(e.getKeyChar()=='w' ||e.getKeyChar()=='W' ){     		 
-				DrawPanel.words.add(new Word(new WordBuilder("TEST WORD" ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY)));	
-		//		DrawPanel.words.add(new Word(new WordBuilder("TEST WQRD" ,Drwa,500)));	
+			if(e.getKeyChar()=='w' ||e.getKeyChar()=='W' ){    
+				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.");
+				panel.setFocusable(true);
+				panel.setRequestFocusEnabled(true);
+
+				input.setLocation((int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
+
 
 			}
 			if(e.getKeyChar() == ' '){
@@ -178,55 +183,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 		}
 		return false;	}
-
-
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		System.out.println(" x: "+getX() +"   y: " +getY());
-	}
-
-
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		System.out.println(" hej");
-	}
-
-
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		System.out.println(" hej");
-	}
-
-
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		System.out.println(" pressed "+e.getButton());
-	}
-
-
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		System.out.println(" released");
-	}
-
-
-
-	@Override
-	public void mouseDragged(MouseEvent arg0) {
-		System.out.println("dragged"+" x: "+arg0.getX() +"   y: " +arg0.getY());
-	}
-
-
-
-	@Override
-	public void mouseMoved(MouseEvent arg0) {
-		System.out.println(" move"+" x: "+arg0.getX() +"   y: " +arg0.getY());
-	}
 
 
 
