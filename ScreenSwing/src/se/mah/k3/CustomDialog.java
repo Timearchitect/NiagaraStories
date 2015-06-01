@@ -34,7 +34,7 @@ public class CustomDialog extends JDialog implements ActionListener {
     private JButton noButton = null;
     private JTextField txtWord;
 
-    public CustomDialog(JFrame frame, boolean modal, String myMessage) {
+    public CustomDialog(JFrame frame, boolean modal, String myMessage,int xPos,int yPos) {
     super(frame, modal);
     myPanel = new JPanel();
     getContentPane().add(myPanel);
@@ -63,7 +63,7 @@ public class CustomDialog extends JDialog implements ActionListener {
     myPanel.add(noButton);
     pack();
     //setLocationRelativeTo(frame);
-    setLocation(200, 200); // <--
+    setLocation(xPos, yPos); // <--
     setVisible(true);
     }
 

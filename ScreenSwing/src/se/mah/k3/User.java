@@ -90,20 +90,19 @@ public class User implements Comparable<User>{
 	public void setColor(Color _color) {
 		this.color = _color;
 	}
-	public void display(Graphics2D g2){
+	public void display(){
 		
-		g2.setColor(color);
-		g2.setStroke(Constants.userStroke);
+		DrawPanel.g2.setColor(color);
+		DrawPanel.g2.setStroke(Constants.userStroke);
 		for(int i=0; i<moves;i++){
-			g2.drawArc((int)(xPos - (size+animSize)*0.5), (int)(yPos - (size+animSize)*0.5),size+animSize,size+animSize,(int)RotateAngle+i*(360/moves),(360/(moves*2)));
+			DrawPanel.g2.drawArc((int)(xPos - (size+animSize)*0.5), (int)(yPos - (size+animSize)*0.5),size+animSize,size+animSize,(int)RotateAngle+i*(360/moves),(360/(moves*2)));
 		}
-		//g2.drawArc((int)(xPos - size*0.5), (int)(yPos - size*0.5),size,size,(int)RotateAngle+180,90);
-		//g2.fillOval((int)(xPos - size*0.5), (int)(yPos - size*0.5), size, size);
-		g2.setColor(Color.BLACK);
-		g2.setFont(Constants.boldFont);
 
-		if(Constants.debug)g2.drawLine((int)(xPos ), (int)(yPos ),(int)(xPos -Math.cos(Math.toRadians(angle))*50), (int)(yPos-Math.sin(Math.toRadians(angle))*50));
-		if(state!=User.State.offline)g2.drawString(id, (int)(xPos + size*0.7), (int)(yPos + size*0.7));
+		DrawPanel.g2.setColor(Color.BLACK);
+		DrawPanel.g2.setFont(Constants.boldFont);
+
+		if(Constants.debug)DrawPanel.g2.drawLine((int)(xPos ), (int)(yPos ),(int)(xPos -Math.cos(Math.toRadians(angle))*50), (int)(yPos-Math.sin(Math.toRadians(angle))*50));
+		if(state!=User.State.offline)DrawPanel.g2.drawString(id, (int)(xPos + size*0.7), (int)(yPos + size*0.7));
 		//}else{
 			//g2.setColor(color);
 			//g2.fillOval((int)(xPos - 50*0.5), (int)(yPos - 50*0.5), 50, 50);

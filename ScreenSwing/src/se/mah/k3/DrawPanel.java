@@ -84,16 +84,54 @@ public class DrawPanel extends JPanel implements Runnable {
 			metrics = g2.getFontMetrics(Constants.font);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+
 		onesRun = false;
 	}
 
+	
+	// image creation
+	VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
+
+	 // rendering to the image
+	 void renderOffscreen() {
+	      do {
+	          if (vImg.validate(getGraphicsConfiguration()) ==
+	              VolatileImage.IMAGE_INCOMPATIBLE)
+	          {
+	              // old vImg doesn't work with new GraphicsConfig; re-create it
+	              vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
+	          }
+	          Graphics2D g = vImg.createGraphics();
+	          //
+	          // miscellaneous rendering commands...
+	          //
+	          g.dispose();
+	      } while (vImg.contentsLost());
+	 
+
+
+	 // copying from the image (here, gScreen is the Graphics
+	 // object for the onscreen window)
+	 do {
+	      int returnCode = vImg.validate(getGraphicsConfiguration());
+	      if (returnCode == VolatileImage.IMAGE_RESTORED) {
+	          // Contents need to be restored
+	          renderOffscreen();      // restore contents
+	      } else if (returnCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+	          // old vImg doesn't work with new GraphicsConfig; re-create it
+	          vImg = createVolatileImage(Constants.screenWidth,
+	      			Constants.screenHeight);
+	          renderOffscreen();
+	      }
+	      g2.drawImage(vImg, 0, 0, this);
+	 } while (vImg.contentsLost());
+
+	 }
+	 
 	public DrawPanel() {
 		
 		
-		// image creation
-		VolatileImage vImg = createVolatileImage(Constants.screenWidth,
-				Constants.screenHeight);
-
+	
 		// rendering to the image
 
 		// bimage = null;
@@ -417,29 +455,22 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.4f));
-		// Image translucentImage = config.createCompatibleImage(WIDTH, HEIGHT,
-		// Transparency.TRANSLUCENT);
+		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f));
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth,Constants.screenHeight, this);
-		// g2.drawImage(app, Constants.screenWidth - 450, Constants.screenHeight
-		// - 200, this);
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		// g2.drawImage(app, Constants.screenWidth - 450, Constants.screenHeight- 200, this);
+		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 
-		for (int i = 0; i < 7; i++) { // spawn particles
+		/*for (int i = 0; i < 7; i++) { // spawn particles
 			particles.add(new WaterParticle((int) r
 					.nextInt(Constants.screenWidth), 0));
-		}
-		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all
-																// particlesCap
+		}*/
+		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all particlesCap
 			particles.remove(0);
 		}
-		while (overParticles.size() > Constants.HEAVY_PARTICLE_LIMIT) { // run
-																		// all
-																		// OverparticlesCap
+		while (overParticles.size() > Constants.HEAVY_PARTICLE_LIMIT) { // run all OverparticlesCap
 			overParticles.remove(0);
 		}
-		while (projectiles.size() > Constants.PROJECTILE_LIMIT) { // run all
-																	// OverparticlesCap
+		while (projectiles.size() > Constants.PROJECTILE_LIMIT) { // run all OverparticlesCap
 			projectiles.remove(0);
 		}
 
@@ -448,15 +479,12 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.get(i).display(g2);
 
 			for (Word word : words) { // collision
-
 				if (word.active) {
 					// particles.get(i).collisionCircle(word.xPos, word.yPos,
 					// word.margin);
 					// particles.get(i).collisionCircle(word.xPos, word.yPos,
 					// word.margin);
-					if (!Constants.noCollision)
-						particles.get(i).collisionRect(word.xPos, word.yPos,
-								word.width, word.height);
+					if (!Constants.noCollision)particles.get(i).collisionRect(word.xPos, word.yPos,word.width, word.height);
 				}
 			}
 			if (particles.get(i).dead)
@@ -466,7 +494,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		if (!Constants.noUser) {
 			for (User user : userList) { // run all users
 				user.update();
-				user.display(g2);
+				user.display();
 			}
 		}
 		for (Projectile p : projectiles) { // run all projectiles
@@ -476,7 +504,6 @@ public class DrawPanel extends JPanel implements Runnable {
 					p.collision(w);
 				}
 			}
-
 			p.BoundCollision();
 			p.update();
 			p.display(g2);
@@ -500,21 +527,18 @@ public class DrawPanel extends JPanel implements Runnable {
 		}
 
 		for (int i = overParticles.size() - 1; 0 < i; i--) { // run all
-																// overparticles
 			overParticles.get(i).update();
 			if (!Constants.simple)
 				overParticles.get(i).display(g2);
 			for (Word w : words) {
 				if (w.active)
-					overParticles.get(i).collisionCircle(w.xPos, w.yPos,
-							w.width, w);
+					overParticles.get(i).collisionCircle(w.xPos, w.yPos,w.width, w);
 			}
 			for (Particle p : particles) {
 				overParticles.get(i).collisionVSParticle(p);
 			}
 
-			if (overParticles.get(i).dead)
-				overParticles.remove(i);
+			if (overParticles.get(i).dead)overParticles.remove(i);
 
 		}
 
@@ -966,10 +990,12 @@ public class DrawPanel extends JPanel implements Runnable {
 							switch(snapshot.child("attributes/state").getValue().toString()){
 							case "placed":
 								//	words.get(index).released();
-								matchingWord.setState(Word.State.placed);
-								u.release();
-								System.out.println("placed");
-								matchingWord.appear();
+								if(u.state==User.State.online){
+									matchingWord.setState(Word.State.placed);
+									u.release();
+									System.out.println("placed");
+									matchingWord.appear();
+								}
 								break;
 
 							case "draging":

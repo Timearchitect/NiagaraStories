@@ -13,7 +13,7 @@ public class WordSkin{
 		owner=_owner;
 	}
 
-	public void display (Graphics2D g2) {
+	public void display () {
 		/*oldTransform = g2.getTransform();
 		g2.translate(owner.xPos, owner.yPos);
 		g2.rotate(Math.toRadians(owner.angle));
@@ -26,9 +26,9 @@ public class WordSkin{
 		//oldTransform = g2.getTransform();
 		//g2.translate(owner.xPos, owner.yPos);
 		//g2.rotate(Math.toRadians(owner.angle));*/
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity));
-		g2.drawImage(DrawPanel.moss, (int) (0- owner.margin-owner.width*0.5), (int) (0- owner.margin * 0.5-owner.height*0.5+3), (int) (owner.width + owner.margin * 1.5 + 10), owner.height+6, null);
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		DrawPanel.g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) opacity));
+		DrawPanel.g2.drawImage(DrawPanel.moss, (int) (0- owner.margin-owner.width*0.5), (int) (0- owner.margin * 0.5-owner.height*0.5+3), (int) (owner.width + owner.margin * 1.5 + 10), owner.height+6, null);
+		DrawPanel.g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 	}
 
 	public void update() {	
