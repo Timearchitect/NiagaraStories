@@ -17,7 +17,7 @@ import se.mah.k3.particles.TextParticle;
 //the user will have displayed in their mobile app. 
 //It also contains a boolean to check if the word is active or not.
 
-public class Word implements Health{
+public class Word implements Health ,RenderOrder{
 	ArrayList<Word> linkedWords = new ArrayList<Word>();
 	private final int MAX_OFFSET=20;
 	public static final int MIN_ANGLE=-10, MAX_ANGLE=10;
@@ -167,7 +167,7 @@ public class Word implements Health{
 	}
 
 	public void respond(){
-		DrawPanel.overParticles.add(new FrameParticle(xPos, yPos, this, 0));
+		DrawPanel.overParticles.add(new FrameParticle(xPos, yPos, this, 1));
 	}
 
 	public void appear(){
@@ -517,7 +517,6 @@ public class Word implements Health{
 			public void addToFirebase(){
 				
 				
-				
 			}
 	        public Word build() {
 	            Word word =  new Word(this);
@@ -525,4 +524,23 @@ public class Word implements Health{
 	            return word;
 	        }
 	    }
+
+	@Override
+	public void toBottom(Object o) {
+		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
+		DrawPanel.words.add(0, this);
+	}
+
+	@Override
+	public void toTop(Object o) {
+	
+		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
+		DrawPanel.words.add(DrawPanel.words.size(), this);
+	}
+
+	@Override
+	public void toIndex(int i) {
+		// TODO Auto-generated method stub
+		
+	}
 }

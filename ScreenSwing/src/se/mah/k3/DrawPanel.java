@@ -159,6 +159,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							if (word.xPos + word.margin + (word.width * 0.5) > mouseX&& word.xPos - word.margin- (word.width * 0.5) < mouseX&& word.yPos + word.margin+ (word.height * 0.5) > mouseY&& word.yPos - word.margin- (word.height * 0.5) < mouseY) {
 								selectedWord = word;
 								selectedWord.selected();
+								selectedWord.toTop(selectedWord); 
 								selectedWord.state = Word.State.draging;
 								offsetX = word.xPos - mouseX;
 								offsetY = word.yPos - mouseY;
@@ -903,7 +904,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						words.get(words.size()-1).height = metrics.getHeight();
 						words.get(words.size()-1).active=Boolean.parseBoolean(DSS.child("/attributes/active").getValue().toString());
 						System.out.println("assigning states");
-
+						try{
 						switch(DSS.child("/attributes/state").getValue().toString()){
 							case "onTray": 
 							words.get(words.size()-1).setState(Word.State.onTray);
@@ -920,6 +921,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							words.get(words.size()-1).setState(Word.State.locked);
 							break;
 						}
+						}catch(NullPointerException e){}
 
 						System.out.println(" created some words:" +words.get(words.size()-1).getWordId()); 
 				}
