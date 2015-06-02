@@ -1,13 +1,11 @@
 package se.mah.k3;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
@@ -30,8 +28,6 @@ import se.mah.k3.particles.EqualizerParticle;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.ScanParticle;
-import se.mah.k3.particles.WaterParticle;
-
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -303,7 +299,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		//myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
 		//regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
 		//themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		// myFirebaseRef.removeValue(); // Cleans out everything
+		//myFirebaseRef.removeValue(); // Cleans out everything
 
 		// createRegularWords();
 		// createThemeWords();
