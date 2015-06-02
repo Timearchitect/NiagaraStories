@@ -159,7 +159,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							if (word.xPos + word.margin + (word.width * 0.5) > mouseX&& word.xPos - word.margin- (word.width * 0.5) < mouseX&& word.yPos + word.margin+ (word.height * 0.5) > mouseY&& word.yPos - word.margin- (word.height * 0.5) < mouseY) {
 								selectedWord = word;
 								selectedWord.selected();
-								selectedWord.toTop(selectedWord); 
+								
 								selectedWord.state = Word.State.draging;
 								offsetX = word.xPos - mouseX;
 								offsetY = word.yPos - mouseY;
@@ -186,7 +186,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							}
 						} 
 					}
-
+					if(selectedWord!= null)selectedWord.toTop(selectedWord); 
 					overParticles.add(new RippleParticle((int) mouseX,(int) mouseY, 30));
 
 					// overParticles.add( new RippleParticle((int)mouseX,
@@ -489,12 +489,12 @@ public class DrawPanel extends JPanel implements Runnable {
 				particles.remove(i);
 		}
 
-		if (!Constants.noUser) {
+		//if (!Constants.noUser) {
 			for (User user : userList) { // run all users
 				user.update();
 				user.display();
 			}
-		}
+		//}
 		for (Projectile p : projectiles) { // run all projectiles
 
 			for (Word w : words) {
@@ -904,7 +904,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		});
 		 
 
-		/*Firebase fireBaseUsedWords = myFirebaseRef.child("Used Words");
+		Firebase fireBaseUsedWords = myFirebaseRef.child("Used Words");
 		//Firebase fireBaseWords = myFirebaseRef.child("Used Words");
 		fireBaseUsedWords.addListenerForSingleValueEvent(new ValueEventListener( ) {
 
@@ -1088,7 +1088,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			@Override
 			public void onCancelled(FirebaseError arg0) {
 			}
-		});*/
+		});
 	}
 
 	public void displayDebugText() {

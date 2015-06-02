@@ -192,6 +192,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	if(Constants.simple){
 		for(Word w:DrawPanel.words){
 			w.active=false;	
+
 		}
 	}
 		DrawPanel.clearScreen();

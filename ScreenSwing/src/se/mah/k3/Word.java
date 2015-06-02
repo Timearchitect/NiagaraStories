@@ -193,7 +193,6 @@ public class Word implements Health ,RenderOrder{
 
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
 
-		
 
 		
 		active=false;
@@ -201,7 +200,7 @@ public class Word implements Health ,RenderOrder{
 	}
 	public void deathAnimation(){
 		tAngle=(new Random().nextInt()*90)-45;
-		tyPos = Constants.screenHeight;
+		tyPos = Constants.screenHeight-120;
 	}
 	public void selected(){
 		DrawPanel.overParticles.add( new FrameParticle(xPos, yPos, this, 0));
@@ -404,7 +403,7 @@ public class Word implements Health ,RenderOrder{
 		//Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
 		yPos = Constants.screenHeight;
 		//System.out.println(yPos);
-
+deathAnimation();
 		//active=false;
 		//firebase.child(wordId+"/attributes/active").setValue(false);
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
