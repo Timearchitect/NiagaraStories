@@ -197,4 +197,11 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		DrawPanel.clearScreen();
 	}
 
+	public void generateAvalibleWordId(){
+		
+		
+		
+	}
+	
+	
 }

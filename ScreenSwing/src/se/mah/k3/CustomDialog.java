@@ -53,6 +53,7 @@ public class CustomDialog extends JDialog implements ActionListener {
   
     myPanel.add(txtWord);
     txtWord.setColumns(10);
+    yesButton.requestFocus();
     myPanel.add(yesButton);
     noButton = new JButton("Cancel");
     noButton.addActionListener(new ActionListener() {

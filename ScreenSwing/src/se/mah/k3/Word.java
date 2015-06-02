@@ -203,6 +203,8 @@ public class Word implements Health ,RenderOrder{
 
 	public void released(){
 		DrawPanel.overParticles.add( new FrameParticle(xPos, yPos, this));
+	
+
 	}
 
 	public void display() {
