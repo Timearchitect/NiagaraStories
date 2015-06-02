@@ -50,8 +50,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static FontMetrics metrics;
 	private float offsetX, offsetY ; // mouse
 	static float mouseY,mouseX;
-	private float pMouseX;
-	private float pMouseY;
+	private static float pMouseX, pMouseY;
 																		// variable
 	static boolean collisionSent;
 	boolean hold;
@@ -77,10 +76,8 @@ public class DrawPanel extends JPanel implements Runnable {
 	public void setup() {
 		Constants.screenWidth = (int) getSize().width;
 		Constants.screenHeight = (int) getSize().height;
-			metrics = g2.getFontMetrics(Constants.font);
-		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
+		metrics = g2.getFontMetrics(Constants.font);
+		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		onesRun = false;
 	}
 
@@ -158,6 +155,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							if (word.xPos + word.margin + (word.width * 0.5) > mouseX&& word.xPos - word.margin- (word.width * 0.5) < mouseX&& word.yPos + word.margin+ (word.height * 0.5) > mouseY&& word.yPos - word.margin- (word.height * 0.5) < mouseY) {
 								selectedWord = word;
 								selectedWord.selected();
+								selectedWord.toTop(selectedWord); 
 								selectedWord.state = Word.State.draging;
 								offsetX = word.xPos - mouseX;
 								offsetY = word.yPos - mouseY;
@@ -185,8 +183,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						}
 					}
 
-					overParticles.add(new RippleParticle((int) mouseX,
-							(int) mouseY, 30));
+					overParticles.add(new RippleParticle((int) mouseX,(int) mouseY, 30));
 
 					// overParticles.add( new RippleParticle((int)mouseX,
 					// (int)mouseY, 40));
@@ -248,7 +245,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/xRel").setValue(((float) selectedWord.xPos / Constants.screenWidth));
 						myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/yRel").setValue(((float) selectedWord.yPos / Constants.screenHeight));
 						myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/state").setValue("placed");
-						System.out.println("id placed:"+ selectedWord.getWordId());
+						System.out.println("id placed: "+ selectedWord.getWordId());
 						selectedWord = null;
 
 					}
@@ -893,6 +890,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				//boolean matched = false;
 				for(DataSnapshot DSS: childrens){
 					System.out.println(" DSS:" +DSS.getKey()); 
+				
 						words.add(new Word(DSS,DSS.child("/attributes/text").getValue().toString(), DSS.child("/attributes/owner").getValue().toString(),
 						(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
 						(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight)),
@@ -902,7 +900,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						words.get(words.size()-1).height = metrics.getHeight();
 						words.get(words.size()-1).active=Boolean.parseBoolean(DSS.child("/attributes/active").getValue().toString());
 						System.out.println("assigning states");
-
+						try{
 						switch(DSS.child("/attributes/state").getValue().toString()){
 							case "onTray": 
 							words.get(words.size()-1).setState(Word.State.onTray);
@@ -919,6 +917,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							words.get(words.size()-1).setState(Word.State.locked);
 							break;
 						}
+						}catch(NullPointerException e){}
 
 						System.out.println(" created some words:" +words.get(words.size()-1).getWordId()); 
 				}
@@ -947,10 +946,10 @@ public class DrawPanel extends JPanel implements Runnable {
 					for(Word w:words){
 					//	System.out.println("datasnap:"+w.dataSnapshot.getKey() +"compareto:"+snapshot);
 						try{
-						if(w.dataSnapshot.getKey().equals(snapshot.getKey())){
-							match=true;
-							matchingWord=w;
-						}
+							if(w.dataSnapshot.getKey().equals(snapshot.getKey())){
+								match=true;
+								matchingWord=w;
+							}
 						}catch (NullPointerException npe){
 							System.err.println("Word not found on Firebase");
 						}

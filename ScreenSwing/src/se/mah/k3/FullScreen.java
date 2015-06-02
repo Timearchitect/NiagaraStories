@@ -43,11 +43,13 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 * Launch the application.
 	 */
 	static {
-	//System.setProperty("sun.java2d.transaccel", "True");
-		// System.setProperty("sun.java2d.trace", "timestamp,log,count");
+	System.setProperty("sun.java2d.transaccel", "True");
+	//	 System.setProperty("sun.java2d.trace", "timestamp,log,count");
 		//System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
-		//System.setProperty("sun.java2d.d3d", "True");
-		//System.setProperty("sun.java2d.ddforcevram", "True");
+		System.setProperty("sun.java2d.d3d", "True");
+		System.setProperty("sun.java2d.ddforcevram", "True");
+	//	System.setProperty("sun.java2d.ddoffscreen","true");
+	//	System.setProperty("sun.java2d.accthreshold","0");
 	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

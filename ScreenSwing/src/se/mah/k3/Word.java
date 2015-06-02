@@ -17,25 +17,25 @@ import se.mah.k3.particles.TextParticle;
 //the user will have displayed in their mobile app. 
 //It also contains a boolean to check if the word is active or not.
 
-public class Word implements Health{
+public class Word implements Health ,RenderOrder{
 	ArrayList<Word> linkedWords = new ArrayList<Word>();
-	private final int MIN_ANGLE=-6, MAX_ANGLE=6;
+	private final int MAX_OFFSET=20;
+	public static final int MIN_ANGLE=-10, MAX_ANGLE=10;
 	private final float FORCEFACTOR = 0.05f;
-	private String type="",wordId="";
-	public boolean active = true, occupied,colliding, selected, plural;
-	public String bending[];
-	public String ownerId = "",text = "";
+	public String type="",wordId="",bending[], ownerId = "",text = "";
+	public boolean active = true, occupied,colliding, selected, plural;	
 	public User owner;
 	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
 	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
 	public State state=State.onTray;
-	public int xPos, yPos, width, height, margin = 20, offsetX = margin + 10, offsetY = margin - 20;
+	public int xPos, yPos, width, height, margin = 20, offsetX = -20, offsetY = 40;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
 	
 	//WordSkin skin = new WordSkin(this);
 	Shadow shadow = new Shadow(this);
+	private float tAngle;
 
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
@@ -167,7 +167,7 @@ public class Word implements Health{
 	}
 
 	public void respond(){
-		DrawPanel.overParticles.add(new FrameParticle(xPos, yPos, this, 0));
+		DrawPanel.overParticles.add(new FrameParticle(xPos, yPos, this, 1));
 	}
 
 	public void appear(){
@@ -209,7 +209,7 @@ public class Word implements Health{
 
 
 		AffineTransform oldTransform = DrawPanel.g2.getTransform();
-		DrawPanel.g2.translate((int) (xPos ),(int) (yPos ));
+		DrawPanel.g2.translate((int) (xPos +offsetX),(int) (yPos +offsetY));
 		if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
 		DrawPanel.g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -302,6 +302,7 @@ public class Word implements Health{
 	public void update() {
 		float xDiff=txPos-xPos;
 		float yDiff=tyPos-yPos;
+		float AngleDiff=tAngle-angle;
 		//txPos=Math.cos(angle);
 		//tyPos=Math.sin(angle);
 		xPos+=(int)(xDiff*0.2);
@@ -315,7 +316,34 @@ public class Word implements Health{
 		tyPos+=tyVel;
 		pxPos=xPos;
 		pyPos=yPos;		
+		if(MAX_ANGLE>tAngle && tAngle >MIN_ANGLE){}else{tAngle*=0.9;}
+		//DrawPanel.g2.drawString(String.valueOf(tAngle)+"   "+String.valueOf(angle), (int) (xPos),(int) (yPos + height* 3));
+		angle+=(float)(AngleDiff*0.2);
+		//if(this.MAX_ANGLE<angle )angle*=0.9;
 
+		switch(state.ordinal()){
+		case 0 ://onTray
+			
+		break;
+		case 1 : // draging
+			if(offsetX<this.MAX_OFFSET)offsetX+=4;
+			if(offsetY<this.MAX_OFFSET)offsetY+=4;
+			tAngle=(float) (yVel*0.9+xVel*0.9);
+			tAngle %= 360;
+			angle %= 360;
+		break;
+		
+		case 2 : // placed
+			offsetX=0;
+			offsetY=0;
+		break;
+		
+		case 3 : // locked
+			
+		break;
+		
+		default :
+	}
 		//skin.update();
 	}
 
@@ -401,9 +429,10 @@ public class Word implements Health{
 		        this.txPos = x;
 		        this.tyPos = y;
 		        //	DrawPanel.metrics = DrawPanel.g2.getFontMetrics(Constants.font);
-				width = DrawPanel.metrics.stringWidth(text);
-				height = DrawPanel.metrics.getHeight();
-		
+		        this.width = DrawPanel.metrics.stringWidth(text);
+				this.height = DrawPanel.metrics.getHeight();
+				this.firebase.setValue("word888");
+				this.wordId="word888";
 			}
 			  
 			public WordBuilder plural(boolean plural) {
@@ -481,8 +510,11 @@ public class Word implements Health{
 				this.angle = angle;
 				return this;
 			}
+			public WordBuilder angle(String command) {
+				if(command.equals("random"))angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
+				return this;
+			}
 			public void addToFirebase(){
-				
 				
 				
 			}
@@ -492,4 +524,23 @@ public class Word implements Health{
 	            return word;
 	        }
 	    }
+
+	@Override
+	public void toBottom(Object o) {
+		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
+		DrawPanel.words.add(0, this);
+	}
+
+	@Override
+	public void toTop(Object o) {
+	
+		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
+		DrawPanel.words.add(DrawPanel.words.size(), this);
+	}
+
+	@Override
+	public void toIndex(int i) {
+		// TODO Auto-generated method stub
+		
+	}
 }
