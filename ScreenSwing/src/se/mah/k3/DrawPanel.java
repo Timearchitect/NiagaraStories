@@ -23,11 +23,13 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import se.mah.k3.Word.WordBuilder;
 import se.mah.k3.Projectiles.Projectile;
 import se.mah.k3.particles.EqualizerParticle;
 import se.mah.k3.particles.Particle;
 import se.mah.k3.particles.RippleParticle;
 import se.mah.k3.particles.ScanParticle;
+
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -78,7 +80,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		Constants.screenHeight = (int) getSize().height;
 		metrics = g2.getFontMetrics(Constants.font);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+		createStarterWords();
 		onesRun = false;
+		
 	}
 
 
@@ -302,7 +306,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		// createThemeWords();
 		// createUsedWords() ;
 		// createNewWords() ;
-		createStarterWords();
+
 		// Run method that listens for change in word list (active words for
 		// example).
 		wordListener();
@@ -592,8 +596,11 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			int x = r.nextInt(Constants.screenWidth + 1); // skalad x pos
 			int y = r.nextInt(Constants.screenHeight + 1); // skalad y pos
-			words.add(new Word(starterWords[i], null, x, y, x, y));
-			words.get(words.size() - 1).setWordId(wordId);
+			//words.add(new Word(starterWords[i], null, x, y, x, y));
+			words.add(new Word(new WordBuilder(starterWords[i], x, y)));
+
+			//words.get(words.size() - 1).setWordId(wordId);
+			
 			System.out.println(words.get(words.size() - 1).getWordId());
 		}
 	}

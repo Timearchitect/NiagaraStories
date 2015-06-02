@@ -45,7 +45,16 @@ public class SplashParticle extends Particle {
 				g2.translate(x,y);
 				g2.rotate(Math.toRadians(angle));
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)opacity));
+					
+					
+					
+					
 					g2.drawImage(DrawPanel.mist, (int)-(size*0.5), (int)-(size*0.5), size, size, null);
+					
+					
+					
+					
+					
 			g2.setTransform(oldTransform);
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 					  

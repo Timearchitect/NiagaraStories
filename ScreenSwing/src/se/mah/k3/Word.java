@@ -176,7 +176,7 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (margin * 0.5), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (- margin * 0.5), 0, text));
 		active=true;
-		//firebase.child(wordId+"/attributes/active").setValue(true);
+		firebase.child(wordId+"/attributes/active").setValue(true);
 
 		pxPos=xPos;
 		pyPos=yPos;
@@ -184,22 +184,23 @@ public class Word implements Health ,RenderOrder{
 	}
 
 	public void disappear(){
-		/*DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, margin, text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, margin, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (margin * 0.5), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.5), text));
-		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));*/
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
 
-		tyVel = Constants.screenHeight;
-		//System.out.println(yPos);
 		
 		
-		//active=false;
-		//firebase.child(wordId+"/attributes/active").setValue(false);
+		active=false;
+		firebase.child(wordId+"/attributes/active").setValue(false);
 	}
-
+	public void deathAnimation(){
+		tAngle=(new Random().nextInt()*90)-45;
+		tyPos = Constants.screenHeight;
+	}
 	public void selected(){
 		DrawPanel.overParticles.add( new FrameParticle(xPos, yPos, this, 0));
 	}
@@ -320,7 +321,7 @@ public class Word implements Health ,RenderOrder{
 		angle+=(float)(AngleDiff*0.2);
 		//if(this.MAX_ANGLE<angle )angle*=0.9;
 		
-		if (yPos >= Constants.screenHeight - 200){
+		if (yPos >= Constants.screenHeight - 50){
 			active = false;
 			//System.out.println(active);
 		}
