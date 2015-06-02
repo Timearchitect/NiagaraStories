@@ -88,7 +88,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		Constants.screenHeight = (int) getSize().height;
 		metrics = g2.getFontMetrics(Constants.font);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		createStarterWords();
+		//createStarterWords();
 		onesRun = false;
 		
 	}
@@ -592,6 +592,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		System.out.println("reSpawn");
 		final Random ra = new Random();
 		 clearFirebase();
+		 
 		myFirebaseRef.addListenerForSingleValueEvent( new ValueEventListener() {
 		
 		    @Override
@@ -625,7 +626,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("xRel").setValue( new Random().nextFloat()*1);
 					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("yRel").setValue( new Random().nextFloat()*1);
 		        }
-
+		        wordListener();
 		    }
 
 			@Override
@@ -659,20 +660,24 @@ public class DrawPanel extends JPanel implements Runnable {
 		
 		 //DataSnapshot regularWords=new DataSnapshot( regularWordsRef,null);
 		System.out.println("relisten for words");
-		wordListener();
+		
 
 
 		
 	}
+	
 	public static void clearFirebase(){
 	myFirebaseRef.child("Used Words").removeValue();
-	words.clear();				
+	words.clear();			
+	System.out.println("WHYYY!!");
+	wordListener();
+
 	}
 	public void update(Graphics g) {
 		paint(g);
 	}
 
-	public void createStarterWords(){
+	/*public void createStarterWords(){
 		Firebase wordList = myFirebaseRef.child("Starter Words");
 		String[] starterWords = {"Our", "first", "sentence"};
 
@@ -692,7 +697,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			
 			System.out.println(words.get(words.size() - 1).getWordId());
 		}
-	}
+	}*/
 
 	/*public void createRegularWords() {
 
@@ -886,13 +891,13 @@ public class DrawPanel extends JPanel implements Runnable {
 	private static void wordListener() {
 		// Creating a ref to a random child in the Regular Words tree on
 		// firebase
-		Firebase fireBaseWords = myFirebaseRef.child("Starter Words");
+		Firebase fireBaseWords = myFirebaseRef.child("Used Words");
 		//Firebase fireBaseWords = myFirebaseRef.child("Used Words");
 
 		// Adding a child event listener to the firebasewords ref, to check for
 		// active words
 		fireBaseWords.addChildEventListener(new ChildEventListener() {
-
+ 
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {
 			}
@@ -1022,7 +1027,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 						System.out.println("assigning states");
 
-					words.add(new Word(DSS,DSS.child("/attributes/text").getValue().toString(), DSS.child("/attributes/owner").getValue().toString(),
+					/*words.add(new Word(DSS,DSS.child("/attributes/text").getValue().toString(), DSS.child("/attributes/owner").getValue().toString(),
 							(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
 							(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight)),
 							(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
@@ -1034,7 +1039,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					}
 					words.get(words.size()-1).height = metrics.getHeight();
 					words.get(words.size()-1).active=Boolean.parseBoolean(DSS.child("/attributes/active").getValue().toString());
-					System.out.println("assigning states");
+					System.out.println("assigning states");*/
 					try{
 						switch(DSS.child("/attributes/state").getValue().toString()){
 						case "onTray": 
@@ -1057,10 +1062,10 @@ public class DrawPanel extends JPanel implements Runnable {
 					System.out.println(" created some words:" +words.get(words.size()-1).getWordId()); 
 				}
 				System.out.println("arraylist of words is now:"+words.size());
-			}});
+			}});}
 		// Adding a child event listener to the firebasewords ref, to check for
 		// active words
-
+/*
 		fireBaseUsedWords.addChildEventListener(new ChildEventListener() {
 
 			@Override
@@ -1190,7 +1195,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				// TODO Auto-generated method stub
 				
 			}});
-	}
+	}*/
 
 	public void displayDebugText() {
 		g2.setColor(Color.BLACK); // svart system color
@@ -1218,7 +1223,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	public static void clearScreen() {
-		// words.clear();
+		 words.clear();
 		overParticles.add(new EqualizerParticle((int) (Constants.screenWidth * 0.5),(int) (Constants.screenHeight * 0.5), 50));
 		respawn();
 	}

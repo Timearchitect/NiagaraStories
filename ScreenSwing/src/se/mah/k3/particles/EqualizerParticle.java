@@ -70,7 +70,7 @@ public class EqualizerParticle extends Particle {
 		if(dist-_radius<r*2){ // collision
 			vy*=-0.5;
 			vx=5;
-			w.dead();
+			//w.dead();  <-----
 		}		
 	}
 }
