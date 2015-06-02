@@ -190,9 +190,11 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.5), text));
+
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
 
 		
+
 		
 		active=false;
 		firebase.child(wordId+"/attributes/active").setValue(false);
@@ -323,7 +325,8 @@ public class Word implements Health ,RenderOrder{
 		
 		if (yPos >= Constants.screenHeight - 50){
 			active = false;
-			//System.out.println(active);
+			Constants.noCollision=false;
+			System.out.println(active);
 		}
 
 		switch(state.ordinal()){
@@ -396,10 +399,13 @@ public class Word implements Health ,RenderOrder{
 
 	public void dead() {
 		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
-		DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));
+		DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));	
+		Constants.noCollision=true;
+		//Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
+		yPos = Constants.screenHeight;
+		//System.out.println(yPos);
 
-
-		active=false;
+		//active=false;
 		//firebase.child(wordId+"/attributes/active").setValue(false);
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
 		//fireBaseWords.child(+wordId+"/Active").setValue(false);
