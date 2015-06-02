@@ -34,7 +34,7 @@ public class CustomDialog extends JDialog implements ActionListener {
     private JButton noButton = null;
     private JTextField txtWord;
 
-    public CustomDialog(JFrame frame, boolean modal, String myMessage) {
+    public CustomDialog(JFrame frame, boolean modal, String myMessage,int xPos,int yPos) {
     super(frame, modal);
     myPanel = new JPanel();
     getContentPane().add(myPanel);
@@ -45,7 +45,7 @@ public class CustomDialog extends JDialog implements ActionListener {
     yesButton = new JButton("Create");
     yesButton.addActionListener(new ActionListener() {
     	public void actionPerformed(ActionEvent arg0) {
-			DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY)));	
+			DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY).angle("random")));	
     		dispose();
     	}
     });
@@ -53,6 +53,7 @@ public class CustomDialog extends JDialog implements ActionListener {
   
     myPanel.add(txtWord);
     txtWord.setColumns(10);
+    yesButton.requestFocus();
     myPanel.add(yesButton);
     noButton = new JButton("Cancel");
     noButton.addActionListener(new ActionListener() {
@@ -63,7 +64,7 @@ public class CustomDialog extends JDialog implements ActionListener {
     myPanel.add(noButton);
     pack();
     //setLocationRelativeTo(frame);
-    setLocation(200, 200); // <--
+    setLocation(xPos, yPos); // <--
     setVisible(true);
     }
 

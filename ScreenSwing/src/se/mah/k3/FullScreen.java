@@ -44,10 +44,12 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 */
 	static {
 	System.setProperty("sun.java2d.transaccel", "True");
-		// System.setProperty("sun.java2d.trace", "timestamp,log,count");
+	//	 System.setProperty("sun.java2d.trace", "timestamp,log,count");
 		//System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
 		System.setProperty("sun.java2d.d3d", "True");
 		System.setProperty("sun.java2d.ddforcevram", "True");
+	//	System.setProperty("sun.java2d.ddoffscreen","true");
+	//	System.setProperty("sun.java2d.accthreshold","0");
 	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -81,6 +83,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		} catch (FontFormatException e) {
 			e.printStackTrace();
 		}
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -101,10 +104,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 	}
 	static void gameLoop() {
-
 		// panel.run();
-
-
 	}
 
 	public void setFullscreen(boolean fullscreen) {
@@ -165,18 +165,14 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 				DrawPanel.projectiles.clear();		
 			}
 			if(e.getKeyChar()=='w' ||e.getKeyChar()=='W' ){    
-				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.");
-				panel.setFocusable(true);
-				panel.setRequestFocusEnabled(true);
-
-				input.setLocation((int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
-
+				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
+				//panel.setFocusable(true);
+				//panel.setRequestFocusEnabled(true);
 
 			}
 			if(e.getKeyChar() == ' '){
-						clearScreen();
+				clearScreen();
 			}
-
 			if(e.getKeyChar() == 'p' || e.getKeyChar() == 'P'){
 				DrawPanel.projectiles.add(new PingBall((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 			}
@@ -195,10 +191,18 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	public void clearScreen(){ 
 	if(Constants.simple){
 		for(Word w:DrawPanel.words){
-		w.active=false;	
+			w.active=false;	
+
 		}
 	}
 		DrawPanel.clearScreen();
 	}
 
+	public void generateAvalibleWordId(){
+		
+		
+		
+	}
+	
+	
 }

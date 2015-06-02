@@ -18,7 +18,7 @@ public class ScanParticle extends Particle {
 		super((int)x2,(int)y2);
 		x=x2;
 		y=y2;
-		vy=150;
+		vy=200;
 		//ay=0.4f;
 	}
 	

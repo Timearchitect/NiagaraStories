@@ -7,6 +7,7 @@ import java.awt.Stroke;
 import java.util.Calendar;
 
  public class Constants {
+	public static String theme="";
 	public static Calendar cal= Calendar.getInstance();
 	public static boolean debug, noCollision,noTimer,noUser,simple;
 	public static int spaceOnScreen=500, screenNbr=145,screenWidth = 1920, screenHeight = 1080;

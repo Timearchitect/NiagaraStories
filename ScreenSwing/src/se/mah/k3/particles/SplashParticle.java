@@ -22,13 +22,7 @@ public class SplashParticle extends Particle {
 		 angle= r.nextInt(360);
 	}
 	public void update(){
-		//x+=Math.round(vx);
-		//y+=(int)vy;
-		//vx*=0.93;
-		//vx+=ax;
-		//vy+=ay;
 		size+=2;
-
 		angle+=0.5;
 		opacity-=0.04;
 		if(opacity<0.1){kill();}
@@ -51,7 +45,16 @@ public class SplashParticle extends Particle {
 				g2.translate(x,y);
 				g2.rotate(Math.toRadians(angle));
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,(float)opacity));
+					
+					
+					
+					
 					g2.drawImage(DrawPanel.mist, (int)-(size*0.5), (int)-(size*0.5), size, size, null);
+					
+					
+					
+					
+					
 			g2.setTransform(oldTransform);
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1));
 					  

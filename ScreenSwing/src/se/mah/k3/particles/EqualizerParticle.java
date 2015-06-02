@@ -18,13 +18,13 @@ public class EqualizerParticle extends Particle {
 		super(_x,_y);
 		x=_x;
 		y=_y;
-		increment=f;
+		increment=f*10;
 	}
 
 	public void update(){
 		r+=increment;
 		circleStroke = new BasicStroke(increment);
-		increment*=0.99;
+		increment*=0.85;
 		opacity*=0.9;
 		
 		if(increment<10)kill();
