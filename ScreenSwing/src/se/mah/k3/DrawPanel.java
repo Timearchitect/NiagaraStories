@@ -1081,7 +1081,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				for(Word w:words){
 					//	System.out.println("datasnap:"+w.dataSnapshot.getKey() +"compareto:"+snapshot);
 					try{
-						if(w.dataSnapshot.getKey().equals(snapshot.getKey())){
+						if( w.dataSnapshot.getKey().equals(snapshot.getKey())){
 							match=true;
 							matchingWord=w;
 						}
@@ -1177,14 +1177,19 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			}
 
-			@Override
-			public void onChildAdded(DataSnapshot arg0, String arg1) {
-			}
+		}}
 
 			@Override
 			public void onCancelled(FirebaseError arg0) {
+				// TODO Auto-generated method stub
+				
 			}
-		});
+
+			@Override
+			public void onChildAdded(DataSnapshot arg0, String arg1) {
+				// TODO Auto-generated method stub
+				
+			}});
 	}
 
 	public void displayDebugText() {
