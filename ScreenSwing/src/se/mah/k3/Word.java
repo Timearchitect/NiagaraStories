@@ -40,7 +40,7 @@ public class Word implements Health ,RenderOrder{
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
 		this.ownerId = _ownerId;
-		this.active = false;
+		//this.active = true;
 	}
 
 	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
@@ -50,7 +50,7 @@ public class Word implements Health ,RenderOrder{
 		tyPos=_ty;
 		this.text = _text;
 		this.ownerId = _ownerId;
-		this.active = false;
+		//this.active = false;
 	}
 
 	public Word(DataSnapshot _dataSnapshot,String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
@@ -62,7 +62,7 @@ public class Word implements Health ,RenderOrder{
 		tyPos=_ty;
 		this.text = _text;
 		this.ownerId = _ownerId;
-		this.active = false;
+		//this.active = false;
 	}
 
 	public Word(WordBuilder wordBuilder) {

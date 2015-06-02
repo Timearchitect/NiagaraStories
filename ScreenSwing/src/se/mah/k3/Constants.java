@@ -24,6 +24,7 @@ import java.util.Calendar;
 	public static float fontSize=58;
 	public static Font font,lightFont,boldFont ;
 	public static final int WaterStrokeWidth = 10;
+	protected static final int StartWordAmount = 5;
 	public static BasicStroke waterStroke = new BasicStroke(WaterStrokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
 	public static BasicStroke squareStroke = new BasicStroke(20, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke userStroke = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
