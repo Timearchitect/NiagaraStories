@@ -32,7 +32,7 @@ public class Word implements Health ,RenderOrder{
 	public int xPos, yPos, width, height, margin = 20, offsetX = -20, offsetY = 40;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-	
+
 	//WordSkin skin = new WordSkin(this);
 	Shadow shadow = new Shadow(this);
 	private float tAngle;
@@ -52,7 +52,7 @@ public class Word implements Health ,RenderOrder{
 		this.ownerId = _ownerId;
 		this.active = false;
 	}
-	
+
 	public Word(DataSnapshot _dataSnapshot,String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
 		dataSnapshot=_dataSnapshot;
 		wordId=_dataSnapshot.getKey();
@@ -66,7 +66,7 @@ public class Word implements Health ,RenderOrder{
 	}
 
 	public Word(WordBuilder wordBuilder) {
-		
+
 		this.linkedWords =wordBuilder.linkedWords;
 		this.type=wordBuilder.type;
 		this.wordId=wordBuilder.wordId;
@@ -184,17 +184,20 @@ public class Word implements Health ,RenderOrder{
 	}
 
 	public void disappear(){
-		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, margin, text));
+		/*DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, margin, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (margin * 0.5), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.2), text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, (int) (- margin * 0.5), text));
-		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
+		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));*/
 
-		active=false;
+		tyVel = Constants.screenHeight;
+		//System.out.println(yPos);
+		
+		
+		//active=false;
 		//firebase.child(wordId+"/attributes/active").setValue(false);
-
 	}
 
 	public void selected(){
@@ -214,7 +217,7 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		shadow.display();
-		
+
 		if ( owner==null) {
 			DrawPanel.g2.setColor(Constants.wordStroke);
 		}else {
@@ -226,25 +229,19 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.g2.setColor(Color.white);
 		DrawPanel.g2.setFont(Constants.lightFont);
 		DrawPanel.g2.drawString(text,(int)(0 -width*0.5),(int) (0 + height* 0.25) );
-		
+
 		switch(state.ordinal()){
-			case 0 ://onTray
-				
+		case 0 ://onTray
 			break;
-			case 1 : // draging
-				DrawPanel.g2.setStroke(Constants.wordOutline);
-				DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
+		case 1 : // draging
+			DrawPanel.g2.setStroke(Constants.wordOutline);
+			DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 			break;
-			
-			case 2 : // placed
-				
+		case 2 : // placed
 			break;
-			
-			case 3 : // locked
-				
+		case 3 : // locked
 			break;
-			
-			default :
+		default :
 		}
 		//if(!Constants.simple)skin.display(DrawPanel.g2);
 
@@ -263,11 +260,11 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.g2.drawString(text, (int) (xPos - width * 0.5),(int) (yPos + height* 0.25));*/
 
 
-		
+
 
 	}
 
-	
+
 	public void collisionVSWord (Word w){
 		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)&&(xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)&&(yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)&&(yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
 			w.txVel=(w.xPos-xPos)*FORCEFACTOR;
@@ -320,30 +317,35 @@ public class Word implements Health ,RenderOrder{
 		//DrawPanel.g2.drawString(String.valueOf(tAngle)+"   "+String.valueOf(angle), (int) (xPos),(int) (yPos + height* 3));
 		angle+=(float)(AngleDiff*0.2);
 		//if(this.MAX_ANGLE<angle )angle*=0.9;
+		
+		if (yPos >= Constants.screenHeight - 200){
+			active = false;
+			//System.out.println(active);
+		}
 
 		switch(state.ordinal()){
 		case 0 ://onTray
-			
-		break;
+
+			break;
 		case 1 : // draging
 			if(offsetX<this.MAX_OFFSET)offsetX+=4;
 			if(offsetY<this.MAX_OFFSET)offsetY+=4;
 			tAngle=(float) (yVel*0.9+xVel*0.9);
 			tAngle %= 360;
 			angle %= 360;
-		break;
-		
+			break;
+
 		case 2 : // placed
 			offsetX=0;
 			offsetY=0;
-		break;
-		
+			break;
+
 		case 3 : // locked
-			
-		break;
-		
+
+			break;
+
 		default :
-	}
+		}
 		//skin.update();
 	}
 
@@ -354,7 +356,7 @@ public class Word implements Health ,RenderOrder{
 
 	public void displayLinked(){
 		float xDiff,yDiff,dist,angle;
-		
+
 		for(Word w : DrawPanel.words){
 			xDiff= w.xPos-xPos;
 			yDiff= w.yPos-yPos;
@@ -390,9 +392,11 @@ public class Word implements Health ,RenderOrder{
 	}
 
 	public void dead() {
-		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
+		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
 		DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));
-		active=false;		
+
+
+		active=false;
 		//firebase.child(wordId+"/attributes/active").setValue(false);
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");
 		//fireBaseWords.child(+wordId+"/Active").setValue(false);
@@ -405,125 +409,125 @@ public class Word implements Health ,RenderOrder{
 	public void setWordId(String _s) {
 		wordId=_s;
 	}	
-	
-	 public static class WordBuilder
-	    {
-			ArrayList<Word> linkedWords = new ArrayList<Word>();
-			private String type,wordId,ownerId,text;
-			private boolean active = true, occupied, plural;
-			private String bending[];
-			private User owner;
-			private Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
-			private DataSnapshot dataSnapshot;
-			private State state=Word.State.placed;
-			private int xPos, yPos, width, height, margin=20;
-			private float txPos,tyPos;
-			private float health,angle;
-			
-			
-	
-			public WordBuilder(String text, int  x,int y) {
-				this.text = text;
-		        this.xPos = x;
-		        this.yPos = y;
-		        this.txPos = x;
-		        this.tyPos = y;
-		        //	DrawPanel.metrics = DrawPanel.g2.getFontMetrics(Constants.font);
-		        this.width = DrawPanel.metrics.stringWidth(text);
-				this.height = DrawPanel.metrics.getHeight();
-				this.firebase.setValue("word888");
-				this.wordId="word888";
-			}
-			  
-			public WordBuilder plural(boolean plural) {
-				this.plural = plural;
-				return this;
-			}
-			public WordBuilder active(boolean active) {
-				this.active = active;
-				return this;
-			}
-			public WordBuilder occupied(boolean occupied) {
-				this.occupied = occupied;
-				return this;
-			}
-			public WordBuilder linkedWords(ArrayList<Word> linkedWords ) {
-				this.linkedWords = linkedWords;
-				return this;
-			}
-			
-			public WordBuilder type(String type) {
-				this.type = type;
-				return this;
-			}
-			public WordBuilder wordId(String wordId) {
-				this.wordId = wordId;
-				return this;
-			}
-			public WordBuilder ownerId(String ownerId) {
-				this.ownerId = ownerId;
-				return this;
-			}
-			public WordBuilder bending(String[] bending) {
-				this.bending = bending;
-				return this;
-			}
-			public WordBuilder dataSnapshot(DataSnapshot dataSnapshot) {
-				this.dataSnapshot = dataSnapshot;
-				
-				return this;
-			}
-			public WordBuilder state(State _state) {
-				this.state = _state;
-				return this;
-			}
-			
-			public WordBuilder owner(User owner) {
-				this.owner = owner;
-				return this;
-			}
-			
-			public WordBuilder xPos(int xPos) {
-				this.xPos = xPos;
-				return this;
-			}
 
-			public WordBuilder yPos(int yPos) {
-				this.yPos = yPos;
-				return this;
-			}
-			public WordBuilder txPos(int txPos) {
-				this.txPos = txPos;
-				return this;
-			}
+	public static class WordBuilder
+	{
+		ArrayList<Word> linkedWords = new ArrayList<Word>();
+		private String type,wordId,ownerId,text;
+		private boolean active = true, occupied, plural;
+		private String bending[];
+		private User owner;
+		private Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
+		private DataSnapshot dataSnapshot;
+		private State state=Word.State.placed;
+		private int xPos, yPos, width, height, margin=20;
+		private float txPos,tyPos;
+		private float health,angle;
 
-			public WordBuilder ytPos(int tyPos) {
-				this.tyPos = tyPos;
-				return this;
-			}
 
-			public WordBuilder health(float health) {
-				this.health = health;
-				return this;
-			}
-			public WordBuilder angle(float angle) {
-				this.angle = angle;
-				return this;
-			}
-			public WordBuilder angle(String command) {
-				if(command.equals("random"))angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-				return this;
-			}
-			public void addToFirebase(){
-				
-				
-			}
-	        public Word build() {
-	            Word word =  new Word(this);
-	            //validateUserObject(user);
-	            return word;
-	        }
-	    }
+
+		public WordBuilder(String text, int  x,int y) {
+			this.text = text;
+			this.xPos = x;
+			this.yPos = y;
+			this.txPos = x;
+			this.tyPos = y;
+			//	DrawPanel.metrics = DrawPanel.g2.getFontMetrics(Constants.font);
+			this.width = DrawPanel.metrics.stringWidth(text);
+			this.height = DrawPanel.metrics.getHeight();
+			this.firebase.setValue("word888");
+			this.wordId="word888";
+		}
+
+		public WordBuilder plural(boolean plural) {
+			this.plural = plural;
+			return this;
+		}
+		public WordBuilder active(boolean active) {
+			this.active = active;
+			return this;
+		}
+		public WordBuilder occupied(boolean occupied) {
+			this.occupied = occupied;
+			return this;
+		}
+		public WordBuilder linkedWords(ArrayList<Word> linkedWords ) {
+			this.linkedWords = linkedWords;
+			return this;
+		}
+
+		public WordBuilder type(String type) {
+			this.type = type;
+			return this;
+		}
+		public WordBuilder wordId(String wordId) {
+			this.wordId = wordId;
+			return this;
+		}
+		public WordBuilder ownerId(String ownerId) {
+			this.ownerId = ownerId;
+			return this;
+		}
+		public WordBuilder bending(String[] bending) {
+			this.bending = bending;
+			return this;
+		}
+		public WordBuilder dataSnapshot(DataSnapshot dataSnapshot) {
+			this.dataSnapshot = dataSnapshot;
+
+			return this;
+		}
+		public WordBuilder state(State _state) {
+			this.state = _state;
+			return this;
+		}
+
+		public WordBuilder owner(User owner) {
+			this.owner = owner;
+			return this;
+		}
+
+		public WordBuilder xPos(int xPos) {
+			this.xPos = xPos;
+			return this;
+		}
+
+		public WordBuilder yPos(int yPos) {
+			this.yPos = yPos;
+			return this;
+		}
+		public WordBuilder txPos(int txPos) {
+			this.txPos = txPos;
+			return this;
+		}
+
+		public WordBuilder ytPos(int tyPos) {
+			this.tyPos = tyPos;
+			return this;
+		}
+
+		public WordBuilder health(float health) {
+			this.health = health;
+			return this;
+		}
+		public WordBuilder angle(float angle) {
+			this.angle = angle;
+			return this;
+		}
+		public WordBuilder angle(String command) {
+			if(command.equals("random"))angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
+			return this;
+		}
+		public void addToFirebase(){
+
+
+		}
+		public Word build() {
+			Word word =  new Word(this);
+			//validateUserObject(user);
+			return word;
+		}
+	}
 
 	@Override
 	public void toBottom(Object o) {
@@ -533,7 +537,7 @@ public class Word implements Health ,RenderOrder{
 
 	@Override
 	public void toTop(Object o) {
-	
+
 		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
 		DrawPanel.words.add(DrawPanel.words.size(), this);
 	}
@@ -541,6 +545,6 @@ public class Word implements Health ,RenderOrder{
 	@Override
 	public void toIndex(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
