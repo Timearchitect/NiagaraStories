@@ -43,10 +43,10 @@ import com.firebase.client.snapshot.IndexedNode;
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private int FPS, frames;
-	final static Firebase myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
-	final static Firebase regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Regular Words");
-	final static Firebase themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Themed Words");
-	final static Firebase firebaseUsedWord=myFirebaseRef.child("/Used Words/");
+	static Firebase myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
+	static Firebase regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Regular Words");
+ 	static Firebase themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Themed Words");
+	static Firebase firebaseUsedWord=myFirebaseRef.child("/Used Words/");
 
 	//static Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	public static ArrayList<User> userList = new ArrayList<User>();
@@ -88,7 +88,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		Constants.screenHeight = (int) getSize().height;
 		metrics = g2.getFontMetrics(Constants.font);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-		createStarterWords();
+		//createStarterWords();
 		onesRun = false;
 		
 	}
@@ -470,8 +470,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.add(new WaterParticle((int) r
 					.nextInt(Constants.screenWidth), 0));
 		}*/
-		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all
-																// particlesCap
+		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all particlesCap
 			particles.remove(0);
 		}
 		while (overParticles.size() > Constants.HEAVY_PARTICLE_LIMIT) { // run all OverparticlesCap
@@ -556,6 +555,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.dispose();
 	}
 
+
 	public void run() { // threading
 		long lastTime = System.nanoTime();
 		while (true) {
@@ -627,14 +627,6 @@ public class DrawPanel extends JPanel implements Runnable {
 		        }
 
 		    }
-
-			@Override
-			public void onCancelled(FirebaseError arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-
-		
 			public void occupiedFalse(DataSnapshot snapshot){
 				System.out.println("UPLOAD FIREBASE");
 				DataSnapshot DsR = snapshot.child("Regular Words");
@@ -654,20 +646,18 @@ public class DrawPanel extends JPanel implements Runnable {
 			 	*/
 
 			}
-		});
-		
-		
-		 //DataSnapshot regularWords=new DataSnapshot( regularWordsRef,null);
-		System.out.println("relisten for words");
-		wordListener();
+			@Override
+			public void onCancelled(FirebaseError arg0) {
+				// TODO Auto-generated method stub
+				
+			}});
+		}
 
-
-		
-	}
 	public static void clearFirebase(){
 	myFirebaseRef.child("Used Words").removeValue();
 	words.clear();				
 	}
+
 	public void update(Graphics g) {
 		paint(g);
 	}
@@ -883,7 +873,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	}*/
 
 	// Method to listen for updates in the words list
-	private static void wordListener() {
+	public void wordListener() {
 		// Creating a ref to a random child in the Regular Words tree on
 		// firebase
 		Firebase fireBaseWords = myFirebaseRef.child("Starter Words");
@@ -1010,17 +1000,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				//boolean matched = false;
 				for(DataSnapshot DSS: childrens){
 					System.out.println(" DSS:" +DSS.getKey()); 
-						words.add(new Word(DSS,DSS.child("/attributes/text").getValue().toString(), DSS.child("/attributes/owner").getValue().toString(),
-						(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
-						(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight)),
-						(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
-						(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight))));
-						words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
-						words.get(words.size()-1).height = metrics.getHeight();
-					//	words.get(words.size()-1).active=Boolean.parseBoolean(DSS.child("/attributes/active").getValue().toString());
-						words.get(words.size()-1).active=true;
-
-						System.out.println("assigning states");
 
 					words.add(new Word(DSS,DSS.child("/attributes/text").getValue().toString(), DSS.child("/attributes/owner").getValue().toString(),
 							(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
@@ -1081,36 +1060,40 @@ public class DrawPanel extends JPanel implements Runnable {
 				for(Word w:words){
 					//	System.out.println("datasnap:"+w.dataSnapshot.getKey() +"compareto:"+snapshot);
 					try{
-						if( w.dataSnapshot.getKey().equals(snapshot.getKey())){
+						if(w.dataSnapshot.getKey().equals(snapshot.getKey())){
 							match=true;
 							matchingWord=w;
 						}
 					}catch (NullPointerException npe){
 						System.err.println("Word not found on Firebase");
 					}
-					if(!match){ // create word
-						words.add(new Word(snapshot,snapshot.child("/attributes/text").getValue().toString(), snapshot.child("/attributes/owner").getValue().toString(),
-					(int)(Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth)),
-					(int)(Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight)),
-					(int)(Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth)),
-					(int)(Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight))));
-						words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
-						words.get(words.size()-1).height = metrics.getHeight();
-					
-					try{
-						if (matchingWord != null) {
-							matchingWord.txPos=(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth);
-							System.out.println("xRel assigned");
-						}
-					}catch( NullPointerException ne){}
-					try{
-						if (matchingWord != null) {
-							matchingWord.tyPos=(int)Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight);
-							System.out.println("yRel assigned");
-						}	
-					}catch( NullPointerException ne){}
-					
-					try{
+				}
+				if(!match){ // create word
+					words.add(new Word(snapshot,snapshot.child("/attributes/text").getValue().toString(), snapshot.child("/attributes/owner").getValue().toString(),
+							(int)(Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth)),
+							(int)(Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight)),
+							(int)(Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth)),
+							(int)(Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight))));
+					words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
+					words.get(words.size()-1).height = metrics.getHeight();
+				}
+				//	System.out.println(" x:"+(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth));
+
+
+				try{
+					if (matchingWord != null) {
+						matchingWord.txPos=(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth);
+						System.out.println("xRel assigned");
+					}
+				}catch( NullPointerException ne){}
+				try{
+					if (matchingWord != null) {
+						matchingWord.tyPos=(int)Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight);
+						System.out.println("yRel assigned");
+					}	
+				}catch( NullPointerException ne){}
+
+				try{
 					if (snapshot.child("attributes/state").getValue() != null) {
 						//System.out.println("State stuff");
 						User u = null;
@@ -1177,19 +1160,14 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			}
 
-		}}
-
 			@Override
-			public void onCancelled(FirebaseError arg0) {
-				// TODO Auto-generated method stub
-				
+			public void onChildAdded(DataSnapshot arg0, String arg1) {
 			}
 
 			@Override
-			public void onChildAdded(DataSnapshot arg0, String arg1) {
-				// TODO Auto-generated method stub
-				
-			}});
+			public void onCancelled(FirebaseError arg0) {
+			}
+		});
 	}
 
 	public void displayDebugText() {
@@ -1219,8 +1197,11 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	public static void clearScreen() {
 		// words.clear();
-		overParticles.add(new EqualizerParticle((int) (Constants.screenWidth * 0.5),(int) (Constants.screenHeight * 0.5), 50));
+		overParticles.add(new EqualizerParticle(
+				(int) (Constants.screenWidth * 0.5),
+				(int) (Constants.screenHeight * 0.5), 50));
 		respawn();
+
 	}
 
 	public static void sendAfterCollision() {
@@ -1231,7 +1212,6 @@ public class DrawPanel extends JPanel implements Runnable {
 				if (w.active && w.colliding) {
 					allWordsNotColliding = false;
 				}
-				
 			}
 
 			if (allWordsNotColliding) {
@@ -1257,3 +1237,5 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 }
+		
+	
