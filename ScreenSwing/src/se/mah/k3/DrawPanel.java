@@ -12,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
@@ -53,6 +54,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static BufferedImage bimage, mist, rust, cracks, moss, app;
 	public static int myFrame;
 	public String changedWord = "word";
+	private FontMetrics fMetrics ;
 	public static FontMetrics metrics;
 	//static float offsetX ; // mouse
 	//static float offsetY;
@@ -88,16 +90,20 @@ public class DrawPanel extends JPanel implements Runnable {
 		Constants.screenWidth = (int) getSize().width;
 		Constants.screenHeight = (int) getSize().height;
 		metrics = g2.getFontMetrics(Constants.font);
+		fMetrics=g2.getFontMetrics(Constants.boldFontScreen); // debug // screenID fontmetric
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		//createStarterWords();
 		onesRun = false;
 		wordListener();
+		clearScreen(); //first clear
 
 	}
 
 
 	// image creation
 	VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
+
+
 
 	// rendering to the image
 	void renderOffscreen() {
@@ -229,35 +235,32 @@ public class DrawPanel extends JPanel implements Runnable {
 						for (User ul : userList) {
 
 							if (ul.getId().equals(dataSnapshot.getKey())) {				
-								String state = "";
-								if (dataSnapshot.child("state").getValue() != null)state = dataSnapshot.child("state").getValue().toString();
-								// ul.xTar = u.xPos;
-								// ul.yTar = u.yPos;
+								
 								ul.setId(dataSnapshot.getKey());
-								try {
-									ul.xTar = Float.parseFloat(dataSnapshot.child("xRel").getValue().toString())* Constants.screenWidth;
-									ul.yTar = Float.parseFloat(dataSnapshot.child("yRel").getValue().toString())* Constants.screenHeight;
-								} catch (Exception e) {
-								}
-								try {
-									ul.moves = Integer.parseInt(dataSnapshot.child("moves").getValue().toString());
-								} catch (Exception e) {
-								}
+									try {
+										ul.xTar = Float.parseFloat(dataSnapshot.child("xRel").getValue().toString())* Constants.screenWidth;
+										ul.yTar = Float.parseFloat(dataSnapshot.child("yRel").getValue().toString())* Constants.screenHeight;
+									} catch (Exception e) {}
+									try {
+										ul.moves = Integer.parseInt(dataSnapshot.child("moves").getValue().toString());
+									} catch (Exception e) {}
 
-								switch (state) {
+								switch (dataSnapshot.child("state").getValue().toString()) {
 								case "offline":
 									ul.state = User.State.offline;
-									// System.out.println("offline");
+									 System.out.println("taping: "+ul.getId()+"state: "+ "offline");
 									break;
 								case "online":
 									ul.state = User.State.online;
-									// System.out.println("online");
-
+									 System.out.println("taping: "+ul.getId()+"state: "+ "online");
 									break;
 								case "taping":
 									ul.state = User.State.taping;
-									// System.out.println("taping: "+ul.getId()+"state: "+
-									// state);
+									 System.out.println("taping: "+ul.getId()+"state: "+ "taping");
+									break;
+								case "grabing":
+									ul.state = User.State.grabing;
+									 System.out.println("taping: "+ul.getId()+"state: "+ "grabing");
 									break;
 								default:
 								}
@@ -269,11 +272,15 @@ public class DrawPanel extends JPanel implements Runnable {
 						if (!match) {
 							try {
 								userList.add(new User(dataSnapshot.getKey(),Float.parseFloat(dataSnapshot.child("xRel").getValue().toString())*Constants.screenWidth, Float.parseFloat(dataSnapshot.child("yRel").getValue().toString())*Constants.screenHeight));
-								userList.get(userList.size() - 1).setColor(new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
+								//userList.add(new User(dataSnapshot.getKey()));
+								//userList.get(userList.size() - 1).
+								userList.get(userList.size() - 1).setColor(new Color(r.nextInt(200), r.nextInt(200), r.nextInt(20)));
 								System.out.println("Added user"+dataSnapshot.getKey());
 							} catch (Exception e) {
-
+								System.err.println("no Users");
 							}
+							
+
 						}
 					}
 				}
@@ -299,10 +306,10 @@ public class DrawPanel extends JPanel implements Runnable {
 		// get the advance of my text in this font
 		// and render context
 
-		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f));
-		g2.drawImage(bimage, 0, 0, Constants.screenWidth,Constants.screenHeight, this);
-	  g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight- 150, this);
-		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		if(Constants.spawnParticle)g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.3f));
+			g2.drawImage(bimage, 0, 0, Constants.screenWidth,Constants.screenHeight, this);
+		if(Constants.spawnParticle)	g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
+		  g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight- 150, this);
 
 		if(Constants.spawnParticle){	
 			for (int i = 0; i < 7; i++) { // spawn particles
@@ -362,7 +369,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					word.colliding = false;
 					word.BoundCollision();
 					for (Word word2 : words) { // word collision
-						if (word != word2 && word2.active && word2.state != Word.State.draging) {
+						if (word != word2 && word2.active && word2.state != Word.State.draging && word2.state != Word.State.onTray) {
 							word.collisionVSWord(word2);
 						}
 					}
@@ -739,9 +746,14 @@ public class DrawPanel extends JPanel implements Runnable {
 					if (snapshot.child("y").getValue() != null) {
 						words.get(index).tyPos=(int)  (Float.parseFloat(snapshot.child("y").getValue().toString()) * Constants.screenHeight);
 					}
+					try{
+						if (snapshot.child("firstDrag").getValue() != null) {
+							words.get(index).firstDrag= Boolean.parseBoolean(snapshot.child("firstDrag").getValue().toString());
+						}
+					}catch( NullPointerException e){}
 
 					if (snapshot.child("active").getValue() == "true") {
-					words.get(index).display();
+						words.get(index).display();
 					}
 					
 					if (snapshot.child("state").getValue() != null) {
@@ -759,14 +771,14 @@ public class DrawPanel extends JPanel implements Runnable {
 								break;
 
 							case "draging":
-								//words.get(index).respond();
+								
 								if(words.get(index).state!=Word.State.onTray){
 									words.get(index).setState(Word.State.draging);
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
 									u.xPos=(int)words.get(index).txPos;
 									u.yPos=(int)words.get(index).tyPos;
-									//System.out.println("dragging");
+									System.out.println("dragging");
 								}else{
 									words.get(index).xPos=(int)words.get(index).txPos;
 									words.get(index).yPos=(int)words.get(index).tyPos;
@@ -775,11 +787,19 @@ public class DrawPanel extends JPanel implements Runnable {
 									u.yPos=(int)words.get(index).tyPos;
 									u.xPos=(int)words.get(index).txPos;
 									words.get(index).respond();
+									System.out.println("GHOST");
 								}
 
 								break;
 							case "onTray":
-
+								words.get(index).xPos=(int)words.get(index).txPos;
+								words.get(index).yPos=(int)words.get(index).tyPos;
+								u.xTar=words.get(index).txPos;
+								u.yTar=words.get(index).tyPos;
+								u.yPos=(int)words.get(index).tyPos;
+								u.xPos=(int)words.get(index).txPos;
+								words.get(index).respond();
+								
 								words.get(index).setState(Word.State.onTray);
 								System.out.println("on tray");
 								break;
@@ -856,6 +876,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							break;
 						case "placed": 
 							words.get(words.size()-1).setState(Word.State.placed);
+							words.get(words.size()-1).appear();// <---
 							break;
 						case "locked": 
 							words.get(words.size()-1).setState(Word.State.locked);
@@ -924,9 +945,10 @@ public class DrawPanel extends JPanel implements Runnable {
 						System.out.println("yRel assigned");
 					}	
 				}catch( NullPointerException ne){}
-
+				
+				
 				try{
-					if (snapshot.child("attributes/state").getValue() != null) {
+				//	if (snapshot.child("attributes/state").getValue() != null) {
 						//System.out.println("State stuff");
 						User u = null;
 						if(matchingWord.getUser()!=null){ 
@@ -940,10 +962,12 @@ public class DrawPanel extends JPanel implements Runnable {
 									System.out.println("placed");
 									matchingWord.appear();
 								}
+								matchingWord.appear();
+								System.out.println("placed without"); // <---w
 								break;
 
 							case "draging":
-								//words.get(index).respond();
+								
 								if(matchingWord.state!=Word.State.onTray){
 									matchingWord.setState(Word.State.draging);
 									matchingWord.toTop(matchingWord);
@@ -951,7 +975,7 @@ public class DrawPanel extends JPanel implements Runnable {
 									u.yTar=matchingWord.tyPos;
 									u.xPos=(int)matchingWord.txPos;
 									u.yPos=(int)matchingWord.tyPos;
-									//System.out.println("dragging");
+									System.out.println("dragging");
 								}else{
 									matchingWord.xPos=(int)matchingWord.txPos;
 									matchingWord.yPos=(int)matchingWord.tyPos;
@@ -960,10 +984,18 @@ public class DrawPanel extends JPanel implements Runnable {
 									u.yPos=(int)matchingWord.tyPos;
 									u.xPos=(int)matchingWord.txPos;
 									matchingWord.respond();
+									System.out.println("GHOST");
 								}
 
 								break;
 							case "onTray":
+								matchingWord.xPos=(int)matchingWord.txPos;
+								matchingWord.yPos=(int)matchingWord.tyPos;
+								u.xTar=matchingWord.txPos;
+								u.yTar=matchingWord.tyPos;
+								u.yPos=(int)matchingWord.tyPos;
+								u.xPos=(int)matchingWord.txPos;
+								matchingWord.respond();
 
 								matchingWord.setState(Word.State.onTray);
 								System.out.println("on tray");
@@ -971,7 +1003,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 							}
 						}
-					}	
+					//}	
 				}catch( NullPointerException ne){}
 
 				try{
@@ -1005,6 +1037,9 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	public void displayDebugText() {
 		g2.setColor(Color.white); // vit system color
+		
+		g2.setColor(Constants.waterColorTrans); // vit system color
+
 		g2.setFont(Constants.boldFont); // init typsnitt
 		if (Constants.debug) {g2.drawString("ID: " + Constants.screenNbr + " part:" + particles.size()+ " Overpart:" + overParticles.size() + "  words: "
 				+ words.size() + "  Users:" + userList.size()+ "  FPS: " + FPS + "  Time:" + Constants.timeLeft,30, 50);
@@ -1013,7 +1048,9 @@ public class DrawPanel extends JPanel implements Runnable {
 		if (Constants.noUser)g2.drawString("No user", 30, 200);
 		if (Constants.simple)g2.drawString("simple Mode", 30, 250);
 		} else {
-			g2.drawString("Screen ID: " + Constants.screenNbr, 30, 50);
+			g2.setFont(Constants.boldFontScreen);
+			float fWidth=fMetrics.stringWidth("Screen ID: " + Constants.screenNbr);
+			g2.drawString("Screen ID: " + Constants.screenNbr, (int) (Constants.screenWidth  -fWidth-45), (int) (Constants.screenHeight * 0.8 + 50));
 		}
 	}
 
@@ -1067,7 +1104,7 @@ public class DrawPanel extends JPanel implements Runnable {
 						//w.respond();
 					}
 				}
-				overParticles.add(new ScanParticle((int) (Constants.screenWidth*0.5),0));
+				//overParticles.add(new ScanParticle((int) (Constants.screenWidth*0.5),0));
 				//overParticles.add(new RippleParticle((int) (Constants.screenWidth * 0.5),(int) (Constants.screenHeight * 0.5), 200));
 				System.out.println("all words cood ,after collision update");
 				DrawPanel.collisionSent = true;

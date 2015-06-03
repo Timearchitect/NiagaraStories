@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 public class RippleParticle extends Particle{
 
-	private float r,increment=50,opacity=150;
+	private float r,increment=50,opacity=80;
 	private BasicStroke circleStroke;
 	//Graphics2D g2;
 	public RippleParticle(int _x, int _y,int _increment){

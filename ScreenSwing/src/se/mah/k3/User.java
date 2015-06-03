@@ -11,7 +11,7 @@ import se.mah.k3.particles.RippleParticle;
 public class User implements Comparable<User>{
 	final private int  offlineTime = 30000,DeathTimer=60000;
 	private  long spawnTime ,DeathTime;
-    public enum State {offline,online, holding,taping,droping,idle};
+    public enum State {offline,online, grabing,taping,droping,idle};
     public State state=State.online;
 	final int DEFAULT_SIZE=100 ;
 	private String id;
@@ -29,13 +29,22 @@ public class User implements Comparable<User>{
 	private int size=100;
 	int animSize;
 	public int moves = 4;
+	
+	public User(String id) {
+		this.id = id;
+		state=User.State.grabing;
+		spawnTime=System.currentTimeMillis(); // set millis time
+		//this.xPos = _xRel*Constants.screenWidth;
+		//this.yPos = _yRel*Constants.screenHeight;
+	}
+	
 	public User(String id, float _xRel, float _yRel) {
 		this.id = id;
 		this.xRel = _xRel;
 		this.yRel = _yRel;
 		this.xTar = _xRel*Constants.screenWidth;
 		this.yTar= _yRel*Constants.screenHeight;
-		state=User.State.online;
+		state=User.State.grabing;
 		spawnTime=System.currentTimeMillis(); // set millis time
 		//this.xPos = _xRel*Constants.screenWidth;
 		//this.yPos = _yRel*Constants.screenHeight;
@@ -162,14 +171,16 @@ public class User implements Comparable<User>{
 
 	}
 	public void taping(){
-		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos,20));
+		if(!Constants.noUser)DrawPanel.overParticles.add( new RippleParticle(xPos,yPos,20));
 		state=User.State.online;
 		resetTimer();
 	}
 
 	public void release() {
-		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos));
-		animSize=200;
+		if(!Constants.noUser){
+			DrawPanel.overParticles.add( new RippleParticle(xPos,yPos));
+			animSize=200;
+		}
 		state=User.State.online;
 		resetTimer();
 	}

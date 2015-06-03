@@ -9,7 +9,7 @@ import se.mah.k3.Word;
 public class TextParticle extends Particle {
 	private String text;
 	private Word owner;
-	private float w,h,opacity=150;
+	private float w,h,opacity=40;
 	
 	public TextParticle(int _x, int _y,float _w,float _h,int _vx,int _vy,String _text) {
 		super(_x, _y);

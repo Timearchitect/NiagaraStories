@@ -43,11 +43,11 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	 * Launch the application.
 	 */
 	static {
-		System.setProperty("sun.java2d.transaccel", "True");
+	//	System.setProperty("sun.java2d.transaccel", "True");
 	//	 System.setProperty("sun.java2d.trace", "timestamp,log,count");
-		System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
-		System.setProperty("sun.java2d.d3d", "True");
-		System.setProperty("sun.java2d.ddforcevram", "True");
+	//	System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
+	//	System.setProperty("sun.java2d.d3d", "True");
+	//	System.setProperty("sun.java2d.ddforcevram", "True");
 	//	System.setProperty("sun.java2d.ddoffscreen","true");
 	//	System.setProperty("sun.java2d.accthreshold","0");
 	}
@@ -78,6 +78,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(Constants.fontSize);
 			Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(Constants.fontSize);
 			Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(Constants.fontSize);
+			Constants.boldFontScreen =Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(32f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (FontFormatException e) {

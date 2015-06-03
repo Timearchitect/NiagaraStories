@@ -23,12 +23,12 @@ public class Word implements Health ,RenderOrder{
 	public static final int MIN_ANGLE=-10, MAX_ANGLE=10;
 	private final float FORCEFACTOR = 0.05f;
 	public String type="",wordId="",bending[], ownerId = "",text = "";
-	public boolean active = true, occupied,colliding, selected, plural;	
+	public boolean active = true, occupied,colliding, selected, plural,firstDrag;	
 	public User owner;
 	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
 	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
-	public State state=State.onTray;
+	public State state=State.placed;
 	public int xPos, yPos, width, height, margin = 20, offsetX = -20, offsetY = 40;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
@@ -36,6 +36,7 @@ public class Word implements Health ,RenderOrder{
 	//WordSkin skin = new WordSkin(this);
 	Shadow shadow = new Shadow(this);
 	private float tAngle;
+	
 
 	public Word(String _text, String _ownerId) {
 		this.text = _text;
@@ -176,6 +177,7 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (margin * 0.5), 0, text));
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, (int) (- margin * 0.5), 0, text));
 		active=true;
+		state=Word.State.placed;
 		firebase.child(wordId+"/attributes/active").setValue(true);
 
 		pxPos=xPos;
@@ -208,7 +210,8 @@ public class Word implements Health ,RenderOrder{
 
 	public void released(){
 		DrawPanel.overParticles.add( new FrameParticle(xPos, yPos, this));
-	
+	//	DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));	
+
 
 	}
 
@@ -229,14 +232,18 @@ public class Word implements Health ,RenderOrder{
 		}
 
 		//angle++;
-		DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
-		DrawPanel.g2.setColor(Color.white);
-		DrawPanel.g2.setFont(Constants.lightFont);
-		DrawPanel.g2.drawString(text,(int)(0 -width*0.5),(int) (0 + height* 0.25) );
-
+		if(state!=Word.State.onTray){
+			DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
+		}
+			DrawPanel.g2.setColor(Color.white);
+			DrawPanel.g2.setFont(Constants.lightFont);
+			DrawPanel.g2.drawString(text,(int)(0 -width*0.5),(int) (0 + height* 0.25) );
+		
+		
 		switch(state.ordinal()){
 		case 0 ://onTray
-			break;
+		
+		break;
 		case 1 : // draging
 			DrawPanel.g2.setStroke(Constants.wordOutline);
 			DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
@@ -270,13 +277,15 @@ public class Word implements Health ,RenderOrder{
 
 
 	public void collisionVSWord (Word w){
-		if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)&&(xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)&&(yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)&&(yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
-			w.txVel=(w.xPos-xPos)*FORCEFACTOR;
-			w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
-			txVel=(xPos-w.xPos)*FORCEFACTOR;
-			tyVel=(yPos-w.yPos)*FORCEFACTOR;
-			colliding=true;
-			DrawPanel.collisionSent=false;
+		if(state!=State.onTray && this.state!=State.draging){
+			if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)&&(xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)&&(yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)&&(yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
+				w.txVel=(w.xPos-xPos)*FORCEFACTOR;
+				w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
+				txVel=(xPos-w.xPos)*FORCEFACTOR;
+				tyVel=(yPos-w.yPos)*FORCEFACTOR;
+				colliding=true;
+				DrawPanel.collisionSent=false;
+			}
 		}
 	}
 
@@ -398,7 +407,7 @@ public class Word implements Health ,RenderOrder{
 
 	public void dead() {
 		//DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, 0, text));
-		DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));	
+		//DrawPanel.overParticles.add(new RippleParticle((int)xPos, (int)yPos,30));	
 		Constants.noCollision=true;
 		//Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
 		yPos = Constants.screenHeight;
@@ -422,7 +431,7 @@ public class Word implements Health ,RenderOrder{
 	{
 		ArrayList<Word> linkedWords = new ArrayList<Word>();
 		private String type,wordId,ownerId,text;
-		private boolean active = true, occupied, plural;
+		private boolean active, occupied, plural;
 		private String bending[];
 		private User owner;
 		private Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;

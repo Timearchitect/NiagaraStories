@@ -36,7 +36,7 @@ public class ScanParticle extends Particle {
 		if(!Constants.simple){
 
 		g2.setStroke(new BasicStroke((int)(vy*0.5)));
-		g2.setColor(new Color(255,255,255,50));
+		g2.setColor(new Color(255,255,255,30));
 		g2.drawLine((int)0,(int)( y-vy*0.5), (int)(Constants.screenWidth), (int)(y-vy*0.5));
 		g2.setColor(new Color(255,255,255,20));
 		g2.drawLine((int)0,(int) y, (int)(Constants.screenWidth), (int)(y));

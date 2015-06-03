@@ -18,7 +18,7 @@ public class WaterParticle extends Particle {
 		super((int)x2,(int)y2);
 		x=x2;
 		y=y2;
-		vy=5;
+		vy=17;
 		ay=0.4f;
 	}
 	
@@ -29,17 +29,17 @@ public class WaterParticle extends Particle {
 		vx*=0.93;
 		vx+=ax;
 		vy+=ay;
-		if (y > Constants.screenHeight)kill();
+		if (y > Constants.screenHeight+200)kill();
 	}
 
 	public void display(Graphics2D g2) {
 		g2.setColor(waterColor);
 		g2.setStroke(Constants.waterStroke);
-		g2.drawLine((int)x,(int) y, (int)(x-vx*2), (int)(y-vy*2));
+		g2.drawLine((int)x,(int) y, (int)(x-vx*2), (int)(y-vy*6));
 		
 		if(!Constants.simple){DrawPanel.g2.setColor(Constants.waterEffect);
 		DrawPanel.g2.setStroke(Constants.wordEffectLine);
-		DrawPanel.g2.drawLine((int)x-2,(int) y, (int)(x-vx-2), (int)(y-vy*2));
+		DrawPanel.g2.drawLine((int)x-2,(int) y, (int)(x-vx-2), (int)(y-vy*10));
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class WaterParticle extends Particle {
 	}
 	
 	public void kill(){
-		if((int)r.nextInt(12)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,(int)y,(int)vy*7)); //splash
+		if((int)r.nextInt(12)==0)DrawPanel.overParticles.add(new SplashParticle((int)x,Constants.screenHeight,(int)vy*7)); //splash
 		dead=true;
 	}
 }
