@@ -403,7 +403,7 @@ public class Word implements Health ,RenderOrder{
 		//Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
 		yPos = Constants.screenHeight;
 		//System.out.println(yPos);
-deathAnimation();
+		deathAnimation();
 		//active=false;
 		//firebase.child(wordId+"/attributes/active").setValue(false);
 		//Firebase fireBaseWords = DrawPanel.myFirebaseRef.child("Regular Words");

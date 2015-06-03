@@ -142,29 +142,30 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			}
 		}
 		if (e.getID() == KeyEvent.KEY_TYPED) {
-
-			if(e.getKeyChar()=='f' || e.getKeyChar()=='F'){     		 
+			char key=(String.valueOf(e.getKeyChar()).toLowerCase()).charAt(0);
+			
+			if(key=='f' ){     		 
 				setFullscreen(!inFullScreenMode);	
 			}
-			if(e.getKeyChar()=='c' || e.getKeyChar()=='C'){     		 
+			if(key=='c' ){     		 
 				Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
 			}
-			if(e.getKeyChar()=='t' || e.getKeyChar()=='T'){     		 
+			if(key=='t' ){     		 
 				Constants.noTimer=(Constants.noTimer==true)?(Constants.noTimer=false) :(Constants.noTimer=true);
 			}
-			if(e.getKeyChar()=='u' || e.getKeyChar()=='U'){     		 
+			if(key=='u'){     		 
 				Constants.noUser=(Constants.noUser==true)?(Constants.noUser=false) :(Constants.noUser=true);
 			}
-			if(e.getKeyChar()=='s' || e.getKeyChar()=='S'){     		 
+			if(key=='s' ){     		 
 				Constants.simple=(Constants.simple==true)?(Constants.simple=false) :(Constants.simple=true);
 			}
-			if(e.getKeyChar()=='#' ){     		 
+			if(key=='#' ){     		 
 				Constants.debug=(Constants.debug==true)?(Constants.debug=false) :(Constants.debug=true);
 			}
-			if(e.getKeyChar()=='d' ||e.getKeyChar()=='D' ){     		 
+			if(key=='d' ){     		 
 				DrawPanel.projectiles.clear();		
 			}
-			if(e.getKeyChar()=='w' ||e.getKeyChar()=='W' ){    
+			if(key=='w' ){    
 				//CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
 				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)Mouse.mouseX,(int)Mouse.mouseY);
 
@@ -172,10 +173,10 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 				//panel.setRequestFocusEnabled(true);
 
 			}
-			if(e.getKeyChar() == ' '){
+			if(key == ' '){
 				clearScreen();
 			}
-			if(e.getKeyChar() == 'p' || e.getKeyChar() == 'P'){
+			if(key == 'p'){
 				DrawPanel.projectiles.add(new PingBall((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 			}
 
