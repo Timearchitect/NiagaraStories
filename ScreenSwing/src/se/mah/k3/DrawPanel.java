@@ -301,13 +301,13 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.5f));
 		g2.drawImage(bimage, 0, 0, Constants.screenWidth,Constants.screenHeight, this);
-		// g2.drawImage(app, Constants.screenWidth - 450, Constants.screenHeight- 200, this);
+	  g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight- 150, this);
 		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 
-		/*for (int i = 0; i < 7; i++) { // spawn particles
+		for (int i = 0; i < 7; i++) { // spawn particles
 			particles.add(new WaterParticle((int) r
 					.nextInt(Constants.screenWidth), 0));
-		}*/
+		}
 		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all particlesCap
 			particles.remove(0);
 		}
