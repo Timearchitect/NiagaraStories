@@ -165,7 +165,9 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 				DrawPanel.projectiles.clear();		
 			}
 			if(e.getKeyChar()=='w' ||e.getKeyChar()=='W' ){    
-				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
+				//CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
+				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)Mouse.mouseX,(int)Mouse.mouseY);
+
 				//panel.setFocusable(true);
 				//panel.setRequestFocusEnabled(true);
 
@@ -192,7 +194,6 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	if(Constants.simple){
 		for(Word w:DrawPanel.words){
 			w.active=false;	
-
 		}
 	}
 		DrawPanel.clearScreen();

@@ -2,6 +2,7 @@ package se.mah.k3;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,6 +10,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -47,7 +49,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	static Firebase regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Regular Words");
  	static Firebase themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Themed Words");
 	static Firebase firebaseUsedWord=myFirebaseRef.child("/Used Words/");
-
+	static Mouse mouse= new Mouse();
 	//static Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	public static ArrayList<User> userList = new ArrayList<User>();
 	private Random r = new Random(); // randomize numbers
@@ -56,13 +58,14 @@ public class DrawPanel extends JPanel implements Runnable {
 	public static int myFrame;
 	public String changedWord = "word";
 	public static FontMetrics metrics;
-	private float offsetX, offsetY ; // mouse
-	static float mouseY,mouseX;
-	private static float pMouseX, pMouseY;
-	// variable
+	//static float offsetX ; // mouse
+	//static float offsetY;
+	//static float mouseY,mouseX;
+	//private static float pMouseX, pMouseY;
+	//boolean hold;
+	//static Word selectedWord;
 	static boolean collisionSent;
-	boolean hold;
-	Word selectedWord;
+
 	User user;
 	public static ArrayList<Particle> particles = new ArrayList<Particle>(),overParticles = new ArrayList<Particle>();
 	public static ArrayList<Projectile> projectiles = new ArrayList<Projectile>();
@@ -83,6 +86,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				alpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE);
 	}
 
+
 	public void setup() {
 		Constants.screenWidth = (int) getSize().width;
 		Constants.screenHeight = (int) getSize().height;
@@ -90,7 +94,8 @@ public class DrawPanel extends JPanel implements Runnable {
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 		//createStarterWords();
 		onesRun = false;
-		
+		wordListener();
+
 	}
 
 
@@ -151,7 +156,9 @@ public class DrawPanel extends JPanel implements Runnable {
 			System.out.println("no");
 		}
 
-		this.addMouseListener(new MouseAdapter() {
+		 this.addMouseListener(mouse);
+		this.addMouseMotionListener(mouse);
+	/*	this.addMouseListener(new MouseAdapter() {
 
 			public void mousePressed(MouseEvent e) {
 				mouseX = e.getX();
@@ -171,12 +178,12 @@ public class DrawPanel extends JPanel implements Runnable {
 								selectedWord.state = Word.State.draging;
 								offsetX = word.xPos - mouseX;
 								offsetY = word.yPos - mouseY;
-								/*myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+ "/occupied").setValue(true);
+								myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+ "/occupied").setValue(true);
 								myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+ "/active").setValue(true);
 								myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+ "/xRel").setValue(((float) selectedWord.xPos / Constants.screenWidth));
 								myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+ "/yRel").setValue(((float) selectedWord.yPos / Constants.screenHeight));
 								myFirebaseRef.child("Regular Words").child(selectedWord.getWordId()+ "/state").setValue("draging");
-								 */
+								 
 								myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/text").setValue(selectedWord.text);
 								try {
 									myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/owner").setValue(selectedWord.owner.getId());
@@ -246,12 +253,12 @@ public class DrawPanel extends JPanel implements Runnable {
 						// (selectedWord.getXPos() + 3, selectedWord.getYPos() -
 						// 4, 200, 100, Integer.valueOf(wordLength)));
 						selectedWord.state = Word.State.placed;
-						/*	myFirebaseRef.child("Regular Words").child(selectedWord.getWordId() + "/occupied").setValue(false); // false in regular temp
+							myFirebaseRef.child("Regular Words").child(selectedWord.getWordId() + "/occupied").setValue(false); // false in regular temp
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId() + "/active").setValue(true);
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId() + "/xRel").setValue(((float) selectedWord.xPos / Constants.screenWidth));
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId() + "/yRel").setValue(((float) selectedWord.yPos / Constants.screenHeight));
 						myFirebaseRef.child("Regular Words").child(selectedWord.getWordId() + "/state").setValue("placed");
-						 */
+						 
 						myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/occupied").setValue(false);
 						myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/active").setValue(true);
 						myFirebaseRef.child("Used Words").child(selectedWord.getWordId()+ "/attributes/xRel").setValue(((float) selectedWord.xPos / Constants.screenWidth));
@@ -304,12 +311,9 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 			}
 		});
-
-		//myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
-		//regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/regularWords");
-		//themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/themedWords");
-		//myFirebaseRef.removeValue(); // Cleans out everything
-
+   */
+		
+		
 		// createRegularWords();
 		// createThemeWords();
 		// createUsedWords() ;
@@ -317,13 +321,13 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		// Run method that listens for change in word list (active words for
 		// example).
-		wordListener();
 
 		// use method getText from the word class to set text to "word1" in the
 		// firebase db.
 		myFirebaseRef.child("ScreenNbr").setValue(Constants.screenNbr);
-		myFirebaseRef.child("ScreenWidth").setValue(1000);
-		myFirebaseRef.child("ScreenHeight").setValue(800); 
+		myFirebaseRef.child("ScreenWidth").setValue(Constants.screenWidth);
+		myFirebaseRef.child("ScreenHeight").setValue(Constants.screenHeight); 
+		
 		myFirebaseRef.addChildEventListener(new ChildEventListener() {
 
 			@Override
@@ -389,20 +393,12 @@ public class DrawPanel extends JPanel implements Runnable {
 								// ul.yTar = u.yPos;
 								ul.setId(dataSnapshot.getKey());
 								try {
-									ul.xTar = Float.parseFloat(dataSnapshot
-											.child("xRel").getValue()
-											.toString())
-											* Constants.screenWidth;
-									ul.yTar = Float.parseFloat(dataSnapshot
-											.child("yRel").getValue()
-											.toString())
-											* Constants.screenHeight;
+									ul.xTar = Float.parseFloat(dataSnapshot.child("xRel").getValue().toString())* Constants.screenWidth;
+									ul.yTar = Float.parseFloat(dataSnapshot.child("yRel").getValue().toString())* Constants.screenHeight;
 								} catch (Exception e) {
 								}
 								try {
-									ul.moves = Integer.parseInt(dataSnapshot
-											.child("moves").getValue()
-											.toString());
+									ul.moves = Integer.parseInt(dataSnapshot.child("moves").getValue().toString());
 								} catch (Exception e) {
 								}
 
@@ -523,8 +519,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					word.colliding = false;
 					word.BoundCollision();
 					for (Word word2 : words) { // word collision
-						if (word != word2 && word2.active
-								&& word2.state != Word.State.draging) {
+						if (word != word2 && word2.active && word2.state != Word.State.draging) {
 							word.collisionVSWord(word2);
 						}
 					}
@@ -636,14 +631,6 @@ public class DrawPanel extends JPanel implements Runnable {
 					
 				}
 				System.out.println("all occupied is false");
-			/*	DataSnapshotebase(){
-				myFirebaseRef. DsU = snapshot.child("Used Words");
-				int avalibleIndex=0;
-					for(DataSnapshot DSC:snapshot.getChildren()){
-						System.out.println(DSC.child("attributes").child("text"));
-					}
-				
-			 	*/
 
 			}
 			@Override
@@ -1069,6 +1056,7 @@ public class DrawPanel extends JPanel implements Runnable {
 					}
 				}
 				if(!match){ // create word
+					try{
 					words.add(new Word(snapshot,snapshot.child("/attributes/text").getValue().toString(), snapshot.child("/attributes/owner").getValue().toString(),
 							(int)(Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth)),
 							(int)(Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight)),
@@ -1076,6 +1064,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							(int)(Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight))));
 					words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
 					words.get(words.size()-1).height = metrics.getHeight();
+					}catch(NullPointerException e){}
 				}
 				//	System.out.println(" x:"+(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth));
 
@@ -1114,6 +1103,7 @@ public class DrawPanel extends JPanel implements Runnable {
 								//words.get(index).respond();
 								if(matchingWord.state!=Word.State.onTray){
 									matchingWord.setState(Word.State.draging);
+									matchingWord.toTop(matchingWord);
 									u.xTar=matchingWord.txPos;
 									u.yTar=matchingWord.tyPos;
 									u.xPos=(int)matchingWord.txPos;
@@ -1171,7 +1161,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	}
 
 	public void displayDebugText() {
-		g2.setColor(Color.BLACK); // svart system color
+		g2.setColor(Color.white); // vit system color
 		g2.setFont(Constants.boldFont); // init typsnitt
 		if (Constants.debug) {g2.drawString("ID: " + Constants.screenNbr + " part:" + particles.size()+ " Overpart:" + overParticles.size() + "  words: "
 				+ words.size() + "  Users:" + userList.size()

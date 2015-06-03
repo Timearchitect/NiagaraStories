@@ -539,15 +539,26 @@ deathAnimation();
 
 	@Override
 	public void toBottom(Object o) {
-		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
-		DrawPanel.words.add(0, this);
+		int amountOfUnderlaying=0;
+		for(Word w: DrawPanel.words){
+			amountOfUnderlaying++;
+		}
+		if(DrawPanel.words.indexOf((Word)o) > amountOfUnderlaying){
+			DrawPanel.words.remove(DrawPanel.words.indexOf(this));
+			DrawPanel.words.add(0, this);
+		}
 	}
 
 	@Override
 	public void toTop(Object o) {
-
+		int amountOfoverlaying=0;
+		for(Word w: DrawPanel.words){
+			if(w.state==state.draging)amountOfoverlaying++;
+		}
+		if(DrawPanel.words.indexOf((Word)o) < DrawPanel.words.size()-amountOfoverlaying){
 		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
 		DrawPanel.words.add(DrawPanel.words.size(), this);
+		}
 	}
 
 	@Override

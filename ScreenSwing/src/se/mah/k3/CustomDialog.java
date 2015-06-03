@@ -45,7 +45,9 @@ public class CustomDialog extends JDialog implements ActionListener {
     yesButton = new JButton("Create");
     yesButton.addActionListener(new ActionListener() {
     	public void actionPerformed(ActionEvent arg0) {
-			DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY).angle("random")));	
+			//DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY).angle("random")));	
+			DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)Mouse.mouseX,(int)Mouse.mouseY).angle("random")));	
+
     		dispose();
     	}
     });
