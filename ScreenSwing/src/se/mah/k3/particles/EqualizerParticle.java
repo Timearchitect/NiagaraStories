@@ -18,13 +18,13 @@ public class EqualizerParticle extends Particle {
 		super(_x,_y);
 		x=_x;
 		y=_y;
-		increment=f*10;
+		increment=f*15;
 	}
 
 	public void update(){
 		r+=increment;
 		circleStroke = new BasicStroke(increment);
-		increment*=0.85;
+		increment*=0.80;
 		opacity*=0.9;
 		
 		if(increment<10)kill();
@@ -49,7 +49,6 @@ public class EqualizerParticle extends Particle {
 			//p.vy=-5;
 			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
-			p.particleColor = (new Color(100,100,255,(int)opacity));
 		}
 		
 		if(dist<r*0.3){

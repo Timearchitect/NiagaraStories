@@ -147,6 +147,9 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			if(key=='f' ){     		 
 				setFullscreen(!inFullScreenMode);	
 			}
+			if(key=='n' ){     		 
+				Constants.spawnParticle=(Constants.spawnParticle==true)?(Constants.spawnParticle=false) :(Constants.spawnParticle=true);
+			}
 			if(key=='c' ){     		 
 				Constants.noCollision=(Constants.noCollision==true)?(Constants.noCollision=false) :(Constants.noCollision=true);
 			}

@@ -9,7 +9,7 @@ import java.util.Calendar;
  public class Constants {
 	public static String theme="";
 	public static Calendar cal= Calendar.getInstance();
-	public static boolean debug, noCollision,noTimer,noUser,simple;
+	public static boolean debug, noCollision,noTimer,noUser,simple,spawnParticle;
 	public static int spaceOnScreen=500, screenNbr=145,screenWidth = 1920, screenHeight = 1080;
     public static final int PARTICLE_LIMIT=3000,HEAVY_PARTICLE_LIMIT=400,PROJECTILE_LIMIT=100;
     public static final int clearInterval = 10*60; // time for next clearWave
@@ -25,6 +25,7 @@ import java.util.Calendar;
 	public static Font font,lightFont,boldFont ;
 	public static final int WaterStrokeWidth = 10;
 	protected static final int StartWordAmount = 5;
+
 	public static BasicStroke waterStroke = new BasicStroke(WaterStrokeWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER);
 	public static BasicStroke squareStroke = new BasicStroke(20, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);
 	public static BasicStroke userStroke = new BasicStroke(15, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_ROUND);

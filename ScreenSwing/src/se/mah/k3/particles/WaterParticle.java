@@ -55,6 +55,7 @@ public class WaterParticle extends Particle {
 		
 	}
 	public void collisionRect(int _x,int _y, int _w,int _h){
+		
 		if(_x+_w*0.5 > x &&  _x-_w*0.5 < x && _y+_h*0.5 > y &&  _y-_h*0.5 < y){
 				vy*=-0.5;
 				vx=r.nextInt(10)-5;

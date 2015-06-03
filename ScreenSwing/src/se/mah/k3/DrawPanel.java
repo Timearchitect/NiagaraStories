@@ -304,9 +304,10 @@ public class DrawPanel extends JPanel implements Runnable {
 	  g2.drawImage(app, Constants.screenWidth - 400, Constants.screenHeight- 150, this);
 		//g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1));
 
-		for (int i = 0; i < 7; i++) { // spawn particles
-			particles.add(new WaterParticle((int) r
-					.nextInt(Constants.screenWidth), 0));
+		if(Constants.spawnParticle){	
+			for (int i = 0; i < 7; i++) { // spawn particles
+			particles.add(new WaterParticle((int) r.nextInt(Constants.screenWidth), 0));
+			}
 		}
 		while (particles.size() > Constants.PARTICLE_LIMIT) { // run all particlesCap
 			particles.remove(0);
@@ -323,7 +324,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			particles.get(i).display(g2);
 
 			for (Word word : words) { // collision
-				if (word.active) {
+				if (word.active && word.state!=Word.State.draging) {
 					// particles.get(i).collisionCircle(word.xPos, word.yPos,
 					// word.margin);
 					// particles.get(i).collisionCircle(word.xPos, word.yPos,
