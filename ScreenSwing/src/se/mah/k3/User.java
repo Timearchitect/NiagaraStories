@@ -3,16 +3,20 @@ package se.mah.k3;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 
 import se.mah.k3.particles.RippleParticle;
 
 public class User implements Comparable<User>{
+	final private int  offlineTime = 30000,DeathTimer=60000;
+	private  long spawnTime ,DeathTime;
     public enum State {offline,online, holding,taping,droping,idle};
     public State state=State.online;
 	final int DEFAULT_SIZE=100 ;
 	private String id;
-	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Users/"); // Root;
+	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Users"); // Root;
+	DataSnapshot dataSnapshot;
 	int xPos, pyPos;
 	int yPos, pxPos;
 	float xTar;
@@ -31,6 +35,8 @@ public class User implements Comparable<User>{
 		this.yRel = _yRel;
 		this.xTar = _xRel*Constants.screenWidth;
 		this.yTar= _yRel*Constants.screenHeight;
+		state=User.State.online;
+		spawnTime=System.currentTimeMillis(); // set millis time
 		//this.xPos = _xRel*Constants.screenWidth;
 		//this.yPos = _yRel*Constants.screenHeight;
 	}
@@ -91,7 +97,7 @@ public class User implements Comparable<User>{
 		this.color = _color;
 	}
 	public void display(){
-		if (!Constants.noUser){
+		if (!Constants.noUser && state!=User.State.offline){
 			DrawPanel.g2.setColor(color);
 			DrawPanel.g2.setStroke(Constants.userStroke);
 			for(int i=0; i<moves;i++){
@@ -101,9 +107,15 @@ public class User implements Comparable<User>{
 			DrawPanel.g2.setColor(Color.BLACK);
 			DrawPanel.g2.setFont(Constants.boldFont);
 	
-			if(Constants.debug)DrawPanel.g2.drawLine((int)(xPos ), (int)(yPos ),(int)(xPos -Math.cos(Math.toRadians(angle))*50), (int)(yPos-Math.sin(Math.toRadians(angle))*50));
-			if(state!=User.State.offline)DrawPanel.g2.drawString(id, (int)(xPos + size*0.7), (int)(yPos + size*0.7));
+			if(  state!=User.State.idle)DrawPanel.g2.drawString(id, (int)(xPos + size*0.7), (int)(yPos + size*0.7));
 		}
+		if(Constants.debug){
+			DrawPanel.g2.setColor(Color.BLACK);
+			DrawPanel.g2.setFont(Constants.boldFont);
+			DrawPanel.g2.drawString(state.toString(), (int)(xPos + size*0.7), (int)(yPos - size*0.7));
+			DrawPanel.g2.drawLine((int)(xPos), (int)(yPos ),(int)(xPos -Math.cos(Math.toRadians(angle))*50), (int)(yPos-Math.sin(Math.toRadians(angle))*50));
+		}
+
 		
 	}
 	public void update(){
@@ -123,7 +135,7 @@ public class User implements Comparable<User>{
 		
 		switch(state.ordinal()){
 			case 0: // offline
-				animSize=-50;
+				animSize=-100;
 			break;
 			case 1: // online
 				animSize+=((0-animSize)*0.5);
@@ -135,17 +147,41 @@ public class User implements Comparable<User>{
 				 if(xTdiff<100 && yTdiff<100)taping();
 				// System.out.println("taping");
 			break;
+			case 4: // droping 
+				
+			break;
+			case 5:  // idle
+				animSize=-50;
+
+			break;
+
 		}
+		
+		if( System.currentTimeMillis()-spawnTime > offlineTime){state=state.idle;} // set offline after i minute
+		if( System.currentTimeMillis()-DeathTimer > DeathTime){state=state.offline;} // set offline after i minute
+
 	}
 	public void taping(){
 		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos,20));
 		state=User.State.online;
-			
+		resetTimer();
 	}
 
 	public void release() {
 		DrawPanel.overParticles.add( new RippleParticle(xPos,yPos));
 		animSize=200;
 		state=User.State.online;
+		resetTimer();
+	}
+	
+	private void resetTimer(){
+		spawnTime=System.currentTimeMillis(); 
+		DeathTime=System.currentTimeMillis(); 
+	}
+
+	public void removeFromFirebase() {
+		firebase.child(this.id).removeValue();
+		//firebase.removeValue();
+
 	}
 }
