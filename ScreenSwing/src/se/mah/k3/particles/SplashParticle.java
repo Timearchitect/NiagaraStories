@@ -12,7 +12,8 @@ public class SplashParticle extends Particle {
 	Random r = new Random();
 	private float angle,opacity=0.7f;
 	private int size=100;
-	private AffineTransform tx = new AffineTransform(),oldTransform;
+	//private AffineTransform tx = new AffineTransform()
+	private AffineTransform 	oldTransform;
 	public SplashParticle(int _x, int _y,int _size) {
 		super(_x,_y);
 		 //img = Toolkit.getDefaultToolkit().getImage("images/mist.png");

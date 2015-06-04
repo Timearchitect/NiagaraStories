@@ -3,13 +3,10 @@ package se.mah.k3.particles;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.Random;
 
 import se.mah.k3.Constants;
-import se.mah.k3.DrawPanel;
 
 public class ScanParticle extends Particle {
-	private Random r =  new Random();
 	boolean deathTime = false;
 	int timeToDeath = 20;
   Color waterColor = particleColor;

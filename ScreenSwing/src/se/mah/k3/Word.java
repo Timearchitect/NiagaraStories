@@ -6,12 +6,11 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Random;
 
+import se.mah.k3.particles.FrameParticle;
+import se.mah.k3.particles.TextParticle;
+
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
-
-import se.mah.k3.particles.FrameParticle;
-import se.mah.k3.particles.RippleParticle;
-import se.mah.k3.particles.TextParticle;
 
 //This is the class for the word object. It contains the words that
 //the user will have displayed in their mobile app. 
@@ -369,12 +368,12 @@ public class Word implements Health ,RenderOrder{
 	}
 
 	public void displayLinked(){
-		float xDiff,yDiff,dist,angle;
+		float xDiff,yDiff,dist;//angle;
 
 		for(Word w : DrawPanel.words){
 			xDiff= w.xPos-xPos;
 			yDiff= w.yPos-yPos;
-			angle=(float) Math.atan2(xDiff, yDiff);
+			//angle=(float) Math.atan2(xDiff, yDiff);
 			dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
 
 			if(dist<500){
@@ -549,9 +548,9 @@ public class Word implements Health ,RenderOrder{
 	@Override
 	public void toBottom(Object o) {
 		int amountOfUnderlaying=0;
-		for(Word w: DrawPanel.words){
-			amountOfUnderlaying++;
-		}
+		//for(Word w: DrawPanel.words){
+		//	amountOfUnderlaying++;
+		//}
 		if(DrawPanel.words.indexOf((Word)o) > amountOfUnderlaying){
 			DrawPanel.words.remove(DrawPanel.words.indexOf(this));
 			DrawPanel.words.add(0, this);
@@ -562,7 +561,7 @@ public class Word implements Health ,RenderOrder{
 	public void toTop(Object o) {
 		int amountOfoverlaying=0;
 		for(Word w: DrawPanel.words){
-			if(w.state==state.draging)amountOfoverlaying++;
+			if(w.state==State.draging)amountOfoverlaying++;
 		}
 		if(DrawPanel.words.indexOf((Word)o) < DrawPanel.words.size()-amountOfoverlaying){
 		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
@@ -572,7 +571,6 @@ public class Word implements Health ,RenderOrder{
 
 	@Override
 	public void toIndex(int i) {
-		// TODO Auto-generated method stub
 
 	}
 }

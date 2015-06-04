@@ -1,8 +1,6 @@
 package se.mah.k3;
 
 import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
 public class WordSkin{
 	private float opacity = 1;

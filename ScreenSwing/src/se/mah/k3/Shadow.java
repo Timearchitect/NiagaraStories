@@ -1,7 +1,6 @@
 package se.mah.k3;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 public class Shadow extends WordSkin {
 	Word owner;

@@ -8,30 +8,18 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
-import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import se.mah.k3.Word.WordBuilder;
 import se.mah.k3.Projectiles.PingBall;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.Calendar;
-
-public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListener {
-
+public class FullScreen extends JFrame implements KeyEventDispatcher {
 
 	public static DrawPanel panel;
 	private static final long serialVersionUID = 1L;
@@ -42,15 +30,15 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 	/**
 	 * Launch the application.
 	 */
-	static {
+	//static {
 	//	System.setProperty("sun.java2d.transaccel", "True");
 	//	 System.setProperty("sun.java2d.trace", "timestamp,log,count");
-	//	System.setProperty("sun.java2d.opengl", "True"); // GPU ACCEL
+	//	System.setProperty("sun.java2d.opengl", "True"); // GOPU ACCEL
 	//	System.setProperty("sun.java2d.d3d", "True");
 	//	System.setProperty("sun.java2d.ddforcevram", "True");
 	//	System.setProperty("sun.java2d.ddoffscreen","true");
 	//	System.setProperty("sun.java2d.accthreshold","0");
-	}
+	//}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -94,18 +82,18 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 		//DrawPanel panel = new DrawPanel();
 		panel = new DrawPanel();
 		panel.setFocusable(true);
-	
+		panel.requestFocus();
 		contentPane.add(panel, BorderLayout.CENTER);
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager(); //Listen to keyboard
 		manager.addKeyEventDispatcher(this);
-		setFullscreen(true);
+	
 		//   DrawPanel canvas = new DrawPanel();
 		Thread t = new Thread(panel);
 		t.start();
-
+		setFullscreen(true);
 	}
 	static void gameLoop() {
-		// panel.run();
+		
 	}
 
 	public void setFullscreen(boolean fullscreen) {
@@ -124,7 +112,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			this.inFullScreenMode = true;
 		}
 		else{
-			setVisible(true);
+		//	setVisible(true);
 			setBounds(PrevX, PrevY, PrevWidth, PrevHeight);
 			dispose();
 			setUndecorated(false);
@@ -171,7 +159,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 			}
 			if(key=='w' ){    
 				//CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)DrawPanel.mouseX,(int)DrawPanel.mouseY);
-				CustomDialog input = new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)Mouse.mouseX,(int)Mouse.mouseY);
+			 new CustomDialog(this, inFullScreenMode, "Write the text of the word.",(int)Mouse.mouseX,(int)Mouse.mouseY);
 
 				//panel.setFocusable(true);
 				//panel.setRequestFocusEnabled(true);
@@ -189,11 +177,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher,ActionListe
 
 
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		System.out.println(" action");
-		
-	}
+
 
 	public void clearScreen(){ 
 	if(Constants.simple){

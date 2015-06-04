@@ -1,7 +1,6 @@
 package se.mah.k3;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -166,8 +165,8 @@ public class User implements Comparable<User>{
 
 		}
 		
-		if( System.currentTimeMillis()-spawnTime > offlineTime){state=state.idle;} // set offline after i minute
-		if( System.currentTimeMillis()-DeathTimer > DeathTime){state=state.offline;} // set offline after i minute
+		if( System.currentTimeMillis()-spawnTime > offlineTime){state=State.idle;} // set offline after i minute
+		if( System.currentTimeMillis()-DeathTimer > DeathTime){state=State.offline;} // set offline after i minute
 
 	}
 	public void taping(){

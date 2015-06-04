@@ -3,7 +3,6 @@ package se.mah.k3;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Stroke;
 import java.util.Calendar;
 
  public class Constants {

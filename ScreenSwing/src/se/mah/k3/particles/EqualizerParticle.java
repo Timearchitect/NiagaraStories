@@ -4,7 +4,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import se.mah.k3.Constants;
 import se.mah.k3.Word;
 
 public class EqualizerParticle extends Particle {
@@ -37,11 +36,11 @@ public class EqualizerParticle extends Particle {
 	}
 
 	public void collisionVSParticle(Particle p){
-		float xDiff,yDiff,dist,angle;
+		float xDiff,yDiff,dist;//angle;
 
 		xDiff= p.x-x;
 		yDiff= p.y-y;
-		angle=(float) Math.atan2(xDiff, yDiff);
+		//angle=(float) Math.atan2(xDiff, yDiff);
 		dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
 
 		if(dist<r*0.5){

@@ -2,35 +2,25 @@ package se.mah.k3;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.Transparency;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.ConcurrentModificationException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import se.mah.k3.Word.WordBuilder;
 import se.mah.k3.Projectiles.Projectile;
 import se.mah.k3.particles.EqualizerParticle;
 import se.mah.k3.particles.Particle;
-import se.mah.k3.particles.RippleParticle;
-import se.mah.k3.particles.ScanParticle;
 import se.mah.k3.particles.WaterParticle;
 
 import com.firebase.client.ChildEventListener;
@@ -38,7 +28,6 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.firebase.client.snapshot.IndexedNode;
 
 public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
@@ -73,7 +62,7 @@ public class DrawPanel extends JPanel implements Runnable {
 	protected static DataSnapshot choosen; // choosen word in respawn
 
 	boolean onesRun = true;
-
+/*
 	private GraphicsConfiguration config = GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getDefaultScreenDevice()
 			.getDefaultConfiguration();
@@ -84,7 +73,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		return config.createCompatibleImage(width, height,
 				alpha ? Transparency.TRANSLUCENT : Transparency.OPAQUE);
 	}
-
+*/
 
 	public void setup() {
 		Constants.screenWidth = (int) getSize().width;
@@ -99,7 +88,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 	}
 
-
+/*
 	// image creation
 	VolatileImage vImg = createVolatileImage(Constants.screenWidth,Constants.screenHeight);
 
@@ -139,7 +128,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			g2.drawImage(vImg, 0, 0, this);
 		} while (vImg.contentsLost());
 
-	}
+	}*/
 
 	public DrawPanel() {
 
@@ -360,7 +349,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			p.update();
 			p.display(g2);
 		}
-
+try{
 		for (Word word : words) { // run all words
 			if (word.active) {
 				word.update();
@@ -376,6 +365,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				}
 			}
 		}
+}catch(ConcurrentModificationException ce){}
 
 		for (int i = overParticles.size() - 1; 0 < i; i--) { // run all
 			overParticles.get(i).update();
@@ -407,7 +397,7 @@ public class DrawPanel extends JPanel implements Runnable {
 
 			repaint();
 			try {
-				Thread.sleep(0);
+				Thread.sleep(20);
 			} catch (InterruptedException iex) {
 				// System.out.println("Exception in thread: " +
 				// iex.getMessage());
@@ -422,8 +412,7 @@ public class DrawPanel extends JPanel implements Runnable {
 				checkCrowdedScreen();
 				if (!Constants.noTimer) {
 					Constants.cal = Calendar.getInstance();
-					Constants.timeLeft = (long) (Constants.clearInterval - ((Constants.cal
-							.getTimeInMillis() - Constants.startTime) * 0.001));
+					Constants.timeLeft = (long) (Constants.clearInterval - ((Constants.cal.getTimeInMillis() - Constants.startTime) * 0.001));
 					if (Constants.timeLeft < 0) { // reset timer
 						clearScreen();
 						Constants.startTime = Constants.cal.getTimeInMillis();
@@ -460,7 +449,7 @@ public class DrawPanel extends JPanel implements Runnable {
 			            }
 			            i++;
 			        }
-					System.out.println("chossen Text: "+choosen.child("text").getValue());
+					System.out.println("choosen Text: "+choosen.child("text").getValue());
 					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("active").setValue(true);
 					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("state").setValue("placed");
 					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("owner").setValue("[startWords]");
@@ -485,7 +474,6 @@ public class DrawPanel extends JPanel implements Runnable {
 			}
 			@Override
 			public void onCancelled(FirebaseError arg0) {
-				// TODO Auto-generated method stub
 				
 			}});
 		}
@@ -850,12 +838,13 @@ public class DrawPanel extends JPanel implements Runnable {
 				//boolean matched = false;
 				for(DataSnapshot DSS: childrens){
 					System.out.println(" DSS:" +DSS.getKey()); 
-
+					try{
 					words.add(new Word(DSS,DSS.child("/attributes/text").getValue().toString(), DSS.child("/attributes/owner").getValue().toString(),
 							(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
 							(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight)),
 							(int)(Math.round((double)(DSS.child("/attributes/xRel").getValue())*Constants.screenWidth)),
 							(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight))));
+					
 					try{
 					words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
 					} catch (NullPointerException npe){
@@ -883,7 +872,7 @@ public class DrawPanel extends JPanel implements Runnable {
 							break;
 						}
 					}catch(NullPointerException e){}
-
+					}catch(NullPointerException npe){}
 					System.out.println(" created some words:" +words.get(words.size()-1).getWordId()); 
 				}
 				System.out.println("arraylist of words is now:"+words.size());
@@ -1060,15 +1049,12 @@ public class DrawPanel extends JPanel implements Runnable {
 			if (w.active)
 				amount += w.text.length() + 2;
 		}
-		if (Constants.spaceOnScreen < amount)
-			clearScreen();
+		if (Constants.spaceOnScreen < amount)clearScreen();
 	}
 
 	public static void clearScreen() {
 		
-		overParticles.add(new EqualizerParticle(
-				(int) (Constants.screenWidth * 0.5),
-				(int) (Constants.screenHeight * 0.5), 50));
+		overParticles.add(new EqualizerParticle((int) (Constants.screenWidth * 0.5),(int) (Constants.screenHeight * 0.5), 50));
 		 words.clear();
 		for(int i =userList.size()-1 ;i>=0 ; i--){
 			if(userList.get(i).state==User.State.offline){

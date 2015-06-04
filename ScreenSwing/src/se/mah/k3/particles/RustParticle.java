@@ -1,20 +1,18 @@
 package se.mah.k3.particles;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 
 import se.mah.k3.DrawPanel;
 import se.mah.k3.Health;
 import se.mah.k3.Word;
 
 public class RustParticle extends Particle implements Health{
-	private float opacity, health;
+	private float opacity;// health;
 	private int width, height, xPos, yPos;
-	private AffineTransform tx = new AffineTransform(), oldTransform;
+	//private AffineTransform tx = new AffineTransform();
+	private AffineTransform oldTransform;
 	Word selectedWord;
 
 	public RustParticle(int _x, int _y, int _width, int _height, int _health) {
