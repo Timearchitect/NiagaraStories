@@ -46,7 +46,7 @@ public class FullScreen extends JFrame implements KeyEventDispatcher {
 					FullScreen frame = new FullScreen();
 					frame.setVisible(true);
 					gameLoop(); // start the game loop
-					frame.setIconImage(ImageIO.read(new File("assets/icon/icontiny.png")));
+					frame.setIconImage(ImageIO.read(this.getClass().getResource("/icon/icontiny.png")));
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -63,14 +63,17 @@ public class FullScreen extends JFrame implements KeyEventDispatcher {
 	public FullScreen() {
 		Constants.startTime= Constants.cal.getTimeInMillis();
 		try{
-			Constants.font = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Regular.ttf")).deriveFont(Constants.fontSize);
-			Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Light.ttf")).deriveFont(Constants.fontSize);
-			Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(Constants.fontSize);
-			Constants.boldFontScreen =Font.createFont(Font.TRUETYPE_FONT, new File("assets/fonts/Roboto-Bold.ttf")).deriveFont(32f);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (FontFormatException e) {
-			e.printStackTrace();
+			//Not logical but normal means....
+			Constants.font = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/fonts/Roboto-Regular.ttf")).deriveFont(Constants.fontSize);
+			Constants.lightFont = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/fonts/Roboto-Light.ttf")).deriveFont(Constants.fontSize);
+			Constants.boldFont = Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf")).deriveFont(Constants.fontSize);
+			Constants.boldFontScreen =Font.createFont(Font.TRUETYPE_FONT, this.getClass().getResourceAsStream("/fonts/Roboto-Bold.ttf")).deriveFont(32f);
+		} catch (Exception e) {
+			System.out.println("Oups didn't find the fonts....add default.....");
+			Constants.font = new Font(Font.SERIF,Font.ITALIC,18);
+			Constants.lightFont = new Font(Font.SERIF,Font.ITALIC,18);
+			Constants.boldFont = new Font(Font.SERIF,Font.ITALIC,18);
+			Constants.boldFontScreen = new Font(Font.SERIF,Font.ITALIC,18);
 		}
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

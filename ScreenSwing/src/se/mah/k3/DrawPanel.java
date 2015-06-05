@@ -138,12 +138,12 @@ public class DrawPanel extends JPanel implements Runnable {
 
 		// bimage = null;
 		try {
-			bimage = ImageIO.read(new File("images/background.bmp"));
-			mist = ImageIO.read(new File("images/mist.png"));
-			rust = ImageIO.read(new File("images/rust.png"));
-			moss = ImageIO.read(new File("images/moss.png"));
-			cracks = ImageIO.read(new File("images/cracks.png"));
-			app = ImageIO.read(new File("images/app.png"));
+			bimage = ImageIO.read(this.getClass().getResource("/background.bmp"));
+			mist = ImageIO.read(this.getClass().getResource("/mist.png"));
+			rust = ImageIO.read(this.getClass().getResource("/rust.png"));
+			moss = ImageIO.read(this.getClass().getResource("/moss.png"));
+			cracks = ImageIO.read(this.getClass().getResource("/cracks.png"));
+			app = ImageIO.read(this.getClass().getResource("/app.png"));
 		} catch (IOException e) {
 			System.out.println("no");
 		}
