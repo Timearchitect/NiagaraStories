@@ -2,6 +2,8 @@ package se.mah.k3;
 
 import java.awt.Color;
 
+import se.mah.k3.skins.WordSkin;
+
 public class Shadow extends WordSkin {
 	Word owner;
 
@@ -15,7 +17,7 @@ public class Shadow extends WordSkin {
 		case 0:
 			break;
 		case 1 : // draging
-			DrawPanel.g2.setColor(new Color(0, 0, 0, 50));;
+			DrawPanel.g2.setColor(new Color(0, 0, 0, 50));
 			DrawPanel.g2.fillRect((int)(0 - owner.offsetX*2-owner.width*0.5),(int)(3- owner.offsetY * 1-owner.height*0.5) , owner.width + owner.margin * 2,(int) (owner.height + 6));
 			break;
 		case 2 : // placed

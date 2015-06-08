@@ -27,7 +27,7 @@ public class Mouse extends MouseMotionAdapter implements MouseListener ,MouseMot
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-System.out.println("click");		
+		System.out.println("click");		
 	}
 
 	@Override

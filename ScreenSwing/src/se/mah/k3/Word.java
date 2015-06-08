@@ -8,6 +8,7 @@ import java.util.Random;
 
 import se.mah.k3.particles.FrameParticle;
 import se.mah.k3.particles.TextParticle;
+import se.mah.k3.skins.WordSkin;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -17,8 +18,10 @@ import com.firebase.client.Firebase;
 //It also contains a boolean to check if the word is active or not.
 
 public class Word implements Health ,RenderOrder{
-	ArrayList<Word> linkedWords = new ArrayList<Word>();
+	private ArrayList<Word> linkedWords = new ArrayList<Word>();
+	private ArrayList<WordSkin> skins = new ArrayList<WordSkin>();
 	private final int MAX_OFFSET=20;
+	private final float trackFactor= 0.2f;
 	public static final int MIN_ANGLE=-10, MAX_ANGLE=10;
 	private final float FORCEFACTOR = 0.05f;
 	public String type="",wordId="",bending[], ownerId = "",text = "";
@@ -31,43 +34,36 @@ public class Word implements Health ,RenderOrder{
 	public int xPos, yPos, width, height, margin = 20, offsetX = -20, offsetY = 40;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
-
-	//WordSkin skin = new WordSkin(this);
-	Shadow shadow = new Shadow(this);
+	private Shadow shadow = new Shadow(this);
 	private float tAngle;
 	
-
-	public Word(String _text, String _ownerId) {
+	public Word(String _text, String _ownerId) {  // basic
+		//skins.add(new MossSkin(this));
 		this.text = _text;
 		this.ownerId = _ownerId;
 		//this.active = true;
 	}
-
-	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
+	public Word(String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {  // advance
+		this(_text,_ownerId);
 		xPos=_x;
 		yPos=_y;
 		txPos=_tx;
 		tyPos=_ty;
-		this.text = _text;
-		this.ownerId = _ownerId;
 		//this.active = false;
 	}
-
-	public Word(DataSnapshot _dataSnapshot,String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {
+	public Word(DataSnapshot _dataSnapshot,String _text, String _ownerId,int _x,int _y, int _tx ,int _ty) {  // full
+		this( _text,  _ownerId, _x, _y,  _tx , _ty);
 		dataSnapshot=_dataSnapshot;
 		wordId=_dataSnapshot.getKey();
-		xPos=_x;
-		yPos=_y;
-		txPos=_tx;
-		tyPos=_ty;
-		this.text = _text;
-		this.ownerId = _ownerId;
 		//this.active = false;
 	}
+	
 
-	public Word(WordBuilder wordBuilder) {
+	public Word(WordBuilder wordBuilder) {  // custom build constructor
 
 		this.linkedWords =wordBuilder.linkedWords;
+		this.skins=wordBuilder.skins;
+		for(WordSkin s:skins){s.setOwner(this);}  // assign owner to all wordSkins
 		this.type=wordBuilder.type;
 		this.wordId=wordBuilder.wordId;
 		this.ownerId=wordBuilder.ownerId;
@@ -88,7 +84,9 @@ public class Word implements Health ,RenderOrder{
 		this.tyPos=wordBuilder.tyPos;
 		this.health =wordBuilder.health;
 		this.angle=wordBuilder.angle;
+	
 	}
+
 
 	public void setUser(User _u){ 
 		if(!owner.equals(_u)){
@@ -221,7 +219,6 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.g2.translate((int) (xPos +offsetX),(int) (yPos +offsetY));
 		if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
 		DrawPanel.g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
 		shadow.display();
 
 		if ( owner==null) {
@@ -242,7 +239,7 @@ public class Word implements Health ,RenderOrder{
 		switch(state.ordinal()){
 		case 0 ://onTray
 		
-		break;
+			break;
 		case 1 : // draging
 			DrawPanel.g2.setStroke(Constants.wordOutline);
 			DrawPanel.g2.drawRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
@@ -253,7 +250,11 @@ public class Word implements Health ,RenderOrder{
 			break;
 		default :
 		}
-		//if(!Constants.simple)skin.display(DrawPanel.g2);
+		if(!Constants.simple){
+			for(WordSkin s:skins){
+				s.display();
+			}
+		}
 
 		DrawPanel.g2.setTransform(oldTransform);
 
@@ -274,7 +275,10 @@ public class Word implements Health ,RenderOrder{
 
 	}
 
-
+	private void sendCollision(){
+		colliding=true;
+		DrawPanel.collisionSent=false;
+	}
 	public void collisionVSWord (Word w){
 		if(state!=State.onTray && this.state!=State.draging){
 			if((xPos + margin + width * 0.5) > (w.xPos - margin - w.width*0.5)&&(xPos - margin - width*0.5) < (w.xPos + margin +w.width*0.5)&&(yPos + margin * 0.5 + height*0.5) > (w.yPos - margin * 0.5 - w.height*0.5)&&(yPos - margin * 0.5 - height*0.5) < (w.yPos + margin * 0.5 + w.height*0.5)){
@@ -282,8 +286,7 @@ public class Word implements Health ,RenderOrder{
 				w.tyVel=(w.yPos-yPos)*FORCEFACTOR;
 				txVel=(xPos-w.xPos)*FORCEFACTOR;
 				tyVel=(yPos-w.yPos)*FORCEFACTOR;
-				colliding=true;
-				DrawPanel.collisionSent=false;
+				sendCollision();
 			}
 		}
 	}
@@ -291,20 +294,16 @@ public class Word implements Health ,RenderOrder{
 	public void BoundCollision(){
 		if(xPos < margin + width * 0.5){											//LEFT
 			txPos += 5;
-			colliding=true;
-			DrawPanel.collisionSent=false;
+			sendCollision();
 		}else if( xPos>Constants.screenWidth - margin - ( width * 0.5)){			//RIGHT
 			txPos -= 5;
-			colliding=true;
-			DrawPanel.collisionSent=false;
+			sendCollision();
 		}if(yPos < margin * 0.5 + height * 0.5){									//TOP
 			tyPos += 5;
-			colliding=true;
-			DrawPanel.collisionSent=false;
+			sendCollision();
 		}else if( yPos>Constants.screenHeight - (margin * 0.5) - (height * 0.5)){	//BOTTOM
 			tyPos -= 5;
-			colliding=true;
-			DrawPanel.collisionSent=false;
+			sendCollision();
 		}
 	}
 
@@ -314,9 +313,8 @@ public class Word implements Health ,RenderOrder{
 		float AngleDiff=tAngle-angle;
 		//txPos=Math.cos(angle);
 		//tyPos=Math.sin(angle);
-		xPos+=(int)(xDiff*0.2);
-		yPos+=(int)(yDiff*0.2);
-
+		xPos+=(int)(xDiff*trackFactor);
+		yPos+=(int)(yDiff*trackFactor);
 		xVel=xPos-pxPos;
 		yVel=yPos-pyPos;
 		txVel*=0.5;
@@ -326,7 +324,7 @@ public class Word implements Health ,RenderOrder{
 		pxPos=xPos;
 		pyPos=yPos;		
 		if(MAX_ANGLE>tAngle && tAngle >MIN_ANGLE){}else{tAngle*=0.9;}
-		//DrawPanel.g2.drawString(String.valueOf(tAngle)+"   "+String.valueOf(angle), (int) (xPos),(int) (yPos + height* 3));
+		if(Constants.debug)DrawPanel.g2.drawString(String.valueOf(tAngle)+"   "+String.valueOf(angle), (int) (xPos),(int) (yPos + height* 3));
 		angle+=(float)(AngleDiff*0.2);
 		//if(this.MAX_ANGLE<angle )angle*=0.9;
 		
@@ -359,7 +357,10 @@ public class Word implements Health ,RenderOrder{
 
 		default :
 		}
-		//skin.update();
+		for(WordSkin s:skins){
+			s.update();
+		}
+	
 	}
 
 	public void link(Word w){
@@ -425,10 +426,16 @@ public class Word implements Health ,RenderOrder{
 	public void setWordId(String _s) {
 		wordId=_s;
 	}	
-
+	
+	public void addSkin(WordSkin _skin) { // multiple
+		_skin.setOwner(this);
+		skins.add( _skin);
+	}
+	
 	public static class WordBuilder
 	{
-		ArrayList<Word> linkedWords = new ArrayList<Word>();
+		private ArrayList<Word> linkedWords = new ArrayList<Word>();
+		private ArrayList<WordSkin> skins = new ArrayList<WordSkin>();
 		private String type,wordId,ownerId,text;
 		private boolean active, occupied, plural;
 		private String bending[];
@@ -441,19 +448,19 @@ public class Word implements Health ,RenderOrder{
 		private float health,angle;
 
 
-
-		public WordBuilder(String text, int  x,int y) {
+		public WordBuilder(String text, int  x,int y) { // basic
 			this.text = text;
 			this.xPos = x;
 			this.yPos = y;
 			this.txPos = x;
 			this.tyPos = y;
-			//	DrawPanel.metrics = DrawPanel.g2.getFontMetrics(Constants.font);
 			this.width = DrawPanel.metrics.stringWidth(text);
 			this.height = DrawPanel.metrics.getHeight();
+			String fireBaseId= DrawPanel.generateNewWordId();
 			this.firebase.setValue("word888");
 			this.wordId="word888";
 		}
+
 
 		public WordBuilder plural(boolean plural) {
 			this.plural = plural;
@@ -534,14 +541,19 @@ public class Word implements Health ,RenderOrder{
 			if(command.equals("random"))angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
 			return this;
 		}
-		public void addToFirebase(){
+		public WordBuilder addSkin(WordSkin _skin) { // multiple
+			this.skins.add( _skin);
+			return this;
+		}
+		 
 
+		public void addToFirebase(){
+			firebase.child(wordId+"/attriubtes/owner/").setValue("[startWords]");
 
 		}
 		public Word build() {
-			Word word =  new Word(this);
-			//validateUserObject(user);
-			return word;
+			addToFirebase();
+			return new Word(this);
 		}
 	}
 
@@ -564,8 +576,8 @@ public class Word implements Health ,RenderOrder{
 			if(w.state==State.draging)amountOfoverlaying++;
 		}
 		if(DrawPanel.words.indexOf((Word)o) < DrawPanel.words.size()-amountOfoverlaying){
-		DrawPanel.words.remove(DrawPanel.words.indexOf(this));
-		DrawPanel.words.add(DrawPanel.words.size(), this);
+			DrawPanel.words.remove(DrawPanel.words.indexOf(this));
+			DrawPanel.words.add(DrawPanel.words.size(), this);
 		}
 	}
 
@@ -573,4 +585,5 @@ public class Word implements Health ,RenderOrder{
 	public void toIndex(int i) {
 
 	}
+	
 }

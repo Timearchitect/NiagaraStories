@@ -13,19 +13,15 @@ public class User implements Comparable<User>{
     public enum State {offline,online, grabing,taping,droping,idle};
     public State state=State.online;
 	final int DEFAULT_SIZE=100 ;
+	final float trackFactor= 0.2f;
 	private String id;
 	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Users"); // Root;
 	DataSnapshot dataSnapshot;
-	int xPos, pyPos;
-	int yPos, pxPos;
-	float xTar;
-	float yTar;
-	private float xRel = 0;
-	private float yRel = 0;
-	float angle,pAngle,tAngle;
+	int xPos,yPos, pxPos, pyPos;
+	float xTar, yTar,angle,pAngle,tAngle;
+	private float xRel = 0,yRel = 0,RotateAngle;
 	private Color color = new Color(100, 100, 100);
-	private float RotateAngle;
-	private int size=100;
+	int size=100;
 	int animSize;
 	public int moves = 4;
 	
@@ -135,8 +131,8 @@ public class User implements Comparable<User>{
 		angle=(float) Math.toDegrees(Math.atan2(yTdiff, xTdiff));
 		RotateAngle+=(xTdiff+yTdiff)*0.1;
 		size=(int)(Math.abs(xTdiff+yTdiff)*0.2+DEFAULT_SIZE);
-		xPos+=(float) (xTdiff*0.1);
-		yPos+=(float) (yTdiff*0.1);
+		xPos+=(float) (xTdiff*trackFactor);
+		yPos+=(float) (yTdiff*trackFactor);
 		pxPos=xPos;
 		pyPos=yPos;
 		pAngle=angle;

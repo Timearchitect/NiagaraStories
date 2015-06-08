@@ -23,10 +23,12 @@ import java.awt.event.WindowEvent;
 import javax.swing.JTextField;
 
 import se.mah.k3.Word.WordBuilder;
+import se.mah.k3.skins.CrackedSkin;
+import se.mah.k3.skins.MossSkin;
 
 public class CustomDialog extends JDialog implements ActionListener {
     /**
-	 * 
+	 *  Dialog box appears when [w] is pressed (you will get kicked out of focus first sadly)
 	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel myPanel = null;
@@ -45,8 +47,15 @@ public class CustomDialog extends JDialog implements ActionListener {
     yesButton = new JButton("Create");
     yesButton.addActionListener(new ActionListener() {
     	public void actionPerformed(ActionEvent arg0) {
-			//DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)DrawPanel.mouseX,(int)DrawPanel.mouseY).angle("random")));	
-			DrawPanel.words.add(new Word(new WordBuilder(txtWord.getText() ,(int)Mouse.mouseX,(int)Mouse.mouseY).angle("random")));	
+
+			DrawPanel.words.add(new WordBuilder(txtWord.getText() ,(int)Mouse.mouseX,(int)Mouse.mouseY)
+			.angle("random")
+			.addSkin(new MossSkin())
+			.addSkin(new CrackedSkin())
+			.active(true)
+			.build()
+			);	
+
 
     		dispose();
     	}

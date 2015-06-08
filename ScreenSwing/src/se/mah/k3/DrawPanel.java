@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,11 +32,10 @@ public class DrawPanel extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private int FPS, frames;
 	static Firebase myFirebaseRef = new Firebase("https://scorching-fire-1846.firebaseio.com/"); // Root
-	static Firebase regularWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Regular Words");
- 	static Firebase themedWordsRef = new Firebase("https://scorching-fire-1846.firebaseio.com/Themed Words");
-	static Firebase firebaseUsedWord=myFirebaseRef.child("/Used Words/");
+	static Firebase regularWordsRef = myFirebaseRef.child("/Regular Words");
+ 	static Firebase themedWordsRef = myFirebaseRef.child("/Themed Words");
+	static Firebase firebaseUsedWords =myFirebaseRef.child("/Used Words/");
 	static Mouse mouse= new Mouse();
-	//static Firebase myFirebaseRef, regularWordsRef, themedWordsRef;
 	private Random r = new Random(); // randomize numbers
 	public static Graphics2D g2;
 	public static BufferedImage bimage, mist, rust, cracks, moss, app;
@@ -45,12 +43,6 @@ public class DrawPanel extends JPanel implements Runnable {
 	public String changedWord = "word";
 	private FontMetrics fMetrics ;
 	public static FontMetrics metrics;
-	//static float offsetX ; // mouse
-	//static float offsetY;
-	//static float mouseY,mouseX;
-	//private static float pMouseX, pMouseY;
-	//boolean hold;
-	//static Word selectedWord;
 	static boolean collisionSent;
 
 	User user;
@@ -137,16 +129,7 @@ public class DrawPanel extends JPanel implements Runnable {
 		// rendering to the image
 
 		// bimage = null;
-		try {
-			bimage = ImageIO.read(this.getClass().getResource("/background.bmp"));
-			mist = ImageIO.read(this.getClass().getResource("/mist.png"));
-			rust = ImageIO.read(this.getClass().getResource("/rust.png"));
-			moss = ImageIO.read(this.getClass().getResource("/moss.png"));
-			cracks = ImageIO.read(this.getClass().getResource("/cracks.png"));
-			app = ImageIO.read(this.getClass().getResource("/app.png"));
-		} catch (IOException e) {
-			System.out.println("no");
-		}
+		preLoadBufferdImages();
 
 		 this.addMouseListener(mouse);
 		 this.addMouseMotionListener(mouse);
@@ -421,7 +404,24 @@ try{
 			}
 		}
 	}
-	
+	void preLoadBufferdImages(){
+		try {
+			// screen images
+			bimage = ImageIO.read(this.getClass().getResource("/background.bmp"));
+			app = ImageIO.read(this.getClass().getResource("/app.png"));
+			
+			//particle images
+			mist = ImageIO.read(this.getClass().getResource("/mist.png"));
+			
+			//skin images
+			rust = ImageIO.read(this.getClass().getResource("/rust.png"));
+			moss = ImageIO.read(this.getClass().getResource("/moss.png"));
+			cracks = ImageIO.read(this.getClass().getResource("/cracks.png"));
+			
+		} catch (IOException e) {
+			System.out.println("no didn't load images ");
+		}
+	}
 	public static void respawn (){
 		System.out.println("reSpawn");
 		final Random ra = new Random();
@@ -450,14 +450,14 @@ try{
 			            i++;
 			        }
 					System.out.println("choosen Text: "+choosen.child("text").getValue());
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("active").setValue(true);
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("state").setValue("placed");
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("owner").setValue("[startWords]");
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("occupied").setValue(false);
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("dropped").setValue(true);
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("text").setValue(choosen.child("text").getValue());
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("xRel").setValue( new Random().nextFloat()*1);
-					firebaseUsedWord.child(choosen.getKey()).child("/attributes").child("yRel").setValue( new Random().nextFloat()*1-0.2);
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/active").setValue(true);
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/state").setValue("placed");
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/owner").setValue("[startWords]");
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/occupied").setValue(false);
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/dropped").setValue(true);
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/text").setValue(choosen.child("text").getValue());
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/xRel").setValue( new Random().nextFloat()*1);
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/yRel").setValue( new Random().nextFloat()*1-0.2);
 		        }
 
 		    }
@@ -477,7 +477,12 @@ try{
 				
 			}});
 		}
-
+	
+	public static String generateNewWordId(){
+	
+		return "888";
+	}
+	
 	public static void clearFirebase(){
 	myFirebaseRef.child("Used Words").removeValue();			
 	//words.clear();	
@@ -706,7 +711,7 @@ try{
 
 		// Adding a child event listener to the firebasewords ref, to check for
 		// active words
-		fireBaseWords.addChildEventListener(new ChildEventListener() {
+	/*	fireBaseWords.addChildEventListener(new ChildEventListener() {
 
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {
@@ -753,6 +758,9 @@ try{
 							case "placed":
 								//	words.get(index).released();
 								words.get(index).setState(Word.State.placed);
+								
+
+								
 								u.release();
 								System.out.println("placed");
 								words.get(index).appear();
@@ -764,16 +772,16 @@ try{
 									words.get(index).setState(Word.State.draging);
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
-									u.xPos=(int)words.get(index).txPos;
-									u.yPos=(int)words.get(index).tyPos;
+									//u.xPos=(int)words.get(index).txPos;
+									//u.yPos=(int)words.get(index).tyPos;
 									System.out.println("dragging");
 								}else{
 									words.get(index).xPos=(int)words.get(index).txPos;
 									words.get(index).yPos=(int)words.get(index).tyPos;
 									u.xTar=words.get(index).txPos;
 									u.yTar=words.get(index).tyPos;
-									u.yPos=(int)words.get(index).tyPos;
-									u.xPos=(int)words.get(index).txPos;
+									//u.yPos=(int)words.get(index).tyPos;
+									//u.xPos=(int)words.get(index).txPos;
 									words.get(index).respond();
 									System.out.println("GHOST");
 								}
@@ -821,9 +829,9 @@ try{
 		});
 		 
 
-		Firebase fireBaseUsedWords = myFirebaseRef.child("Used Words");
+*/ //    <-----
 		//Firebase fireBaseWords = myFirebaseRef.child("Used Words");
-		fireBaseUsedWords.addListenerForSingleValueEvent(new ValueEventListener( ) {
+		firebaseUsedWords.addListenerForSingleValueEvent(new ValueEventListener( ) {
 
 			@Override
 			public void onCancelled(FirebaseError arg0) {
@@ -846,7 +854,7 @@ try{
 							(int)(Math.round((double)(DSS.child("/attributes/yRel").getValue())*Constants.screenHeight))));
 					
 					try{
-					words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
+						words.get(words.size()-1).width = metrics.stringWidth(words.get(words.size()-1).text);
 					} catch (NullPointerException npe){
 						System.err.println("NullPointerException in words.get(words.size()-1).width");
 					}
@@ -880,7 +888,7 @@ try{
 		// Adding a child event listener to the firebasewords ref, to check for
 		// active words
 
-		fireBaseUsedWords.addChildEventListener(new ChildEventListener() {
+		firebaseUsedWords.addChildEventListener(new ChildEventListener() {
 
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {
@@ -897,7 +905,7 @@ try{
 
 				boolean match = false;
 				Word matchingWord=null;
-				for(Word w:words){
+				for(Word w:words){  // check
 					//	System.out.println("datasnap:"+w.dataSnapshot.getKey() +"compareto:"+snapshot);
 					try{
 						if(w.dataSnapshot.getKey().equals(snapshot.getKey())){
@@ -923,67 +931,74 @@ try{
 
 
 				try{
-					if (matchingWord != null) {
+				//	if (matchingWord != null) {
 						matchingWord.txPos=(int)Math.round((double)(snapshot.child("/attributes/xRel").getValue())*Constants.screenWidth);
 						System.out.println("xRel assigned");
-					}
+				//	}
 				}catch( NullPointerException ne){}
 				try{
-					if (matchingWord != null) {
+				//	if (matchingWord != null) {
 						matchingWord.tyPos=(int)Math.round((double)(snapshot.child("/attributes/yRel").getValue())*Constants.screenHeight);
 						System.out.println("yRel assigned");
-					}	
+				//	}	
 				}catch( NullPointerException ne){}
 				
 				
 				try{
 				//	if (snapshot.child("attributes/state").getValue() != null) {
 						//System.out.println("State stuff");
-						User u = null;
+						//User u = null;
 						if(matchingWord.getUser()!=null){ 
-							u=matchingWord.getUser();
+							User u=matchingWord.getUser();
+							String tempState = snapshot.child("attributes/state").getValue().toString();
+							
 							switch(snapshot.child("attributes/state").getValue().toString()){
 							case "placed":
-								//	words.get(index).released();
-								if(u.state==User.State.online){
-									matchingWord.setState(Word.State.placed);
-									u.release();
-									System.out.println("placed");
+
+								if(!matchingWord.state.toString().equals(tempState)){ // do this only when this state:placed is changed 
+
+									u.xTar=matchingWord.txPos;
+									u.yTar=matchingWord.tyPos;
+									u.xPos=(int) matchingWord.txPos;
+									u.yPos=(int) matchingWord.tyPos;
+									matchingWord.released();
+									if(u.state==User.State.online){
+										matchingWord.setState(Word.State.placed);	
+										u.release();
+										System.out.println("placed");
+										matchingWord.appear();
+									}
 									matchingWord.appear();
+									System.out.println("placed without"); // <---w
 								}
-								matchingWord.appear();
-								System.out.println("placed without"); // <---w
 								break;
 
 							case "draging":
 								
+								u.xTar=matchingWord.txPos;
+								u.yTar=matchingWord.tyPos;
+								//	u.xPos=(int)matchingWord.txPos;
+								//	u.yPos=(int)matchingWord.tyPos;
+				
 								if(matchingWord.state!=Word.State.onTray){
 									matchingWord.setState(Word.State.draging);
 									matchingWord.toTop(matchingWord);
-									u.xTar=matchingWord.txPos;
-									u.yTar=matchingWord.tyPos;
-									u.xPos=(int)matchingWord.txPos;
-									u.yPos=(int)matchingWord.tyPos;
 									System.out.println("dragging");
 								}else{
-									matchingWord.xPos=(int)matchingWord.txPos;
-									matchingWord.yPos=(int)matchingWord.tyPos;
-									u.xTar=matchingWord.txPos;
-									u.yTar=matchingWord.tyPos;
-									u.yPos=(int)matchingWord.tyPos;
-									u.xPos=(int)matchingWord.txPos;
+									//matchingWord.xPos=(int)matchingWord.txPos;
+									//matchingWord.yPos=(int)matchingWord.tyPos;
 									matchingWord.respond();
 									System.out.println("GHOST");
 								}
 
 								break;
 							case "onTray":
-								matchingWord.xPos=(int)matchingWord.txPos;
-								matchingWord.yPos=(int)matchingWord.tyPos;
+							//	matchingWord.xPos=(int)matchingWord.txPos;
+							//	matchingWord.yPos=(int)matchingWord.tyPos;
 								u.xTar=matchingWord.txPos;
 								u.yTar=matchingWord.tyPos;
-								u.yPos=(int)matchingWord.tyPos;
-								u.xPos=(int)matchingWord.txPos;
+							//	u.yPos=(int)matchingWord.tyPos;
+							//	u.xPos=(int)matchingWord.txPos;
 								matchingWord.respond();
 
 								matchingWord.setState(Word.State.onTray);
@@ -992,7 +1007,8 @@ try{
 
 							}
 						}
-					//}	
+						
+				
 				}catch( NullPointerException ne){}
 
 				try{
@@ -1025,10 +1041,9 @@ try{
 	}
 
 	public void displayDebugText() {
-		g2.setColor(Color.white); // vit system color
 		
+		g2.setColor(Color.white); // vit system color
 		g2.setColor(Constants.waterColorTrans); // vit system color
-
 		g2.setFont(Constants.boldFont); // init typsnitt
 		if (Constants.debug) {g2.drawString("ID: " + Constants.screenNbr + " part:" + particles.size()+ " Overpart:" + overParticles.size() + "  words: "
 				+ words.size() + "  Users:" + userList.size()+ "  FPS: " + FPS + "  Time:" + Constants.timeLeft,30, 50);
@@ -1098,6 +1113,9 @@ try{
 
 		}
 	}
+
+
+
 
 }
 		
