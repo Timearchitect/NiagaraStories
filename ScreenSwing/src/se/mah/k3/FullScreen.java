@@ -30,15 +30,15 @@ public class FullScreen extends JFrame implements KeyEventDispatcher {
 	/**
 	 * Launch the application.
 	 */
-	//static {
-	//	System.setProperty("sun.java2d.transaccel", "True");
+	static {
+		System.setProperty("sun.java2d.transaccel", "True");
 	//	 System.setProperty("sun.java2d.trace", "timestamp,log,count");
-	//	System.setProperty("sun.java2d.opengl", "True"); // GOPU ACCEL
-	//	System.setProperty("sun.java2d.d3d", "True");
-	//	System.setProperty("sun.java2d.ddforcevram", "True");
+		System.setProperty("sun.java2d.opengl", "True"); // GOPU ACCEL
+		System.setProperty("sun.java2d.d3d", "True");
+		System.setProperty("sun.java2d.ddforcevram", "True");
 	//	System.setProperty("sun.java2d.ddoffscreen","true");
 	//	System.setProperty("sun.java2d.accthreshold","0");
-	//}
+	}
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -169,27 +169,19 @@ public class FullScreen extends JFrame implements KeyEventDispatcher {
 
 			}
 			if(key == ' '){
-				clearScreen();
+				DrawPanel.clearScreen();
 			}
 			if(key == 'p'){
 				DrawPanel.projectiles.add(new PingBall((int)(Constants.screenWidth*0.5),(int)(Constants.screenHeight*0.5),10,10));
 			}
 
 		}
-		return false;	}
-
-
-
-
-
-	public void clearScreen(){ 
-	if(Constants.simple){
-		for(Word w:DrawPanel.words){
-			w.active=false;	
-		}
+		return false;	
 	}
-		DrawPanel.clearScreen();
-	}
+
+
+
+	
 
 	public void generateAvalibleWordId(){
 		

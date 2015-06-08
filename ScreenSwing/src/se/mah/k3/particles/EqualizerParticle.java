@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import se.mah.k3.Constants;
 import se.mah.k3.Word;
 
 public class EqualizerParticle extends Particle {
@@ -42,12 +43,10 @@ public class EqualizerParticle extends Particle {
 		yDiff= p.y-y;
 		//angle=(float) Math.atan2(xDiff, yDiff);
 		dist=(float) Math.sqrt((xDiff*xDiff)+(yDiff*yDiff));
-
-		if(dist<r*0.5){
-			//p.vx=5;
-			//p.vy=-5;
-			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
-			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
+		if(Constants.simple){
+			if(dist<r*0.5){
+			p.particleColor =p.particleColor.brighter(); 
+			}
 		}
 		
 		if(dist<r*0.3){
@@ -57,7 +56,7 @@ public class EqualizerParticle extends Particle {
 			
 			//p.vx+=Math.cos(angle+90)*(dist*2-r)*0.0002*opacity;
 			//p.vy-=Math.sin(angle+90)*(dist*2-r)*0.0002*opacity;
-			p.particleColor =  (new Color(100,200,250,30));
+			//p.particleColor =  (new Color(100,200,250,30));
 		}
 	}
 

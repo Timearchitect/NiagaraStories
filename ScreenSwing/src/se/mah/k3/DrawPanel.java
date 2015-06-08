@@ -457,7 +457,7 @@ try{
 					firebaseUsedWords.child(choosen.getKey()+"/attributes/dropped").setValue(true);
 					firebaseUsedWords.child(choosen.getKey()+"/attributes/text").setValue(choosen.child("text").getValue());
 					firebaseUsedWords.child(choosen.getKey()+"/attributes/xRel").setValue( new Random().nextFloat()*1);
-					firebaseUsedWords.child(choosen.getKey()+"/attributes/yRel").setValue( new Random().nextFloat()*1-0.2);
+					firebaseUsedWords.child(choosen.getKey()+"/attributes/yRel").setValue( new Random().nextFloat()*(0.8));
 		        }
 
 		    }
@@ -706,12 +706,12 @@ try{
 	public void wordListener() {
 		// Creating a ref to a random child in the Regular Words tree on
 		// firebase
-		Firebase fireBaseWords = myFirebaseRef.child("Starter Words");
+		/*Firebase fireBaseWords = myFirebaseRef.child("Starter Words");
 		//Firebase fireBaseWords = myFirebaseRef.child("Used Words");
 
 		// Adding a child event listener to the firebasewords ref, to check for
 		// active words
-	/*	fireBaseWords.addChildEventListener(new ChildEventListener() {
+		fireBaseWords.addChildEventListener(new ChildEventListener() {
 
 			@Override
 			public void onChildRemoved(DataSnapshot arg0) {
@@ -1043,7 +1043,6 @@ try{
 	public void displayDebugText() {
 		
 		g2.setColor(Color.white); // vit system color
-		g2.setColor(Constants.waterColorTrans); // vit system color
 		g2.setFont(Constants.boldFont); // init typsnitt
 		if (Constants.debug) {g2.drawString("ID: " + Constants.screenNbr + " part:" + particles.size()+ " Overpart:" + overParticles.size() + "  words: "
 				+ words.size() + "  Users:" + userList.size()+ "  FPS: " + FPS + "  Time:" + Constants.timeLeft,30, 50);
@@ -1052,6 +1051,7 @@ try{
 		if (Constants.noUser)g2.drawString("No user", 30, 200);
 		if (Constants.simple)g2.drawString("simple Mode", 30, 250);
 		} else {
+			g2.setColor(Constants.waterColorTrans); // vit system color
 			g2.setFont(Constants.boldFontScreen);
 			float fWidth=fMetrics.stringWidth("Screen ID: " + Constants.screenNbr);
 			g2.drawString("Screen ID: " + Constants.screenNbr, (int) (Constants.screenWidth  -fWidth-45), (int) (Constants.screenHeight * 0.8 + 50));
@@ -1069,7 +1069,7 @@ try{
 
 	public static void clearScreen() {
 		
-		overParticles.add(new EqualizerParticle((int) (Constants.screenWidth * 0.5),(int) (Constants.screenHeight * 0.5), 50));
+		overParticles.add(new EqualizerParticle((int) (Constants.screenWidth * 0.5),(int) (Constants.screenHeight * 0.5), 40));
 		 words.clear();
 		for(int i =userList.size()-1 ;i>=0 ; i--){
 			if(userList.get(i).state==User.State.offline){
@@ -1094,15 +1094,17 @@ try{
 
 			if (allWordsNotColliding) {
 				for (Word w : DrawPanel.words) {
-					if (w.active) {
-						w.xVel=0;
-						w.yVel=0;
-						w.txPos=w.xPos;
-						w.tyPos=w.yPos;
-						DrawPanel.myFirebaseRef.child("Used Words").child(w.getWordId() + "/attributes/text").setValue(w.text);
-						DrawPanel.myFirebaseRef.child("Used Words").child(w.getWordId() + "/attributes/xRel").setValue(((float) w.xPos / Constants.screenWidth));
-						DrawPanel.myFirebaseRef.child("Used Words").child(w.getWordId() + "/attributes/yRel").setValue(((float) w.yPos / Constants.screenHeight));
-						//w.respond();
+					if(!w.collisionSent){ // only words who have changed coords since before
+						if (w.active) {
+							w.xVel=0;
+							w.yVel=0;
+							w.txPos=w.xPos;
+							w.tyPos=w.yPos;
+							DrawPanel.myFirebaseRef.child("Used Words").child(w.getWordId() + "/attributes/text").setValue(w.text);
+							DrawPanel.myFirebaseRef.child("Used Words").child(w.getWordId() + "/attributes/xRel").setValue(((float) w.xPos / Constants.screenWidth));
+							DrawPanel.myFirebaseRef.child("Used Words").child(w.getWordId() + "/attributes/yRel").setValue(((float) w.yPos / Constants.screenHeight));
+							//w.respond();
+						}
 					}
 				}
 				//overParticles.add(new ScanParticle((int) (Constants.screenWidth*0.5),0));

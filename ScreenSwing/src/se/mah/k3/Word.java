@@ -25,7 +25,7 @@ public class Word implements Health ,RenderOrder{
 	public static final int MIN_ANGLE=-10, MAX_ANGLE=10;
 	private final float FORCEFACTOR = 0.05f;
 	public String type="",wordId="",bending[], ownerId = "",text = "";
-	public boolean active = true, occupied,colliding, selected, plural,firstDrag;	
+	public boolean active = true, occupied,colliding,collisionSent, selected, plural,firstDrag;	
 	public User owner;
 	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
 	public DataSnapshot dataSnapshot;
@@ -36,6 +36,7 @@ public class Word implements Health ,RenderOrder{
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
 	private Shadow shadow = new Shadow(this);
 	private float tAngle;
+
 	
 	public Word(String _text, String _ownerId) {  // basic
 		//skins.add(new MossSkin(this));
@@ -192,8 +193,6 @@ public class Word implements Health ,RenderOrder{
 
 		DrawPanel.overParticles.add(new TextParticle(xPos, yPos, width, height, 0, -margin, text));
 
-
-		
 		active=false;
 		firebase.child(wordId+"/attributes/active").setValue(false);
 	}
@@ -221,13 +220,8 @@ public class Word implements Health ,RenderOrder{
 		DrawPanel.g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		shadow.display();
 
-		if ( owner==null) {
-			DrawPanel.g2.setColor(Constants.wordStroke);
-		}else {
-			DrawPanel.g2.setColor(owner.getColor());
-		}
-
-		//angle++;
+		displayColor();
+		
 		if(state!=Word.State.onTray){
 			DrawPanel.g2.fillRect((int)(0 - margin-width*0.5),(int)(3- margin * 0.5-height*0.5) , width + margin * 2,(int) (height + 6));
 		}
@@ -275,9 +269,25 @@ public class Word implements Health ,RenderOrder{
 
 	}
 
+	void displayColor() {
+		
+		if ( owner==null) {
+			 DrawPanel.g2.setColor(Constants.wordStroke); 
+			if(colliding){// brighter
+				DrawPanel.g2.setColor(Constants.wordStroke.brighter());
+			}
+		}else{
+			DrawPanel.g2.setColor(owner.getColor());
+			if(colliding){// brighter
+				DrawPanel.g2.setColor(owner.getColor().brighter());
+			}
+		}
+	}
+	
 	private void sendCollision(){
 		colliding=true;
 		DrawPanel.collisionSent=false;
+		collisionSent=false;
 	}
 	public void collisionVSWord (Word w){
 		if(state!=State.onTray && this.state!=State.draging){
@@ -560,9 +570,9 @@ public class Word implements Health ,RenderOrder{
 	@Override
 	public void toBottom(Object o) {
 		int amountOfUnderlaying=0;
-		//for(Word w: DrawPanel.words){
-		//	amountOfUnderlaying++;
-		//}
+
+		amountOfUnderlaying=DrawPanel.words.size();
+		
 		if(DrawPanel.words.indexOf((Word)o) > amountOfUnderlaying){
 			DrawPanel.words.remove(DrawPanel.words.indexOf(this));
 			DrawPanel.words.add(0, this);
@@ -583,7 +593,8 @@ public class Word implements Health ,RenderOrder{
 
 	@Override
 	public void toIndex(int i) {
-
+		DrawPanel.words.remove(this);
+		DrawPanel.words.set(i, this);
 	}
 	
 }
