@@ -8,6 +8,7 @@ import java.util.Random;
 
 import se.mah.k3.particles.FrameParticle;
 import se.mah.k3.particles.TextParticle;
+import se.mah.k3.skins.MossSkin;
 import se.mah.k3.skins.WordSkin;
 
 import com.firebase.client.DataSnapshot;
@@ -30,7 +31,7 @@ public class Word implements Health ,RenderOrder{
 	public Firebase firebase = new Firebase("https://scorching-fire-1846.firebaseio.com/Used Words/"); // Root;
 	public DataSnapshot dataSnapshot;
 	public enum State {onTray, draging, placed,locked};
-	public State state=State.placed;
+	public State state=State.placed; 
 	public int xPos, yPos, width, height, margin = 20, offsetX = -20, offsetY = 40;
 	public float pxPos, pyPos,txPos,tyPos, xVel,yVel,txVel, tyVel;
 	public float health,angle= (int)((new Random().nextInt(MAX_ANGLE))+MIN_ANGLE*0.5) ;
@@ -39,7 +40,7 @@ public class Word implements Health ,RenderOrder{
 
 	
 	public Word(String _text, String _ownerId) {  // basic
-		//skins.add(new MossSkin(this));
+		skins.add(new MossSkin(this));
 		this.text = _text;
 		this.ownerId = _ownerId;
 		//this.active = true;
@@ -219,7 +220,6 @@ public class Word implements Health ,RenderOrder{
 		if(!Constants.simple)DrawPanel.g2.rotate(Math.toRadians(angle));
 		DrawPanel.g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		shadow.display();
-
 		displayColor();
 		
 		if(state!=Word.State.onTray){
